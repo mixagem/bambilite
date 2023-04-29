@@ -1,0 +1,18 @@
+<span [ngClass]="bambiService.appTheme + '-theme'">
+
+	<ng-container id="landing-page" *ngIf="!bambiService.authorizedLogin">
+		<lg2-landing-page></lg2-landing-page>
+	</ng-container>
+
+	<ng-container *ngIf="bambiService.authorizedLogin">
+		<div id="app-wrapper">
+			<lg2-menu-sidebar></lg2-menu-sidebar>
+			<div id="content-wrapper">
+				<lg2-header></lg2-header>
+				<lg2-header-breadcumbs></lg2-header-breadcumbs>
+				<router-outlet></router-outlet>
+			</div>
+		</div>
+	</ng-container>
+
+</span>

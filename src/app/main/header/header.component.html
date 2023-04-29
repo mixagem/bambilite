@@ -1,0 +1,60 @@
+<div id="header-wrapper">
+	<div>aaaaaa</div>
+	<div>bbbbbbbbbbbbbbbbbbbbbbbbbbbbb</div>
+	<div>
+		<button class="header-button" mat-icon-button [matMenuTriggerFor]="langmenu"><mat-icon
+				fontSet="material-icons-outlined">language</mat-icon></button>
+		<button class="header-button" mat-icon-button mat-icon-button [matMenuTriggerFor]="thememenu"><mat-icon
+				fontSet="material-icons-outlined">palette</mat-icon></button>
+		<button class="header-button" mat-icon-button mat-icon-button (click)="bambiService.Disconnect(true)"><mat-icon
+				fontSet="material-icons-outlined">power_settings_new</mat-icon></button>
+		<mat-menu class="header-mini-menu" #langmenu="matMenu" xPosition="before">
+			<span class="lang-menu-wrapper">
+
+				<span class="option-label">{{'APPHEADER.LANGPICKER' | translation}}</span>
+
+				<button id="pt-lang" class="menu-entry"
+					[ngClass]="bambiService.appLang === 'pt' ? 'selected-language' : ''" mat-menu-item
+					(click)="languageSwap('pt')">
+					<div><img src="https://hatscripts.github.io/circle-flags/flags/pt.svg" width="24">
+						<p>{{'APPHEADER.LANGPT' |
+							translation}}</p>
+					</div>
+				</button>
+				<button id="uk-lang" class="menu-entry"
+					[ngClass]="bambiService.appLang === 'uk' ? 'selected-language' : ''" mat-menu-item
+					(click)="languageSwap('uk')">
+					<div><img src="https://hatscripts.github.io/circle-flags/flags/uk.svg" width="24">
+						<p>{{'APPHEADER.LANGUK' |
+							translation}}</p>
+					</div>
+				</button>
+				<button id="es-lang" class="menu-entry"
+					[ngClass]="bambiService.appLang === 'es' ? 'selected-language' : ''" mat-menu-item
+					(click)="languageSwap('es')">
+					<div><img src="https://hatscripts.github.io/circle-flags/flags/es.svg" width="24">
+						<p>{{'APPHEADER.LANGES' |
+							translation}}</p>
+					</div>
+				</button></span>
+		</mat-menu>
+		<mat-menu class="header-mini-menu" #thememenu="matMenu" xPosition="before">
+			<span class="theme-menu-wrapper">
+
+				<span class="option-label">{{'APPHEADER.THEMEPICKER' | translation}}</span>
+
+				<button class="menu-entry" mat-menu-item (click)="themeSwap('waikiki')">
+					<span>{{'APPHEADER.THEMEWAIKIKI' | translation}}</span><mat-icon
+						*ngIf="bambiService.appTheme === 'waikiki'">checked</mat-icon>
+				</button>
+
+				<button class="menu-entry" mat-menu-item (click)="themeSwap('vice')">
+					<span>{{'APPHEADER.THEMEVICE' | translation}}</span><mat-icon
+						*ngIf="bambiService.appTheme === 'vice'">checked</mat-icon>
+
+				</button>
+
+			</span>
+		</mat-menu>
+	</div>
+</div>

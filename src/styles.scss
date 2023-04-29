@@ -1,0 +1,212 @@
+@use "@angular/material" as mat;
+@use "./assets/styles/bambi-palettes" as lgpal;
+
+@import "~animate.css/animate.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
+
+@include mat.core();
+
+:root {
+	--waikiki-primary: #29b6f6;
+	--waikiki-accent: #ffee58;
+	--waikiki-warn: #ff1744;
+	--vice-primary: #b2ff59;
+	--vice-accent: #29b6f6;
+	--vice-warn: #f50057;
+}
+
+$waikiki-theme: mat.define-light-theme(
+	(
+		color: (
+			primary: mat.define-palette(mat.$light-blue-palette, 400),
+			accent: mat.define-palette(mat.$yellow-palette, 50),
+			warn: mat.define-palette(mat.$red-palette, A400),
+		),
+	)
+);
+
+$vice-theme: mat.define-dark-theme(
+	(
+		color: (
+			primary: mat.define-palette(mat.$light-green-palette, A200),
+			accent: mat.define-palette(mat.$light-blue-palette, 500),
+			warn: mat.define-palette(mat.$pink-palette, A400),
+		),
+		typography: mat.define-typography-config(),
+		density: 0,
+	)
+);
+
+.waikiki-theme {
+	@include mat.all-component-themes($waikiki-theme);
+	@include lgpal.theme($waikiki-theme);
+}
+
+.vice-theme {
+	color: #fff;
+	@include mat.all-component-colors($vice-theme);
+	@include lgpal.theme($vice-theme,true);
+
+	mat-form-field {
+		mat-icon {
+			color: #eee;
+		}
+	}
+}
+
+html,
+body {
+	height: 100%;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+	overflow-x: hidden;
+}
+
+.mainform-header {
+	display: flex;
+	justify-content: space-between;
+	height: 80px;
+	padding: 0 30px;
+	* {
+		display: flex;
+		align-items: center;
+	}
+	.header-title {
+		width: 50%;
+		button {
+			-webkit-transition: all 0.3s linear;
+			-moz-transition: all 0.3s linear;
+			-o-transition: all 0.3s linear;
+			transition: all 0.3s linear;
+			padding: 0 !important;
+			display: FLEx;
+			justify-content: center;
+			mat-icon {
+				font-size: 30px;
+				width: 30px;
+				height: 30px;
+			}
+		}
+		h1 {
+			margin: 0;
+			padding-left: 10px;
+		}
+	}
+	.header-actions {
+		justify-content: flex-end;
+		width: 50%;
+		padding-right: 10px;
+	}
+}
+
+.mainform-content {
+	margin: 10px 20px;
+	height: calc(100vh - 200px); //266px = headers + paginator
+	table {
+		-webkit-transition: all 0.6s linear;
+		-moz-transition: all 0.6s linear;
+		-o-transition: all 0.6s linear;
+		transition: all 0.6s linear;
+
+		overflow: hidden;
+		&.mainform-table-vice {
+			background: #222;
+		}
+	}
+}
+// material overrides
+
+// form-fields
+.mat-mdc-floating-label {
+	top: 22px !important;
+}
+
+.mat-mdc-form-field-flex {
+	height: 100% !important;
+}
+
+.mat-mdc-text-field-wrapper {
+	height: 45px !important;
+}
+
+.mat-mdc-form-field-infix {
+	input {
+		height: 100% !important;
+		padding-top: 5px !important;
+	}
+
+	min-height: unset !important;
+	height: 100% !important;
+	padding: 0 !important;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined,
+.mdc-notched-outline--upgraded .mdc-floating-label--float-above {
+	--mat-mdc-form-field-label-transform: translateY(-28px) scale(var(--mat-mdc-form-field-floating-label-scale, 0.75)) !important;
+}
+
+//snackbars
+.mat-mdc-snack-bar-container {
+	div {
+		border-radius: 20px!important;
+	}
+
+	&.waikiki-snack {
+		--mdc-snackbar-container-color: var(--waikiki-warn);
+		--mdc-snackbar-supporting-text-color: #fff;
+		--mat-mdc-snack-bar-button-color: #fff;
+	}
+	&.vice-snack {
+		--mdc-snackbar-container-color: var(--vice-warn);
+		--mdc-snackbar-supporting-text-color: #fff;
+		--mat-mdc-snack-bar-button-color: #fff;
+	}
+
+	&.app-snackbar {
+		position: relative;
+		bottom: 40px;
+		left: -40px;
+
+	}
+
+	&.landing-page-snackbar {
+		position: relative;
+		bottom: 10vh;
+	}
+}
+
+// mat menus for lang/theme picker
+.header-mini-menu {
+	min-width: 140px !important;
+	.mat-mdc-menu-content {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+
+.mat-mdc-paginator {
+	background: transparent !important;
+}
+
+
+// ng-scrollbar overrides
+
+#menu-scroll {
+	.ng-scroll-content {
+		height: 100%!important;
+	}
+	&.waikiki-theme {
+		background-color: var(--waikiki-accent);
+	}
+	&.vice-theme {
+		background-color: var(--vice-accent);
+	}
+}

@@ -1,0 +1,96 @@
+<span [ngClass]="bambiService.appTheme+'-theme'">
+	<svg id="svg-bg" xmlns="http://www.w3.org/2000/svg"
+		[ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
+		preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 90">
+		<path class="out-top" [ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
+			d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z" />
+		<path class="in-top" [ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
+			d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z" />
+		<path class="out-bottom" [ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
+			d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z" />
+		<path class="in-bottom" [ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
+			d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
+	</svg>
+	<mat-progress-bar mode="indeterminate" color="warn" *ngIf="loginProgress"></mat-progress-bar>
+	<div id="landing-page-wrapper">
+
+		<!-- first logo fade in -->
+		<ng-container *ngIf="introLogo">
+			<div id="startup-mi-logo"
+				[ngClass]="startupAnimationsHalfway ? 'animate__animated animate__fadeOut' : 'animate__animated animate__fadeIn'">
+				<img
+					[src]="bambiService.appTheme === 'waikiki' ? '/assets/img/mi-logo.png' : '/assets/img/mi-logo-r.png'">
+				<span>mambosinfinitos</span>
+			</div>
+		</ng-container>
+
+		<!-- login panel (fade in after 3 secs if no cookie) -->
+		<ng-container *ngIf="loginPanel">
+			<div id="after-startup-wrapper" [ngClass]="invalidLogin || anonLogin ? 'temp-dark-pallete' : ''">
+
+				<div id="login-mi-logo-wrapper" class="login-card"
+					[ngClass]="loginFadeoutAnimations ? 'animate__animated animate__fadeOut' :'animate__animated animate__fadeIn'">
+					<span>BAMBILITE</span>
+				</div>
+
+				<div id="login-form-wrapper" class="login-card"
+					[ngClass]="loginFadeoutAnimations ? 'animate__animated animate__fadeOut' :'animate__animated animate__fadeInRight animate__delay-1s'">
+					<mat-card>
+						<mat-card-content>
+							<form [formGroup]="loginForm">
+								<mat-form-field appearance="outline">
+									<mat-label>{{'LANDINGPAGE.USERNAME' | translation}}</mat-label>
+									<input matInput formControlName="username">
+									<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>{{'LANDINGPAGE.PASSWORD' | translation}}</mat-label>
+									<input matInput [type]="hidePassword ? 'password' : 'text'"
+										formControlName="password">
+									<button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+										<mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+									</button>
+								</mat-form-field>
+								<div id="keep-me-logged-wrapper"><mat-checkbox color="primary"
+										formControlName="wantcookie">{{'LANDINGPAGE.KEEPMELOGGEDIN' |
+										translation}}</mat-checkbox></div>
+
+								<button mat-flat-button color="primary" (click)="manualLogin()"
+									[disabled]="loginForm.invalid">{{'LANDINGPAGE.LOGIN' | translation}}</button>
+								<mat-divider></mat-divider>
+
+								<div id="login-type-separator"><span
+										[ngClass]="bambiService.appTheme === 'vice' ? 'dark-theme' : ''">{{'LANDINGPAGE.SEPARATORLABEL'
+										| translation}}</span></div>
+
+								<button mat-flat-button color="primary"
+									(click)="proceedToBambi('anon')">{{'LANDINGPAGE.ANONLOGIN' |
+									translation}}</button>
+
+							</form>
+						</mat-card-content>
+					</mat-card>
+				</div>
+
+			</div>
+		</ng-container>
+
+		<!-- final panel before loading  -->
+		<ng-container *ngIf="finalLoginCard">
+			<div id="final-loading-card" class="animate__animated animate__fadeIn"
+				[ngClass]=" anonLogin ? 'dark-theme' : ''">{{'LANDINGPAGE.FINALCARDTEXT' | translation}}</div>
+		</ng-container>
+
+		<!-- new bambi version avaliable - show patchnotes (user < bambi)-->
+		<ng-container *ngIf="mismatchToggle">
+			<div [ngClass]="extraPanelFadeout ? 'animate__animated animate__fadeOut' :'animate__animated animate__fadeIn'"
+				*ngIf="versionMismatch === 'oldbambi'">old bambi</div>
+
+			<div [ngClass]="extraPanelFadeout ? 'animate__animated animate__fadeOut' :'animate__animated animate__fadeIn'"
+				*ngIf="versionMismatch === 'olduser'">old user <button mat-flat-button color="primary"
+					(click)="markAsRead()">okapinha</button></div>
+		</ng-container>
+
+	</div>
+</span>

@@ -1,0 +1,293 @@
+// animations override
+* {
+	--animate-duration: 1.5s;
+	-webkit-transition: all 0.6s linear;
+	-moz-transition: all 0.6s linear;
+	-o-transition: all 0.6s linear;
+	transition: all 0.6s linear;
+}
+
+svg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+
+	&.anon-login {
+		background: rgb(59, 0, 99) !important;
+	}
+
+	&.invalid-login {
+		background: #241e4e !important;
+	}
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+//waikiki theme colors
+.waikiki-theme {
+	svg {
+		background: #fafafa;
+	}
+
+	#login-mi-logo-wrapper {
+		background-image: url("/assets/img/mi-logo.png");
+
+		span {
+			color: #000;
+		}
+	}
+
+	.out-top {
+		animation: rotate 20s linear infinite;
+		transform-origin: 13px 25px;
+		fill: #7a306c;
+
+		&.invalid-login {
+			fill: rgb(221, 0, 0);
+		}
+
+		&.anon-login {
+			fill: #161616;
+		}
+	}
+
+	.in-top {
+		animation: rotate 10s linear infinite;
+		transform-origin: 13px 25px;
+		fill: #17bebb;
+
+		&.invalid-login {
+			fill: rgb(255, 149, 211);
+		}
+
+		&.anon-login {
+			fill: #e5ff00;
+		}
+	}
+
+	.out-bottom {
+		animation: rotate 25s linear infinite;
+		transform-origin: 84px 93px;
+		fill: #e71d36;
+
+		&.invalid-login {
+			fill: rgb(0, 204, 255);
+		}
+
+		&.anon-login {
+			fill: rgb(255, 94, 0);
+		}
+	}
+
+	.in-bottom {
+		animation: rotate 15s linear infinite;
+		transform-origin: 84px 93px;
+		fill: #fde74c;
+
+		&.invalid-login {
+			fill: rgb(165, 244, 255);
+		}
+
+		&.anon-login {
+			fill: rgb(230, 230, 230);
+		}
+	}
+}
+
+//vice theme colors
+.vice-theme {
+	svg {
+		background: #222;
+	}
+
+	#startup-mi-logo {
+		span {
+			color: #fff;
+		}
+	}
+
+	#login-mi-logo-wrapper {
+		background-image: url("/assets/img/mi-logo-r.png");
+
+		span {
+			color: #fff;
+		}
+	}
+
+	.out-top {
+		animation: rotate 20s linear infinite;
+		transform-origin: 13px 25px;
+		fill: #0aa5ff;
+
+		&.invalid-login {
+			fill: rgb(221, 0, 0);
+		}
+
+		&.anon-login {
+			fill: #161616;
+		}
+	}
+
+	.in-top {
+		animation: rotate 10s linear infinite;
+		transform-origin: 13px 25px;
+		fill: #50ec72;
+
+		&.invalid-login {
+			fill: rgb(255, 149, 211);
+		}
+
+		&.anon-login {
+			fill: #e5ff00;
+		}
+	}
+
+	.out-bottom {
+		animation: rotate 25s linear infinite;
+		transform-origin: 84px 93px;
+		fill: #bea9bb;
+
+		&.invalid-login {
+			fill: rgb(0, 204, 255);
+		}
+
+		&.anon-login {
+			fill: rgb(255, 94, 0);
+		}
+	}
+
+	.in-bottom {
+		animation: rotate 15s linear infinite;
+		transform-origin: 84px 93px;
+		fill: #15f874;
+
+		&.invalid-login {
+			fill: rgb(165, 244, 255);
+		}
+
+		&.anon-login {
+			fill: rgb(230, 230, 230);
+		}
+	}
+}
+
+//overriding light theme if invalid or anon login
+.temp-dark-pallete {
+	#login-mi-logo-wrapper {
+		background-image: url("/assets/img/mi-logo-r.png");
+
+		span {
+			color: #fff !important;
+		}
+	}
+}
+
+// page structure
+#landing-page-wrapper {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	#startup-mi-logo {
+		display: flex;
+		flex-direction: column;
+		justify-self: center;
+
+		span {
+			text-align: center;
+			font-size: 36px;
+			font-family: "Righteous", cursive;
+			padding-top: 20px;
+		}
+	}
+
+	#after-startup-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+
+		#login-mi-logo-wrapper {
+			background-position: center;
+			background-repeat: no-repeat;
+			display: flex;
+			align-items: flex-end;
+			justify-content: center;
+
+			span {
+				display: inline-block;
+				margin-bottom: 30px;
+				font-size: 36px;
+				font-family: "Righteous", cursive;
+			}
+		}
+		#login-form-wrapper {
+			max-width: 400px;
+		}
+		.login-card {
+			min-width: 400px;
+			margin: 0 36px;
+		}
+
+		mat-card-content {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+
+			mat-form-field {
+				width: 100%;
+			}
+
+			#keep-me-logged-wrapper {
+				margin-top: -12px;
+				padding-bottom: 8px;
+			}
+
+			button {
+				width: 100%;
+			}
+
+			mat-divider {
+				width: 85%;
+				margin: 30px auto 10px;
+				opacity: 0.75;
+			}
+
+			#login-type-separator {
+				text-align: center;
+				position: relative;
+				top: -20px;
+				width: 100%;
+
+				span {
+					color: rgba(0, 0, 0, 0.4);
+					background: #fff;
+					padding: 0px 10px;
+
+					&.dark-theme {
+						background: #424242;
+						color: #eee;
+					}
+				}
+			}
+		}
+	}
+}
+
+#final-loading-card {
+	font-size: 24px;
+	font-family: "Righteous", cursive;
+
+	&.dark-theme {
+		color: #fff;
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"LANDINGPAGE.USERNAME" : "Username",
+	"LANDINGPAGE.PASSWORD" : "Password",
+	"LANDINGPAGE.KEEPMELOGGEDIN": "Keep mey session active",
+	"LANDINGPAGE.LOGIN" : "Login",
+	"LANDINGPAGE.SEPARATORLABEL" : "or",
+	"LANDINGPAGE.ANONLOGIN" : "Anonymous Login"
+}

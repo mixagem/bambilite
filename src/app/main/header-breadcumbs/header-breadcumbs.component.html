@@ -1,0 +1,16 @@
+<div id="breadcumbs-wrapper">
+	<div class="breadcumbs-section" [ngClass]="bambiService.appTheme + '-theme'"><mat-icon>star</mat-icon>
+		<div id="favourite-chips-wrapper" *ngIf="breadcumbsService.favourites"><span [ngClass]="bambiService.appTheme + '-theme'"
+				*ngFor="let favourite of breadcumbsService.favourites | slice: (breadcumbsService.favourites.length > 5 ? breadcumbsService.favourites.length - 5 : 0)"
+				(click)="breadcumbsService.BreadcumbClick(favourite.route)">{{favourite.name | translation}}</span>
+		</div>
+	</div>
+	<div class="breadcumbs-section" [ngClass]="bambiService.appTheme + '-theme'">
+		<div id="history-chips-wrapper" *ngIf="breadcumbsService.breadcumbs"><span
+				[ngClass]="bambiService.appTheme + '-theme'"
+				*ngFor="let breadcumb of breadcumbsService.breadcumbs.reverse()"
+				(click)="breadcumbsService.BreadcumbClick(breadcumb.route)">{{breadcumb.name | translation}}</span>
+		</div>
+		<mat-icon>history</mat-icon>
+	</div>
+</div>
