@@ -1,4 +1,5 @@
 import { AppLanguage, AppTheme } from "../services/bambi.service";
+import { IUserFavourite } from "./BambiRoutes";
 
 export interface IUserSettings {
 	name: string;
@@ -9,11 +10,5 @@ export interface IUserSettings {
 	email: string;
 	profilepic: string;
 	cookie: string;
-	favourites: IUserFavourites[]
-}
-
-export interface IUserFavourites {
-	name: string;
-	route: string;
-	order: number;
+	favourites: IUserFavourite[];
 }

@@ -64,12 +64,11 @@ if (mysqli_affected_rows($SQL_CON) !== 1) {
 	return;
 }
 
+// final wrap-up
 unset($login_object["userSettings"]['active']);
 $login_object["validLogin"] = true;
 $login_object["details"] = "valid";
 $login_object["userSettings"]["cookie"] = $newcookie;
 $login_object["userSettings"]["favourites"] = json_decode($login_object["userSettings"]["favourites"]);
-
 echo json_encode($login_object);
-
 mysqli_close($SQL_CON);

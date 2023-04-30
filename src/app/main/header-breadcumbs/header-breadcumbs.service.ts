@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { BambiMenuService } from '../menu-sidebar/bambi-menu.service';
-import { IUserFavourites } from 'src/app/interfaces/UserSettings';
+import { BambiMenuService } from '../menu/bambi-menu.service';
 import { BambiService } from 'src/app/services/bambi.service';
 import { HttpParams } from '@angular/common/http';
+import { IUserFavourite } from 'src/app/interfaces/BambiRoutes';
 
 type Breadcumb = { name: string, route: string }
 
@@ -14,7 +14,7 @@ type Breadcumb = { name: string, route: string }
 export class HeaderBreadcumbsService {
 
 
-	favourites: IUserFavourites[];
+	favourites: IUserFavourite[];
 	breadcumbs: Breadcumb[];
 
 	constructor(private _router: Router, private _menuService: BambiMenuService, private _bambiService: BambiService) {
@@ -87,7 +87,7 @@ export class HeaderBreadcumbsService {
 		this.IsEntityFavourited() ? this._removeFromFavourites(favouriteObject) : this._addToFavourites(favouriteObject)
 	}
 
-	private _removeFromFavourites(favouriteObject: IUserFavourites) {
+	private _removeFromFavourites(favouriteObject: IUserFavourite) {
 		for (let i = 0; i < this.favourites.length; i++) {
 			if (this.favourites[i].route !== favouriteObject.route) { continue }
 
@@ -102,14 +102,14 @@ export class HeaderBreadcumbsService {
 		}
 	}
 
-	private _addToFavourites(favouriteObject: IUserFavourites) {
+	private _addToFavourites(favouriteObject: IUserFavourite) {
 		this.favourites.push(favouriteObject)
 		const httpParams = new HttpParams().set('username', this._bambiService.userInfo.username).set('cookie', this._bambiService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
 		this._bambiService.API('favourite', httpParams, {addingFavourite:true})
 	}
 
-	private _generateFavouriteObject(route: string): IUserFavourites {
-		let newFavourite: IUserFavourites = { name: '', route: '', order: 0 }
+	private _generateFavouriteObject(route: string): IUserFavourite {
+		let newFavourite: IUserFavourite = { name: '', route: '', order: 0 }
 		for (let i = 0; i < this._menuService.bambiMenu.length; i++) {
 			if (this._menuService.bambiMenu[i].route !== route && this._menuService.bambiMenu[i].subEntries.length === 0) { continue }
 			if (this._menuService.bambiMenu[i].route === route) {

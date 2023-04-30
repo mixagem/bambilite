@@ -1,0 +1,65 @@
+<div class="mainform-header">
+	<div class="header-title"><button mat-icon-button (click)="breadcumbsService.AddToFavourites()"><mat-icon
+				[color]="'primary'">{{breadcumbsService.IsEntityFavourited() ? 'star' :
+				'star_outlined'}}</mat-icon></button>
+		<h1>{{'HTMLSNIPPETS.TITLE' | translation}}</h1>
+	</div>
+	<div class="header-actions"> <button mat-raised-button color="primary">Primary</button></div>
+
+</div>
+<div id="htmlcols-warpper" class="mainform-content">
+	<!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+	<!-- <ng-scrollbar> -->
+	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+
+
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+		<!-- Position Column -->
+		<ng-container matColumnDef="position">
+			<th mat-header-cell *matHeaderCellDef> No. </th>
+			<!-- <td mat-cell *matCellDef="let element"> {{element.position}} </td> -->
+		</ng-container>
+
+		<!-- Name Column -->
+		<ng-container matColumnDef="name">
+			<th mat-header-cell *matHeaderCellDef> Name </th>
+			<!-- <td mat-cell *matCellDef="let element"> {{element.name}} </td> -->
+		</ng-container>
+
+		<!-- Weight Column -->
+		<ng-container matColumnDef="weight">
+			<th mat-header-cell *matHeaderCellDef> Weight </th>
+			<!-- <td mat-cell *matCellDef="let element"> {{element.weight}} </td> -->
+		</ng-container>
+
+		<!-- Symbol Column -->
+		<ng-container matColumnDef="symbol">
+			<th mat-header-cell *matHeaderCellDef> Symbol </th>
+			<!-- <td mat-cell *matCellDef="let element"> {{element.symbol}} </td> -->
+		</ng-container>
+
+		<!-- <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
+	</table>
+	<!-- </ng-scrollbar> -->
+	<ng-scrollbar>
+		<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+			<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+			<ng-container matColumnDef="position">
+				<td mat-cell *matCellDef="let element">{{element.position}}</td>
+			</ng-container>
+			<ng-container matColumnDef="name">
+				<td mat-cell *matCellDef="let element">{{element.name}}</td>
+			</ng-container>
+			<ng-container matColumnDef="weight">
+				<td mat-cell *matCellDef="let element">{{element.weight}}</td>
+			</ng-container>
+			<ng-container matColumnDef="symbol">
+				<td mat-cell *matCellDef="let element">{{element.symbol}}</td>
+			</ng-container>
+		</table>
+	</ng-scrollbar>
+	<mat-paginator [pageSizeOptions]="[10]"></mat-paginator>
+</div>

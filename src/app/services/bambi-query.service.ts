@@ -1,21 +1,18 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
+import { BambiService } from './bambi.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class BambiQueryService {
 
-	BACKEND_URL: string = 'http://localhost/bambiapi/';
-
-	constructor(private _http: HttpClient) {
-
-
+	constructor(private _http: HttpClient, private _bambiService: BambiService) {
 	}
 
-	HTMLCollection(operation:string, httpParameters: HttpParams) {
-		const call = this._http.post(this.BACKEND_URL + 'htmlcollection.php', httpParameters.set('operation',operation), { responseType: 'json' }).pipe(
+	LoremIpsum(operation: string, httpParameters: HttpParams) {
+		const call = this._http.post(this._bambiService.BACKEND_URL + 'endpointname.php', httpParameters.set('operation', operation), { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
 			catchError(this.handleError), // then handle the error
 		);
@@ -24,7 +21,7 @@ export class BambiQueryService {
 			next: (data) => {
 
 
-			 },
+			},
 			error: () => {
 
 

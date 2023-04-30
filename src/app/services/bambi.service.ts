@@ -33,6 +33,7 @@ export class BambiService {
 	menuOpen: boolean;
 
 	constructor(private _http: HttpClient, private _channelsService: SubjectChannelsService, private _snackBar: MatSnackBar, private _router: Router) {
+
 		this.LOCALES = {};
 		this.appTheme = this.LastThemeUsed();
 		this.appLang = this.LastLanguageUsed();
@@ -48,7 +49,7 @@ export class BambiService {
 			username: 'anon',
 			profilepic: '',
 			cookie: '',
-			favourites: []
+			favourites: [],
 		}
 	}
 
@@ -187,7 +188,7 @@ export class BambiService {
 			username: 'anon',
 			profilepic: '',
 			cookie: '',
-			favourites: []
+			favourites: [],
 		}
 		localStorage.removeItem('bambi_cookie');
 		this._router.navigate(['/']);
@@ -214,20 +215,4 @@ export class BambiService {
 		return throwError(() => new Error('Something bad happened; please try again later.'));
 	}
 
-
-
-
-
-	// GenStamp(length: number = 25): string {
-
-	// 	function dec2hex(dec: number): string {
-	// 		return dec.toString(16).padStart(2, "0")
-	// 	}
-
-	// 	const bitArray = new Uint8Array(length / 2)
-	// 	window.crypto.getRandomValues(bitArray)
-
-	// 	return Array.from(bitArray, dec2hex).join('')
-
-	// }
 }
