@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BambiQueryService } from './bambi-query.service';
+import { FdService } from './fd.service';
 
-describe('BambiQueryService', () => {
-  let service: BambiQueryService;
+describe('FdService', () => {
+  let service: FdService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BambiQueryService);
+    service = TestBed.inject(FdService);
   });
 
   it('should be created', () => {

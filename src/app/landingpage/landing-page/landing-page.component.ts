@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
 import { BambiService } from 'src/app/services/bambi.service';
@@ -11,12 +11,12 @@ import { LoginSnackComponent } from 'src/app/components/snackbars/login-snack/lo
 type AppVersionMismatch = 'olduser' | 'oldbambi' | 'none'
 
 @Component({
-	selector: 'lg2-landing-page',
+	selector: 'bl-landing-page',
 	templateUrl: './landing-page.component.html',
 	styleUrls: ['./landing-page.component.scss']
 })
 
-export class LandingPageComponent {
+export class LandingPageComponent implements OnInit {
 
 	loginProgress: boolean;
 	introLogo: boolean;

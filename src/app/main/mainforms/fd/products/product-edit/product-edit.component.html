@@ -1,0 +1,34 @@
+<div class="mainform-header">
+	<div class="header-title">
+		<mat-icon>restaurant_menu</mat-icon>
+		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}} - {{productDetailsDraft.title}}</h1>
+	</div>
+
+	<div class="header-actions">
+		{{!!productDetailsDraft.stamp ? 'edição' : 'introdução'}}
+		<!-- ^^ to replace with chip -->
+		<button mat-mini-fab color="primary" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
+		<button mat-mini-fab color="warn" (click)="discardChanges()"><mat-icon>close</mat-icon></button>
+	</div>
+
+</div>
+<div class="mainform-content">
+
+
+
+	<ng-scrollbar>
+		<form [formGroup]="productForm">
+
+			<mat-form-field appearance="outline">
+				<mat-label>{{'FOOD.PRODUCTS.EDITING.TITLE' | translation}}</mat-label>
+				<input matInput formControlName="title">
+				<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+			</mat-form-field>
+
+			<div id="keep-me-logged-wrapper"><mat-checkbox color="primary"
+					formControlName="public">{{'FOOD.PRODUCTS.EDITING.PUBLIC' | translation}}</mat-checkbox></div>
+
+		</form>
+	</ng-scrollbar>
+
+</div>

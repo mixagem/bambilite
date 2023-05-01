@@ -3,9 +3,9 @@ import { BambiService } from 'src/app/services/bambi.service';
 import { BambiMenuService } from './bambi-menu.service';
 
 @Component({
-	selector: 'lg2-menu-sidebar',
-	templateUrl: './menu-sidebar.component.html',
-	styleUrls: ['./menu-sidebar.component.scss']
+	selector: 'bl-menu',
+	templateUrl: './bambi-menu.component.html',
+	styleUrls: ['./bambi-menu.component.scss']
 })
 
 export class MenuSidebarComponent {

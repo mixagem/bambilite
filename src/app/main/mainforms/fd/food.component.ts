@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FdService } from './fd.service';
 
 @Component({
   selector: 'bl-food',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./food.component.scss']
 })
 export class FoodComponent {
+
+	constructor(public fdService: FdService){}
 
 }

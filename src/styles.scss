@@ -38,24 +38,29 @@ $vice-theme: mat.define-dark-theme(
 );
 
 .waikiki-theme {
+	@include mat.core-theme($waikiki-theme);
 	@include mat.all-component-themes($waikiki-theme);
 	@include lgpal.theme($waikiki-theme);
+	#drawer-wrapper {
+		background-color: #fff;
+	}
 }
 
 .vice-theme {
-	color: #fff;
+	@include mat.core-theme($vice-theme);
 	@include mat.all-component-colors($vice-theme);
-	@include lgpal.theme($vice-theme,true);
-
-	mat-form-field {
-		mat-icon {
-			color: #eee;
-		}
+	@include lgpal.theme($vice-theme, true);
+	#drawer-wrapper {
+		background-color: #222;
+	}
+	* {
+		color: #fff;
 	}
 }
 
 html,
 body {
+	width: 100%;
 	height: 100%;
 }
 
@@ -63,13 +68,21 @@ body {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 body {
-	font-family: Roboto, "Helvetica Neue", sans-serif;
 	overflow-x: hidden;
 }
 
+/* default main-forms - list */
+
+//progressbar
+.progress-bar-wrapper {
+	height: 4px;
+}
+
+//mainform header
 .mainform-header {
 	display: flex;
 	justify-content: space-between;
@@ -81,19 +94,10 @@ body {
 	}
 	.header-title {
 		width: 50%;
-		button {
-			-webkit-transition: all 0.3s linear;
-			-moz-transition: all 0.3s linear;
-			-o-transition: all 0.3s linear;
-			transition: all 0.3s linear;
-			padding: 0 !important;
-			display: FLEx;
-			justify-content: center;
-			mat-icon {
-				font-size: 30px;
-				width: 30px;
-				height: 30px;
-			}
+		mat-icon {
+			font-size: 30px;
+			width: 30px;
+			height: 30px;
 		}
 		h1 {
 			margin: 0;
@@ -107,22 +111,49 @@ body {
 	}
 }
 
+//mainform content (table)
 .mainform-content {
-	margin: 10px 20px;
-	height: calc(100vh - 200px); //266px = headers + paginator
+	margin: 0px 20px;
+	height: calc(100vh - 154px);
+	display: flex;
+	flex-direction: column;
 	table {
+		// animação transição de tema
 		-webkit-transition: all 0.6s linear;
 		-moz-transition: all 0.6s linear;
 		-o-transition: all 0.6s linear;
 		transition: all 0.6s linear;
-
 		overflow: hidden;
+		//transition fix
 		&.mainform-table-vice {
 			background: #222;
 		}
 	}
 }
-// material overrides
+
+// transparent table paginators
+.mat-mdc-paginator {
+	background: transparent !important;
+}
+
+/* ng-scrollbar overrides */
+#menu-scroll {
+	&.waikiki-theme {
+		background-color: var(--waikiki-accent);
+	}
+	&.vice-theme {
+		background-color: var(--vice-accent);
+	}
+}
+
+/* material overrides */
+mat-form-field {
+	&.no-hint {
+		.mat-mdc-form-field-subscript-wrapper {
+			display: none;
+		}
+	}
+}
 
 // form-fields
 .mat-mdc-floating-label {
@@ -153,10 +184,10 @@ body {
 	--mat-mdc-form-field-label-transform: translateY(-28px) scale(var(--mat-mdc-form-field-floating-label-scale, 0.75)) !important;
 }
 
-//snackbars
+// snackbars
 .mat-mdc-snack-bar-container {
 	div {
-		border-radius: 20px!important;
+		border-radius: 20px !important;
 	}
 
 	&.waikiki-snack {
@@ -174,7 +205,6 @@ body {
 		position: relative;
 		bottom: 40px;
 		left: -40px;
-
 	}
 
 	&.landing-page-snackbar {
@@ -189,24 +219,5 @@ body {
 	.mat-mdc-menu-content {
 		padding-top: 0;
 		padding-bottom: 0;
-	}
-}
-
-.mat-mdc-paginator {
-	background: transparent !important;
-}
-
-
-// ng-scrollbar overrides
-
-#menu-scroll {
-	.ng-scroll-content {
-		height: 100%!important;
-	}
-	&.waikiki-theme {
-		background-color: var(--waikiki-accent);
-	}
-	&.vice-theme {
-		background-color: var(--vice-accent);
 	}
 }

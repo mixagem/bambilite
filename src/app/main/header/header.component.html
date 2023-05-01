@@ -1,7 +1,24 @@
 <div id="header-wrapper">
-	<div>aaaaaa</div>
-	<div>bbbbbbbbbbbbbbbbbbbbbbbbbbbbb</div>
-	<div>
+
+	<div id="logo-section" class="header-section">
+		😎
+	</div>
+
+	<div id="input-section" class="header-section">
+
+		<div id="products-input" *ngIf="headerService.currentRoute === 'products'">
+			<form [formGroup]="inputsForm">
+				<mat-form-field appearance="outline" class="no-hint" color="accent">
+					<mat-label>{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>
+					<input id="product-query-input" matInput formControlName="products" (ngModelChange)="inputSearch()">
+					<mat-icon matSuffix>search</mat-icon>
+				</mat-form-field>
+			</form>
+		</div>
+
+	</div>
+
+	<div id="mini-menus-section" class="header-section">
 		<button class="header-button" mat-icon-button [matMenuTriggerFor]="langmenu"><mat-icon
 				fontSet="material-icons-outlined">language</mat-icon></button>
 		<button class="header-button" mat-icon-button mat-icon-button [matMenuTriggerFor]="thememenu"><mat-icon

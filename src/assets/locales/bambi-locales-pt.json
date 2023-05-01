@@ -23,6 +23,7 @@
 	"APPHEADER.THEMEWAIKIKI" : "Waikiki",
 	"APPHEADER.THEMEVICE" : "Vice",
 	"APPHEADER.THEMEPICKER" : "Selecionar tema",
+	"APPHEADER.INPUT.PRODUCTS" : "Procurar produtos...",
 	"APPSNACKS.THEMECHANGED-WAIKIKI" : "Tema selecionado - WAIKIKI",
 	"APPSNACKS.THEMECHANGED-VICE" : "Tema selecionado - VICE",
 	"APPSNACKS.THEMECHANGEDERROR" : "Erro ao guardar o tema selecionado",
@@ -47,5 +48,11 @@
 	"APPMENU.BODYBUILDING.WORKOUTS" : "Treinos",
 	"APPMENU.BODYBUILDING.PROGRESS" : "Progresso",
 	"APPMENU.CALENDAR" : "Agenda - wip",
-	"APPMENU.SETTINGS" : "Parâmetros - wip"
+	"APPMENU.SETTINGS" : "Parâmetros - wip",
+	"FOOD.PRODUCTS.TITLE" : "Produtos",
+	"FOOD.PRODUCTS.LISTHEADER.IMAGES" : "Produtos",
+	"FOOD.PRODUCTS.LISTHEADER.TITLE" : "Título",
+	"FOOD.PRODUCTS.LISTHEADER.TAGS" : "Tags",
+	"FOOD.PRODUCTS.EDITING.TITLE" : "Título",
+	"FOOD.PRODUCTS.EDITING.PUBLIC" : "Partilhado"
 }

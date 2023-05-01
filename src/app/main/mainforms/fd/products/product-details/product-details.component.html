@@ -1,0 +1,22 @@
+<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
+
+<p *ngIf="loadingComplete && !!fdService.productDetails.stamp">
+	{{fdService.productDetails.title}} - {{fdService.productDetails.kcal}} -
+	{{fdService.productDetails.unitvalue}}{{fdService.productDetails.unit}}
+
+
+	<button mat-mini-fab color="primary" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('clone')">
+		<mat-icon>file_copy</mat-icon>
+	</button>
+
+	<button mat-mini-fab color="primary" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('edit')">
+		<mat-icon>edit</mat-icon>
+	</button>
+
+	<button mat-mini-fab color="warn" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('delete')">
+		<mat-icon>delete</mat-icon>
+	</button>
+</p>
+
+
+<p *ngIf="loadingComplete && !fdService.productDetails.stamp">error</p>

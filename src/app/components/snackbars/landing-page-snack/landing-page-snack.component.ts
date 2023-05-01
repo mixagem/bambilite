@@ -4,7 +4,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar'
 type LandingPageSnackbar = { label: string, emoji: string }
 
 @Component({
-	selector: 'lg2-landing-page-snack',
+	selector: 'bl-landing-page-snack',
 	templateUrl: './landing-page-snack.component.html',
 	styleUrls: ['./landing-page-snack.component.scss']
 })

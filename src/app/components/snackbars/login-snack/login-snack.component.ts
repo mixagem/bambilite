@@ -4,7 +4,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar'
 type LoginSnack = { beforeNameLabel: string, name:string, afterNameLabel:string, emoji: string }
 
 @Component({
-  selector: 'lg2-login-snack',
+  selector: 'bambi-login-snack',
   templateUrl: './login-snack.component.html',
   styleUrls: ['./login-snack.component.scss']
 })
