@@ -4,6 +4,7 @@ import { FdService } from '../../fd.service';
 import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
 import { Subject } from 'rxjs';
 import { BambiService } from 'src/app/services/bambi.service';
+import { HttpParams } from '@angular/common/http';
 
 type RecordOperation = 'update' | 'delete' | 'clone'
 
@@ -14,7 +15,7 @@ type RecordOperation = 'update' | 'delete' | 'clone'
 })
 
 export class ProductDetailsComponent implements OnInit, OnDestroy {
-
+	deletingRecord: boolean = false;
 	loadingComplete: boolean = false;
 
 	constructor(public dialogRef: MatDialogRef<any>, public fdService: FdService, private _channelsService: SubjectChannelsService, public bambiService: BambiService) {
@@ -41,11 +42,15 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 				this.dialogRef.close();
 				break;
 			case 'delete':
-				//mat dialog
-				alert("wip - delete dialog fade")
+				this.deletingRecord = true;
 				break;
 
 		}
+	}
+
+	deleteRecord() {
+		this.fdService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.fdService.productDetails.stamp))
+
 	}
 
 

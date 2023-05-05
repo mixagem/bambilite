@@ -29,22 +29,20 @@ export class ProductEditComponent implements OnInit {
 	loadingComplete: boolean = true;
 
 	constructor(private _snackBar: MatSnackBar, public fdService: FdService, private _bambiService: BambiService, private _dialog: MatDialog, private _channelsService: SubjectChannelsService) {
-
 		this.productDetailsDraft = this.fdService.productDetails
-
 		this.generateFormControls();
-		this.fdService.tempImage = this.productDetailsDraft.image;
+		this.fdService.tempB64Img = this.productDetailsDraft.image;
 	}
 
 	ngOnInit(): void {
 		this.formControlsUpdate();
-
 		this._channelsService.productUpdateChannel = new Subject<ProductChannelResult>;
 		this._channelsService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
 	}
 
 	ngOnDestroy(): void {
 		this._channelsService.productUpdateChannel = new Subject<ProductChannelResult>;
+		this.fdService.tempB64Img = '';
 	}
 
 	generateFormControls() {
@@ -81,7 +79,7 @@ export class ProductEditComponent implements OnInit {
 		this.loadingComplete = false;
 		this.productDetailsDraft.timestamp = Date.now();
 
-		this.productDetailsDraft.image = this.fdService.tempImage;
+		this.productDetailsDraft.image = this.fdService.tempB64Img;
 		this.productDetailsDraft.kcal = this.productForm.get('kcal')?.value
 		this.productDetailsDraft.title = this.productForm.get('title')?.value
 		this.productDetailsDraft.unit = this.productForm.get('unit')?.value

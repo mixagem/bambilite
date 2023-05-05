@@ -17,7 +17,7 @@ export class FdService {
 	drawerFadeout: boolean = false;
 	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
 	executingQuery: boolean = false;
-	tempImage: string = '';
+	tempB64Img: string = '';
 	loadingComplete: boolean = false;
 
 	constructor(private _http: HttpClient, private _bambiService: BambiService, private _channelsService: SubjectChannelsService) {

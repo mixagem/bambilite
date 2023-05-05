@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { HeaderService } from 'src/app/main/header/header.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
+import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 
 @Component({
@@ -68,6 +69,7 @@ export class ProductsComponent implements OnInit {
 
 	refreshProductListFromDelete(result: ProductChannelResult) {
 		if (result.sucess) {
+			this.bambiService.deleteSelection = [];
 			this.selectedProducts = [];
 			this.fdService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
 
@@ -133,7 +135,11 @@ export class ProductsComponent implements OnInit {
 	}
 
 	deleteSelected() {
-		// abrir modal, e só na modal é que confirmo o pedido abaixo -v
-		this.fdService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.selectedProducts.toString()));
+		this.bambiService.deleteSelection = this.selectedProducts
+		this._dialog.open(DeleteConfirmationDialogComponent, {
+			width: '600px',
+			height: '250px',
+			panelClass: [this.bambiService.appTheme + '-theme']
+		});
 	}
 }

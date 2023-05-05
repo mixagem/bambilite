@@ -9,24 +9,31 @@
 	}
 }
 
-@mixin chips($theme) {
+@mixin chips($theme, $isDarkTheme) {
 	$color-config: mat.get-color-config($theme);
 	$primary-palette: map.get($color-config, "primary");
 	$accent-palette: map.get($color-config, "accent");
-	.record-details-wrapper {
-		.mat-mdc-standard-chip.mdc-evolution-chip--disabled {
-			background-color: mat.get-color-from-palette($primary-palette);
-			* {
-				color: #000;
-			}
-		}
+
+	//chip do modo detalhe
+	.mat-mdc-standard-chip.mdc-evolution-chip--disabled {
+		background-color: mat.get-color-from-palette($primary-palette);
 	}
+	// chip modo edição
 	#product-edit-form {
 		mat-chip-row {
 			background-color: mat.get-color-from-palette($accent-palette);
-			* {
-				color: #000;
+			@if ($isDarkTheme) {
+				* {
+					color: #000;
+				}
 			}
+		}
+	}
+	//chip modo listagem
+	.mainform-table-vice,
+	.mainform-table-waikiki {
+		mat-chip {
+			background-color: mat.get-color-from-palette($primary-palette);
 		}
 	}
 }
@@ -34,14 +41,24 @@
 @mixin dialogs($theme, $isDarkTheme) {
 	$color-config: mat.get-color-config($theme);
 	$accent-palette: map.get($color-config, "accent");
+	$warn-palette: map.get($color-config, "warn");
 
 	.dialog-header-wrapper {
 		background-color: mat.get-color-from-palette($accent-palette);
-
 		@if $isDarkTheme {
 			.dialog-header-title {
 				* {
 					color: #000;
+				}
+			}
+		}
+
+		&.warn-dialog {
+			background-color: mat.get-color-from-palette($warn-palette);
+
+			.dialog-header-title {
+				* {
+					color: #fff;
 				}
 			}
 		}
@@ -50,13 +67,6 @@
 
 @mixin buttons($theme, $isDarkTheme) {
 	@if $isDarkTheme {
-		.mat-primary.mat-mdc-button-base:not(:disabled),
-		.mat-accent.mat-mdc-button-base:not(:disabled) {
-			* {
-				color: #000;
-			}
-		}
-
 		mat-checkbox.mat-primary:not(.mat-mdc-checkbox-disabled),
 		mat-checkbox.mat-accent:not(.mat-mdc-checkbox-disabled) {
 			.mdc-checkbox {
@@ -74,45 +84,25 @@
 	$accent-palette: map.get($color-config, "accent");
 
 	#entries-wrapper {
-		background-color: mat.get-color-from-palette($accent-palette, 400);
-		@if $isDarkTheme {
-			color: #000;
+		background-color: mat.get-color-from-palette($accent-palette);
+		color: #000;
+	}
+
+	.menu-toggler {
+		background-color: mat.get-color-from-palette($primary-palette);
+		@if ($isDarkTheme) {
+			* {
+				color: rgba(255, 255, 255, 0.87) !important;
+			}
 		}
 	}
 
-	#closed-menu-wrapper,
 	#open-menu-wrapper {
-		.menu-entry {
-			&.menu-toggler {
-				background-color: mat.get-color-from-palette($primary-palette);
-			}
-			&.main-entry {
-				&:hover {
-					background-color: rgba(0, 0, 0, 0.15);
-				}
-			}
-			&.sub-entry {
-				&:hover {
-					background-color: rgb(0, 0, 0, 0.15);
-				}
-			}
-		}
-	}
-
-	@if $isDarkTheme {
-		#closed-menu-wrapper,
-		#open-menu-wrapper {
-			.menu-entry {
-				&.main-entry {
-					&:hover {
-						background-color: rgb(255, 255, 255, 0.3);
-					}
-				}
-				&.sub-entry {
-					&:hover {
-						background-color: rgb(255, 255, 255, 0.3);
-					}
-				}
+		.main-entry:hover,
+		.sub-entry:hover {
+			background-color: rgba(255, 255, 255, 0.3);
+			@if $isDarkTheme {
+				background-color: rgba(0, 0, 0, 0.15);
 			}
 		}
 	}
@@ -127,6 +117,25 @@
 				border-color: rgba(255, 255, 255, 0.2);
 			}
 		}
+
+		#header-wrapper {
+			#input-section {
+				.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) {
+					.mdc-notched-outline__leading,
+					.mdc-notched-outline__notch,
+					.mdc-notched-outline__trailing {
+						border-color: rgba(0, 0, 0, 0.2);
+					}
+				}
+				.mdc-text-field--outlined:hover:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) {
+					.mdc-notched-outline__leading,
+					.mdc-notched-outline__notch,
+					.mdc-notched-outline__trailing {
+						border-color: rgba(0, 0, 0, 0.4);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -139,12 +148,33 @@
 	}
 }
 
+@mixin generic($theme, $isDarkTheme: false) {
+	@if $isDarkTheme {
+		.record-details-wrapper {
+			color: rgba(255, 255, 255, 0.87);
+		}
+	}
+}
+
+@mixin icons($theme, $isDarkTheme: false) {
+	@if $isDarkTheme {
+		.mat-mdc-form-field-icon-suffix {
+			color: rgba(255, 255, 255, 0.87);
+		}
+	}
+}
+
 @mixin header($theme, $isDarkTheme: false) {
 	$color-config: mat.get-color-config($theme);
 	$primary-palette: map.get($color-config, "primary");
 
 	#header-wrapper {
 		background-color: mat.get-color-from-palette($primary-palette);
+		@if $isDarkTheme {
+			* {
+				color: rgba(255, 255, 255, 0.87);
+			}
+		}
 	}
 
 	@if $isDarkTheme {
@@ -154,7 +184,7 @@
 		.mainform-header {
 			.header-title {
 				* {
-					color: #fff;
+					color: rgba(255, 255, 255, 0.87);
 				}
 			}
 		}
@@ -170,7 +200,9 @@
 		@include formfields($theme, $isDarkTheme);
 		@include buttons($theme, $isDarkTheme);
 		@include dialogs($theme, $isDarkTheme);
-		@include chips($theme);
+		@include chips($theme, $isDarkTheme);
 		@include imagepicker($theme);
+		@include generic($theme, $isDarkTheme);
+		@include icons($theme, $isDarkTheme);
 	}
 }

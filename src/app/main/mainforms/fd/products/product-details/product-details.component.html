@@ -1,12 +1,16 @@
 <div class="master-dialog-wrapper">
 
-	<div class="dialog-header-wrapper">
+	<div class="dialog-header-wrapper" [ngClass]="deletingRecord? 'warn-dialog' : ''">
 
 		<div class="dialog-header-title">
-			<mat-icon>restaurant_menu</mat-icon>
-			<span>{{'FOOD.PRODUCTS.DETAILS.DIALOGTITLE' | translation}}</span>
+			<mat-icon *ngIf="!deletingRecord">restaurant_menu</mat-icon>
+			<span *ngIf="!deletingRecord">{{'FOOD.PRODUCTS.DETAILS.DIALOGTITLE' | translation}}</span>
+
+			<mat-icon *ngIf="deletingRecord">delete</mat-icon>
+			<span *ngIf="deletingRecord">{{'FOOD.PRODUCTS.DETAILS.DELETETITLE' | translation}}</span>
 		</div>
-		<div class="dialog-header-actions">
+
+		<div class="dialog-header-actions" *ngIf="!deletingRecord">
 
 			<button mat-mini-fab color="primary" [disabled]="!loadingComplete"
 				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('clone')">
@@ -23,13 +27,16 @@
 				<mat-icon>delete</mat-icon>
 			</button>
 		</div>
+		<div class="dialog-header-actions" *ngIf="deletingRecord">
+		</div>
 	</div>
 
 	<div class="progress-bar-wrapper">
-		<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
+		<mat-progress-bar mode="indeterminate" color=warn
+			*ngIf="!loadingComplete && !deletingRecord"></mat-progress-bar>
 	</div>
 
-	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp">
+	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp && !deletingRecord">
 		<ng-scrollbar width="100%" height="100%">
 
 			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
@@ -73,6 +80,27 @@
 
 			</div>
 		</ng-scrollbar>
+	</div>
+	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp && deletingRecord">
+		<ng-scrollbar width="100%" height="100%">
+
+			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
+
+				You sure?
+				<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
+					[ngClass]="bambiService.appTheme + '-theme'" (click)="deletingRecord = false">
+					<mat-icon>cancel</mat-icon>
+
+				</button>
+				<button mat-dialog-close mat-mini-fab color="warn" [disabled]="!loadingComplete || fdService.productDetails.public"
+					[ngClass]="bambiService.appTheme + '-theme'" (click)="deleteRecord()">
+					<mat-icon>delete</mat-icon>
+
+				</button>
+			</div>
+		</ng-scrollbar>
+
+
 	</div>
 
 	<div class="product-details-wrapper" *ngIf="loadingComplete && !fdService.productDetails.stamp">

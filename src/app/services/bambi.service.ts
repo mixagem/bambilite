@@ -30,6 +30,9 @@ export class BambiService {
 	authorizedLogin: boolean = false;
 	userInfo: IUserSettings;
 
+	tempB64Img: string = "";
+	deleteSelection: string[] = [];
+
 	menuOpen: boolean;
 
 	constructor(private _http: HttpClient, private _channelsService: SubjectChannelsService, private _snackBar: MatSnackBar, private _router: Router) {

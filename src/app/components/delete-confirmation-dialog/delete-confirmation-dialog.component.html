@@ -1,0 +1,30 @@
+<div class="master-dialog-wrapper">
+
+	<div class="dialog-header-wrapper warn-dialog">
+
+		<div class="dialog-header-title">
+			<mat-icon>delete</mat-icon>
+			<span>{{'DELETESELECTION.DIALOGTITLE' | translation}}</span>
+		</div>
+		<div class="dialog-header-actions">
+
+		</div>
+	</div>
+
+	<div class="progress-bar-wrapper">
+	</div>
+
+	<div class="record-details-wrapper">
+		<ng-scrollbar width="100%" style="height:calc(100% - 40px)">
+			<div class="scrollbar-details-wrapper">
+				<p>you sure?</p>
+			</div>
+		</ng-scrollbar>
+		<div class="dialog-footer-actions-wrapper">
+			<button mat-stroked-button color="warn" mat-dialog-close>{{'APP.GENERIC.CANCEL' | translation}}</button>
+			<button mat-flat-button color="warn" (click)="confirmDelete()" mat-dialog-close>{{'DELETESELECTION.DIALOG.DELETEBUTTON' | translation}}</button>
+		</div>
+	</div>
+
+
+</div>

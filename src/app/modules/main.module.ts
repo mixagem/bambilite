@@ -10,6 +10,7 @@ import { MaterialImportsModule } from './material-imports.module';
 import { RouterModule } from '@angular/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ImageUploadComponent } from '../components/image-upload/image-upload.component';
+import { DeleteConfirmationDialogComponent } from '../components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @NgModule({
 	declarations: [
@@ -18,7 +19,8 @@ import { ImageUploadComponent } from '../components/image-upload/image-upload.co
 		HeaderComponent,
 		MenuSidebarComponent,
 		HeaderBreadcumbsComponent,
-		ImageUploadComponent
+		ImageUploadComponent,
+		DeleteConfirmationDialogComponent,
 	],
 	imports: [
 		CommonModule,

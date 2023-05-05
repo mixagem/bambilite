@@ -22,13 +22,13 @@
 		<ng-scrollbar width="100%" height="100%">
 
 			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
-				<img [src]="currentImage">
+				<img [src]="bambiService.tempB64Img">
 				<button mat-flat-button color="primary" (click)="saveChanges()">Alterar imagem</button>
 				<button mat-flat-button color="warn" (click)="resetImage()">Remover imagem</button>
 
-				<input #csvInput hidden="true" type="file" onclick="this.value=null" (change)="imageSelected($event)"
+				<input #fileInput hidden="true" type="file" onclick="this.value=null" (change)="imageSelected($event)"
 					accept=".jpg" />
-				<button mat-fab color="primary" (click)="csvInput.click()">
+				<button mat-fab color="primary" (click)="fileInput.click()">
 					<mat-icon>upload</mat-icon>
 				</button>
 

@@ -41,9 +41,9 @@
 	"APPSNACKS.PRODUCT-NOTFOUND": "Não foi possível atualizar as propriedades do produto",
 	"APPSNACKS.USER-NOTOWNER": "Não é possível alterar as propriedades de produtos introduzidos por outros utilizadores",
 	"APPSNACKS.UNREACHABLESERVER": "Erro ao estabelecer ligação com o servidor",
-	"APPSNACKS.ALLPRODUCTDELETED" : "Todos os produtos selecionados foram eleminados com sucesso",
-	"APPSNACKS.SOMEPRODUCTDELETED" : "Alguns dos produtos selecionados foram introduzidos por outros utilizadores, pelo que não foram eliminados",
-	"APPSNACKS.NONEPRODUCTDELETED" : "Todos dos produtos selecionados foram introduzidos por outros utilizadores, pelo que não foram eliminados",
+	"APPSNACKS.ALLPRODUCTDELETED" : "Produto(s) eliminados com sucesso",
+	"APPSNACKS.SOMEPRODUCTDELETED" : "Produto(s) próprios eliminados com sucesso",
+	"APPSNACKS.NONEPRODUCTDELETED" : "Nenhum produto eliminado (produtos introduzidos por outros utilizadores)",
 	"APPMENU.FOOD" : "Alimentação",
 	"APPMENU.FOOD.PRODUCTS" : "Produtos",
 	"APPMENU.FOOD.RECIPEBOOK" : "Receitas",
@@ -64,6 +64,7 @@
 	"FOOD.PRODUCTS.EDITING.TITLE" : "Título",
 	"FOOD.PRODUCTS.EDITING.PUBLIC" : "Partilhado",
 	"FOOD.PRODUCTS.DETAILS.DIALOGTITLE" : "Informação detalhada",
+	"FOOD.PRODUCTS.DETAILS.DELETETITLE" : "Apagar registo",
 	"FOOD.PRODUCTS.EDITING.KCAL": "Calorias",
 	"FOOD.PRODUCTS.EDITING.UNIT": "Unidade medida",
 	"FOOD.PRODUCTS.EDITING.UNITVALUE": "Valor medida",
@@ -71,5 +72,8 @@
 	"FOOD.PRODUCTS.EDITING.INACTIVE": "Inativo",
 	"FOOD.PRODUCTS.EDITING.TAGS": "Tags",
 	"FOOD.PRODUCTS.EDITING.NEWTAG": "Nova tag...",
-	"IMAGEUPLOAD.DIALOGTITLE" : "Carregar imagem"
+	"IMAGEUPLOAD.DIALOGTITLE" : "Carregar imagem",
+	"DELETESELECTION.DIALOGTITLE" : "Apagar selecção",
+	"DELETESELECTION.DIALOG.DELETEBUTTON" : "Apagar registos selecionados",
+	"APP.GENERIC.CANCEL": "Cancelar"
 }
