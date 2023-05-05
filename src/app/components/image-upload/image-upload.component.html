@@ -1,0 +1,41 @@
+<div class="master-dialog-wrapper">
+
+	<div class="dialog-header-wrapper">
+
+		<div class="dialog-header-title">
+			<mat-icon>add_a_photo</mat-icon>
+			<span>{{'IMAGEUPLOAD.DIALOGTITLE' | translation}}</span>
+		</div>
+		<div class="dialog-header-actions">
+
+			<button mat-dialog-close mat-mini-fab color="warn" [ngClass]="bambiService.appTheme + '-theme'">
+				<mat-icon>close</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<div class="progress-bar-wrapper">
+		<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
+	</div>
+
+	<div class="record-details-wrapper">
+		<ng-scrollbar width="100%" height="100%">
+
+			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
+				<img [src]="currentImage">
+				<button mat-flat-button color="primary" (click)="saveChanges()">Alterar imagem</button>
+				<button mat-flat-button color="warn" (click)="resetImage()">Remover imagem</button>
+
+				<input #csvInput hidden="true" type="file" onclick="this.value=null" (change)="imageSelected($event)"
+					accept=".jpg" />
+				<button mat-fab color="primary" (click)="csvInput.click()">
+					<mat-icon>upload</mat-icon>
+				</button>
+
+
+			</div>
+		</ng-scrollbar>
+	</div>
+
+
+</div>

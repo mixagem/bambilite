@@ -1,0 +1,27 @@
+.record-details-wrapper {
+	.mat-mdc-standard-chip.mdc-evolution-chip--disabled {
+		opacity: 1;
+	}
+}
+
+.product-mini-info {
+	mat-icon {
+		margin-right: 10px;
+	}
+
+	div {
+		display: flex;
+		align-content: center;
+		margin: 5px auto;
+		span {
+			margin-top: 4px;
+			// font-size: 18px;
+		}
+	}
+}
+
+
+.product-info-left,
+.product-info-right{
+	padding:0 10px;
+}

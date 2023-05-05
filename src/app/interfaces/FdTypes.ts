@@ -13,5 +13,7 @@ export interface IDetailsProduct extends IListProduct {
 	price: number;
 	owner: string;
 	public: boolean;
+	inactive: boolean;
+	timestamp: number;
 }
 

@@ -1,3 +1,5 @@
+
+
 <div class="mainform-header">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
@@ -8,27 +10,96 @@
 		{{!!productDetailsDraft.stamp ? 'edição' : 'introdução'}}
 		<!-- ^^ to replace with chip -->
 		<button mat-mini-fab color="primary" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
-		<button mat-mini-fab color="warn" (click)="discardChanges()"><mat-icon>close</mat-icon></button>
+		<button mat-mini-fab color="warn" (click)="closeEditMode()"><mat-icon>close</mat-icon></button>
 	</div>
 
 </div>
 <div class="mainform-content">
 
-
-
 	<ng-scrollbar>
-		<form [formGroup]="productForm">
+		<div id="product-edit-form" [formGroup]="productForm" style="display: flex;padding: 20px;">
 
-			<mat-form-field appearance="outline">
-				<mat-label>{{'FOOD.PRODUCTS.EDITING.TITLE' | translation}}</mat-label>
-				<input matInput formControlName="title">
-				<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-			</mat-form-field>
+			<div class="product-edit-left" style="width:50%;margin-right: 10px;">
 
-			<div id="keep-me-logged-wrapper"><mat-checkbox color="primary"
-					formControlName="public">{{'FOOD.PRODUCTS.EDITING.PUBLIC' | translation}}</mat-checkbox></div>
 
-		</form>
+				<div class="img-picker-wrapper"
+					style="margin: 20px auto 45px;width: 156px;height: 156px;cursor: pointer;">
+
+					<div class="img-picker-pic-wrapper"
+						style="width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;margin: auto;">
+						<img [src]="fdService.tempImage"></div>
+
+					<div class="img-picker-pic-wrapper picker-controller" (click)="newPicUpload()"
+						style="position:relative;top:-156px;width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;background-color:rgba(123,195,45,.3);margin: auto;justify-content:center;align-items: center;">
+						<mat-icon>add_a_photo</mat-icon>
+					</div>
+
+				</div>
+
+				<mat-form-field appearance="outline" style="width:50%">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}}</mat-label>
+					<input matInput formControlName="kcal">
+					<span style="padding-right:10px;" matSuffix>Kcal</span>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" style="width:50%">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}}</mat-label>
+					<input matInput formControlName="price">
+					<mat-icon matSuffix>euro</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" style="width:50%">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.UNIT' | translation}}</mat-label>
+					<input matInput formControlName="unit">
+					<mat-icon matSuffix>square_foot</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" style="width:50%">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.UNITVALUE' | translation}}</mat-label>
+					<input matInput formControlName="unitvalue">
+					<span style="padding-right:10px;" matSuffix>{{productForm.get('unit')!.value}}</span>
+				</mat-form-field>
+
+				<div class="checkbox-wrapper" style="width: 50%;padding-left: 20px;display: inline-block;"><mat-checkbox
+						color="primary" formControlName="public">{{'FOOD.PRODUCTS.EDITING.PUBLIC' |
+						translation}}</mat-checkbox></div>
+
+				<div class="checkbox-wrapper" style="width: 50%;padding-left: 20px;display: inline-block"><mat-checkbox
+						color="primary" formControlName="inactive">{{'FOOD.PRODUCTS.EDITING.INACTIVE' |
+						translation}}</mat-checkbox>
+				</div>
+
+			</div>
+
+
+			<div class="product-edit-right" style="width:50%;margin-left: 10px;">
+
+				<mat-form-field appearance="outline" style="width:100%">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.TITLE' | translation}}</mat-label>
+					<input matInput formControlName="title">
+					<mat-icon matSuffix>title</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field class="example-chip-list" appearance="outline" style="width:100%;min-height:160px;">
+					<mat-label>{{'FOOD.PRODUCTS.EDITING.TAGS' | translation}}</mat-label>
+					<mat-chip-grid style="padding-top: 10px;" #chipGrid>
+						<mat-chip-row *ngFor="let tag of productDetailsDraft.tags" (removed)="removeTag(tag)"
+							[editable]="true" (edited)="editTag(tag, $event)">
+							{{tag}}
+							<button matChipRemove>
+								<mat-icon>cancel</mat-icon>
+							</button>
+						</mat-chip-row>
+						<input style="height: 32px!important;"
+							placeholder="{{'FOOD.PRODUCTS.EDITING.NEWTAG' | translation}}" [matChipInputFor]="chipGrid"
+							[matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+							(matChipInputTokenEnd)="addTag($event)" />
+					</mat-chip-grid>
+				</mat-form-field>
+
+			</div>
+
+		</div>
 	</ng-scrollbar>
 
 </div>

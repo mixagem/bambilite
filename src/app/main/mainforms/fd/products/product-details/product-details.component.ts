@@ -5,7 +5,7 @@ import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/s
 import { Subject } from 'rxjs';
 import { BambiService } from 'src/app/services/bambi.service';
 
-type RecordOperation = 'edit' | 'delete' | 'clone'
+type RecordOperation = 'update' | 'delete' | 'clone'
 
 @Component({
 	selector: 'bl-product-details',
@@ -35,7 +35,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 	enterEditMode(operation: RecordOperation) {
 		switch (operation) {
-			case 'edit': case 'clone':
+			case 'update': case 'clone':
 				if (operation === 'clone') { this.fdService.productDetails.stamp = '' }
 				this.fdService.drawerOpen = true;
 				this.dialogRef.close();
@@ -47,6 +47,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 		}
 	}
+
+
 
 
 }

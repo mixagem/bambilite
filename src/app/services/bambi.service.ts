@@ -76,7 +76,7 @@ export class BambiService {
 		});
 	}
 
-	API(endpoint: string, httpParameters: HttpParams | null = null, extraParameters?: {[key:string] : string | number | boolean}) {
+	API(endpoint: string, httpParameters: HttpParams | null = null, extraParameters?: { [key: string]: string | number | boolean }) {
 
 		const call = httpParameters ? this._http.post(this.BACKEND_URL + endpoint + '.php', httpParameters, { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
@@ -175,6 +175,22 @@ export class BambiService {
 			}
 		});
 	}
+
+	ImageUpload(file: File) {
+		const formData = new FormData();
+		formData.append('file', file);
+		const call = this._http.post(this.BACKEND_URL + 'imgupload.php', formData, { responseType: 'text' }).pipe(
+			retry(1), // retry a failed request
+			catchError(this.handleError), // then handle the error
+		)
+		call.subscribe({
+			next: (data) => {
+				this._channelsService.ImageUploadChannelFire(true, data)
+			},
+			error: () => { return this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.IMAGEUPLOADERROR', emoji: '🚧' } }); }
+		});
+	}
+
 
 	Disconnect(softDisconnect: boolean = false) {
 		this.appLang = 'pt'

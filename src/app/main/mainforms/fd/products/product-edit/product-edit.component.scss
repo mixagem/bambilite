@@ -1,0 +1,14 @@
+.picker-controller{
+	opacity: 0;
+	mat-icon{
+		font-size:48px;
+		height:48px;
+		width:48px;
+	}
+}
+
+.img-picker-wrapper:hover{
+	.img-picker-pic-wrapper.picker-controller{
+		opacity: 1;
+	}
+}

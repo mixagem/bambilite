@@ -2,16 +2,16 @@
 		*ngIf="!loadingComplete || this.fdService.executingQuery"></mat-progress-bar></div>
 
 
-<div class="mainform-header" *ngIf="loadingComplete && !!productList.length">
+<div class="mainform-header" *ngIf="loadingComplete">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
 		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}}</h1>
 	</div>
 
 	<div class="header-actions">
-		<button mat-mini-fab (click)="deleteSelected()" [disabled]="!this.selectedProducts.length"
-			color="warn"><mat-icon>delete</mat-icon></button>
 		<button mat-mini-fab color="primary" (click)="addNewProduct()"><mat-icon>add</mat-icon></button>
+		<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()" *ngIf="!!this.selectedProducts.length"
+			color="warn"><mat-icon>delete</mat-icon></button>
 	</div>
 
 </div>
@@ -22,11 +22,11 @@
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
 		<ng-container matColumnDef="check">
-			<th mat-header-cell *matHeaderCellDef> </th>
+			<th mat-header-cell *matHeaderCellDef style="width:80px;"> </th>
 		</ng-container>
 
 		<ng-container matColumnDef="image">
-			<th mat-header-cell *matHeaderCellDef> </th>
+			<th mat-header-cell *matHeaderCellDef style="width:150px;"> </th>
 		</ng-container>
 
 		<ng-container matColumnDef="title">
@@ -44,13 +44,13 @@
 			<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 			<ng-container matColumnDef="check">
-				<td mat-cell *matCellDef="let element"><mat-checkbox color=warn
+				<td mat-cell *matCellDef="let element" style="width:80px;"><mat-checkbox color=warn
 						(click)="selectItem($event.target!, element.stamp)"></mat-checkbox>
 				</td>
 			</ng-container>
 
 			<ng-container matColumnDef="image">
-				<td mat-cell *matCellDef="let element" (click)="showDetails(element.stamp)">{{element.image}}</td>
+				<td mat-cell *matCellDef="let element" (click)="showDetails(element.stamp)" style="width:150px;"><img src="{{element.image}}" style="max-height: 75px;border-radius: 25px;"></td>
 			</ng-container>
 
 			<ng-container matColumnDef="title">

@@ -15,8 +15,10 @@ export class FdService {
 
 	drawerOpen: boolean = false;
 	drawerFadeout: boolean = false;
-	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false };
+	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
 	executingQuery: boolean = false;
+	tempImage: string = '';
+	loadingComplete: boolean = false;
 
 	constructor(private _http: HttpClient, private _bambiService: BambiService, private _channelsService: SubjectChannelsService) {
 
@@ -36,51 +38,47 @@ export class FdService {
 
 		call.subscribe({
 			next: (data) => {
+				const productObject = data as ProductObject;
 				switch (operation) {
 					case 'getlist':
-						const listObject = data as ProductObject;
-						if (!listObject.sucess) {
-							this._channelsService.ProductListChannelFire(false, listObject.details);
-							return;
-						}
-						this._channelsService.ProductListChannelFire(true, '', listObject.productList!);
-						this.executingQuery = false;
-						return;
-
 					case 'getqueriedlist':
-						const queriedDetailsObject = data as ProductObject;
-						if (!queriedDetailsObject.sucess) {
-							this._channelsService.ProductListChannelFire(false, queriedDetailsObject.details);
-							this.executingQuery = false;
-							return;
-						}
-						this._channelsService.ProductListChannelFire(true, '', queriedDetailsObject.productList!);
-						this.executingQuery = false;
-						return;
+						productObject.sucess ? this._channelsService.ProductListChannelFire(true, '', productObject.productList!) : this._channelsService.ProductListChannelFire(false, productObject.details)
+						break;
 
 					case 'getdetails':
-						const detailsObject = data as ProductObject;
-						if (!detailsObject.sucess) {
-							this._channelsService.ProductDetailsChannelFire(false, detailsObject.details);
-							return;
-						}
-						this._channelsService.ProductDetailsChannelFire(true, '', detailsObject.productDetails!);
-						this.executingQuery = false;
-						return;
+						productObject.sucess ? this._channelsService.ProductDetailsChannelFire(true, '', productObject.productDetails!) : this._channelsService.ProductDetailsChannelFire(false, productObject.details)
+						break;
 
+					case 'update':
+					case 'new':
+						productObject.sucess ? this._channelsService.ProductUpdateChannelFire(true) : this._channelsService.ProductUpdateChannelFire(false, productObject.details)
+						break;
 
+					case 'delete':
+						this._channelsService.ProductDeleteChannelFire(productObject.sucess, productObject.details!);
+						break;
 				}
+				this.executingQuery = false;
 			},
 			error: () => {
+				this.executingQuery = false;
 				switch (operation) {
-					case 'getlist': case 'getqueriedlist':
+					case 'getlist':
+					case 'getqueriedlist':
 						this._channelsService.ProductListChannelFire(false, 'offline');
-						this.executingQuery = false;
 						return;
 
 					case 'getdetails':
 						this._channelsService.ProductDetailsChannelFire(false, 'offline');
-						this.executingQuery = false;
+						return;
+
+					case 'update':
+					case 'new':
+						this._channelsService.ProductUpdateChannelFire(false, 'offline');
+						return;
+
+					case 'delete':
+						this._channelsService.ProductDeleteChannelFire(false, 'offline');
 						return;
 
 

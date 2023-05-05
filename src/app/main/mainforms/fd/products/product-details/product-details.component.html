@@ -1,22 +1,82 @@
-<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
+<div class="master-dialog-wrapper">
 
-<p *ngIf="loadingComplete && !!fdService.productDetails.stamp">
-	{{fdService.productDetails.title}} - {{fdService.productDetails.kcal}} -
-	{{fdService.productDetails.unitvalue}}{{fdService.productDetails.unit}}
+	<div class="dialog-header-wrapper">
+
+		<div class="dialog-header-title">
+			<mat-icon>restaurant_menu</mat-icon>
+			<span>{{'FOOD.PRODUCTS.DETAILS.DIALOGTITLE' | translation}}</span>
+		</div>
+		<div class="dialog-header-actions">
+
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete"
+				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('clone')">
+				<mat-icon>file_copy</mat-icon>
+			</button>
+
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
+				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('update')">
+				<mat-icon>edit</mat-icon>
+			</button>
+
+			<button mat-mini-fab color="warn" [disabled]="!loadingComplete || fdService.productDetails.public"
+				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('delete')">
+				<mat-icon>delete</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<div class="progress-bar-wrapper">
+		<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
+	</div>
+
+	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp">
+		<ng-scrollbar width="100%" height="100%">
+
+			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
+
+				<div class="product-info-left" style="height:100%;width:30%;display: flex;">
+					<div class="product-mini-info" style="width:100%;display: flex;flex-direction: column;">
+						<img src="{{fdService.productDetails.image}}"
+							style="max-width: 100%;margin:0 auto 5px;border-radius: 25%;">
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">bolt</mat-icon><span>{{fdService.productDetails.kcal}}
+								kcal</span></div>
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">scale</mat-icon><span>{{fdService.productDetails.unitvalue}}
+								{{fdService.productDetails.unit}}</span></div>
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">request_quote</mat-icon><span>{{fdService.productDetails.price}}
+								€</span></div>
+
+					</div>
+
+				</div>
 
 
-	<button mat-mini-fab color="primary" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('clone')">
-		<mat-icon>file_copy</mat-icon>
-	</button>
+				<div class="product-info-right" style="height:100%;width:70%;display: flex;flex-direction: column;">
+					<div class="product-title" style="margin-bottom: 10px;">
+						<h1 style="margin:0">{{fdService.productDetails.title}}</h1>
+					</div>
 
-	<button mat-mini-fab color="primary" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('edit')">
-		<mat-icon>edit</mat-icon>
-	</button>
+					<p class="product-chips" style="margin-bottom: 10px;">
+						<mat-chip-listbox>
+							<mat-chip-option disabled
+								*ngFor="let tag of fdService.productDetails.tags">{{tag}}</mat-chip-option>
+						</mat-chip-listbox>
+					</p>
 
-	<button mat-mini-fab color="warn" [ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('delete')">
-		<mat-icon>delete</mat-icon>
-	</button>
-</p>
+					<div class="recipes-list" style="display: flex;align-items: center;justify-content: center;">
+						aqui a lista de receitas que utilizam este produto</div>
 
 
-<p *ngIf="loadingComplete && !fdService.productDetails.stamp">error</p>
+				</div>
+
+			</div>
+		</ng-scrollbar>
+	</div>
+
+	<div class="product-details-wrapper" *ngIf="loadingComplete && !fdService.productDetails.stamp">
+		<p>error fetching details</p>
+	</div>
+
+</div>

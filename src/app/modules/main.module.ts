@@ -9,6 +9,7 @@ import { HeaderBreadcumbsComponent } from '../main/header-breadcumbs/header-brea
 import { MaterialImportsModule } from './material-imports.module';
 import { RouterModule } from '@angular/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { ImageUploadComponent } from '../components/image-upload/image-upload.component';
 
 @NgModule({
 	declarations: [
@@ -17,6 +18,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 		HeaderComponent,
 		MenuSidebarComponent,
 		HeaderBreadcumbsComponent,
+		ImageUploadComponent
 	],
 	imports: [
 		CommonModule,

@@ -19,7 +19,7 @@ $waikiki-theme: mat.define-light-theme(
 	(
 		color: (
 			primary: mat.define-palette(mat.$light-blue-palette, 400),
-			accent: mat.define-palette(mat.$yellow-palette, 50),
+			accent: mat.define-palette(mat.$yellow-palette, 500),
 			warn: mat.define-palette(mat.$red-palette, A400),
 		),
 	)
@@ -108,13 +108,16 @@ body {
 		justify-content: flex-end;
 		width: 50%;
 		padding-right: 10px;
+		button{
+			margin: 0 5px;
+		}
 	}
 }
 
 //mainform content (table)
 .mainform-content {
 	margin: 0px 20px;
-	height: calc(100vh - 154px);
+	height: calc(100vh - 4px - 80px - 70px);
 	display: flex;
 	flex-direction: column;
 	table {
@@ -134,6 +137,51 @@ body {
 // transparent table paginators
 .mat-mdc-paginator {
 	background: transparent !important;
+}
+
+// record details (mat-dialog structure)
+
+.master-dialog-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	.dialog-header-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 75px;
+		width: 100%;
+		padding: 0px 20px;
+
+		.dialog-header-title {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			font-size: 20px;
+			mat-icon {
+				margin-top: -1px;
+			}
+			span {
+				padding-left: 10px;
+			}
+		}
+
+		.dialog-header-actions {
+			button {
+				margin: 0 5px;
+			}
+		}
+	}
+
+	.record-details-wrapper {
+		padding: 0px 20px;
+		height: calc(100% - 75px - 4px);
+		.ng-scroll-content{
+			height: 100%;
+		}
+	}
 }
 
 /* ng-scrollbar overrides */
@@ -220,4 +268,9 @@ mat-form-field {
 		padding-top: 0;
 		padding-bottom: 0;
 	}
+}
+
+//chips
+mat-chip-option{
+	max-height: 26px;
 }

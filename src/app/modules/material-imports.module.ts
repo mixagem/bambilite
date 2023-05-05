@@ -31,6 +31,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatChipsModule} from '@angular/material/chips'
 
 @NgModule({
 	declarations: [],
@@ -67,7 +68,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 		MatSnackBarModule,
 		MatDividerModule,
 		MatSidenavModule,
-		MatProgressBarModule
+		MatProgressBarModule,
+		MatChipsModule
 	],
 	exports: [
 		MatAutocompleteModule,
@@ -101,7 +103,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 		MatSnackBarModule,
 		MatDividerModule,
 		MatSidenavModule,
-		MatProgressBarModule
+		MatProgressBarModule,
+		MatChipsModule
 	]
 })
 export class MaterialImportsModule { }

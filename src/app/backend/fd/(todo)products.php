@@ -64,7 +64,7 @@ if (mysqli_affected_rows($SQL_CON) !== 1) {
 switch ($operation) {
 
 	case 'getlist':
-		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE owner = '" . $owner . "' OR public = 1";
+		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE owner = '" . $owner . "' OR public = 1 ORDER BY timestamp desc";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// no products found
@@ -90,7 +90,7 @@ switch ($operation) {
 		if (is_numeric($query)) {
 			$OR_CLAUSE .= " OR kcal LIKE '%" . $query . "%' OR price LIKE '%" . $query . "%'";
 		}
-		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 )";
+		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
@@ -127,21 +127,23 @@ switch ($operation) {
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
 			$products_object["productDetails"] = $SQL_RESULT_ROW;
+			$products_object["productDetails"]["inactive"] = boolval($products_object["productDetails"]["inactive"]);
+			$products_object["productDetails"]["public"] = boolval($products_object["productDetails"]["public"]);
 		}
 
 		LeggeraSucess($products_object, $SQL_CON);
 		return;
 
 	case 'update':
-		$ele = json_decode($_POST["element"]);
+		$product = json_decode($_POST["product"], true);
 
 		// get og owner
-		$SQL_QUERY = "SELECT owner FROM htmlelements WHERE stamp = '" . $ele['stamp'] . "'";
+		$SQL_QUERY = "SELECT owner FROM products WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// ele not found
+		// product not found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($products_object, $SQL_CON, "ele-not-found");
+			LeggeraError($products_object, $SQL_CON, "product-not-found");
 			return;
 		}
 
@@ -151,18 +153,18 @@ switch ($operation) {
 		}
 
 		// user not owner
-		if ($ogowner === 'public' || $ogowner !== $owner) {
+		if ($ogowner !== $owner) {
 			LeggeraError($products_object, $SQL_CON, "user-not-owner");
 			return;
 		}
 
-		// validations over, updating collection
-		$SQL_QUERY = "UPDATE htmlelements SET elestamp = '" . $ele['elestamp'] . "', subelestamp = '" . $ele['subelestamp'] . "', title = '" . $ele['title'] . "', description = '" . $ele['description'] . "', code = '" . $ele['code'] . "', active = " . $ele['active'] . " WHERE stamp = '" . $ele['stamp'] . "'";
+		// validations over, product collection
+		$SQL_QUERY = "UPDATE products SET title = '" . $product['title'] . "', kcal = " . $product['kcal'] . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . $product['unitvalue'] . ", price = " . $product['price'] . ", tags = '" . json_encode($product['tags']) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($products_object, $SQL_CON, "error-updating-ele");
+			LeggeraError($products_object, $SQL_CON, "error-updating-product");
 			return;
 		}
 
@@ -170,16 +172,16 @@ switch ($operation) {
 		return;
 
 	case 'new':
-		$ele = json_decode($_POST["element"]);
+		$product = json_decode($_POST["product"], true);
 
 		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO htmlelements (stamp,owner,elestamp,subelestamp,title,description,code,active) VALUES ('" . $stampgen . "','" . $ele['owner'] . "','" . $ele['elestamp'] . "','" . $ele['subelestamp'] . "','" . $ele['title'] . "','" . $ele['description'] . "','" . $ele['code'] . "'," . $ele['active'] . ")";
+		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . $product['title'] . "'," . $product['kcal'] . ",'" . $product['image'] . "','" . $product['unit'] . "'," . $product['unitvalue'] . "," . $product['price'] . ",'" . json_encode($product['tags']) . "','" . $owner . "', " . $product['timestamp'] . " )";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error creating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($products_object, $SQL_CON, "error-creating-element");
+			LeggeraError($products_object, $SQL_CON, "error-creating-product");
 			return;
 		}
 
@@ -187,37 +189,47 @@ switch ($operation) {
 		return;
 
 	case 'delete':
-		$elestamp = $_POST["stamp"];
+		$productstamps_str = str_replace(" ", "", $_POST["stamps"]);
+		$productstamps_arr = explode(",", $productstamps_str);
 
-		$SQL_QUERY = "DELETE FROM htmlelements WHERE stamp = '" . $elestamp  . "' AND owner = '" . $owner . "'";
-		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
-
-		// ele not found
-		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($products_object, $SQL_CON, "ele-not-found");
+		if ($productstamps_str === "") {
+			LeggeraError($products_object, $SQL_CON, "no-products-selected");
 			return;
 		}
 
-		// fetching og owner
+		$IN_CLAUSE = "";
+		foreach ($productstamps_arr as &$productstamp) {
+			$IN_CLAUSE .= "'" . $productstamp . "',";
+		}
+		$IN_CLAUSE = substr_replace($IN_CLAUSE, "", -1);
+
+		$SQL_QUERY = "SELECT COUNT(owner) as count FROM products WHERE public = 0 AND owner = '" . $owner . "' AND stamp IN (" . $IN_CLAUSE . ")";
+		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
+
+		if (mysqli_num_rows($SQL_RUN) === 0) {
+			LeggeraError($products_object, $SQL_CON, "error-counting-owner-rows");
+			return;
+		}
+
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$ogowner = $SQL_RESULT_ROW["owner"];
+			$rows_owner = intval($SQL_RESULT_ROW["count"]);
 		}
 
-		// user not owner
-		if ($ogowner === 'public' || $ogowner !== $owner) {
-			LeggeraError($products_object, $SQL_CON, "user-not-owner");
+
+		if ($rows_owner === 0) {
+			LeggeraError($products_object, $SQL_CON, "user-owns-none");
 			return;
 		}
 
-		// validations over, deleting element
-		$SQL_QUERY = "DELETE FROM htmlcols WHERE stamp = '" . $colstamp  . "' AND owner = '" . $owner . "'";
+		$SQL_QUERY = "DELETE FROM products WHERE stamp IN (" . $IN_CLAUSE  . ") AND owner = '" . $owner . "' AND public = 0";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// error deleting element
-		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($products_object, $SQL_CON, "error-deleting-col");
+		// products not found
+		if (mysqli_affected_rows($SQL_CON) === 0) {
+			LeggeraError($products_object, $SQL_CON, "error-deleting-products");
 			return;
 		}
 
-		LeggeraSucess($products_object, $SQL_CON);
+		$details = $rows_owner !== count($productstamps_arr) ? "user-owns-some" : "user-owns-all";
+		LeggeraSucess($products_object, $SQL_CON, $details);
 }

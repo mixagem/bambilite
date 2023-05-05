@@ -14,7 +14,7 @@ import { FoodModule } from './main/mainforms/fd/fd.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
