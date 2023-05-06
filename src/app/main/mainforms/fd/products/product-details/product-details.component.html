@@ -13,17 +13,17 @@
 		<div class="dialog-header-actions" *ngIf="!deletingRecord">
 
 			<button mat-mini-fab color="primary" [disabled]="!loadingComplete"
-				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('clone')">
+				 (click)="recordOperation('clone')">
 				<mat-icon>file_copy</mat-icon>
 			</button>
 
 			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
-				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('update')">
+				 (click)="recordOperation('update')">
 				<mat-icon>edit</mat-icon>
 			</button>
 
 			<button mat-mini-fab color="warn" [disabled]="!loadingComplete || fdService.productDetails.public"
-				[ngClass]="bambiService.appTheme + '-theme'" (click)="enterEditMode('delete')">
+				 (click)="recordOperation('delete')">
 				<mat-icon>delete</mat-icon>
 			</button>
 		</div>
@@ -36,10 +36,10 @@
 			*ngIf="!loadingComplete && !deletingRecord"></mat-progress-bar>
 	</div>
 
-	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp && !deletingRecord">
+	<div class="dialog-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp">
 		<ng-scrollbar width="100%" height="100%">
 
-			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
+			<div class="scrollbar-details-wrapper">
 
 				<div class="product-info-left" style="height:100%;width:30%;display: flex;">
 					<div class="product-mini-info" style="width:100%;display: flex;flex-direction: column;">
@@ -72,39 +72,25 @@
 						</mat-chip-listbox>
 					</p>
 
-					<div class="recipes-list" style="display: flex;align-items: center;justify-content: center;">
+					<div class="recipes-list" class="animate__animated animate__fadeIn" *ngIf="!deletingRecord"
+						style="display: flex;align-items: center;justify-content: center;">
 						aqui a lista de receitas que utilizam este produto</div>
 
+
+					<div class="delete-confirmation" *ngIf="deletingRecord" class="animate__animated animate__fadeIn" style="padding-top:10px;">
+						<p style="text-align:center">{{'FOOD.PRODUCTS.DETAILS.TEXT-1' | translation}}<br>{{'FOOD.PRODUCTS.DETAILS.TEXT-2' | translation}}</p>
+						<div style="display: flex;align-items: center;justify-content: center;padding-top:10px;">
+							<button mat-stroked-button color="warn" (click)="deletingRecord = false" style="margin: 0 10px">{{'APP.GENERIC.CANCEL' | translation}}</button>
+							<button mat-dialog-close mat-flat-button color="warn" (click)="deleteRecord()" style="margin: 0 5px">{{'FOOD.PRODUCTS.DETAILS.DELETEBUTTON' | translation}}</button>
+						</div>
+					</div>
 
 				</div>
 
 			</div>
+
+			<div class="dialog-footer-actions-wrapper"></div>
 		</ng-scrollbar>
-	</div>
-	<div class="record-details-wrapper" *ngIf="loadingComplete && !!fdService.productDetails.stamp && deletingRecord">
-		<ng-scrollbar width="100%" height="100%">
-
-			<div class="scrollbar-details-wrapper" style="display: flex;height: 100%;padding-top:20px;">
-
-				You sure?
-				<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
-					[ngClass]="bambiService.appTheme + '-theme'" (click)="deletingRecord = false">
-					<mat-icon>cancel</mat-icon>
-
-				</button>
-				<button mat-dialog-close mat-mini-fab color="warn" [disabled]="!loadingComplete || fdService.productDetails.public"
-					[ngClass]="bambiService.appTheme + '-theme'" (click)="deleteRecord()">
-					<mat-icon>delete</mat-icon>
-
-				</button>
-			</div>
-		</ng-scrollbar>
-
-
-	</div>
-
-	<div class="product-details-wrapper" *ngIf="loadingComplete && !fdService.productDetails.stamp">
-		<p>error fetching details</p>
 	</div>
 
 </div>

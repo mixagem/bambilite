@@ -1,14 +1,20 @@
-.picker-controller{
+.picker-controller {
 	opacity: 0;
-	mat-icon{
-		font-size:48px;
-		height:48px;
-		width:48px;
+	// animação transição de tema
+	-webkit-transition: all 0.15s linear;
+	-moz-transition: all 0.15s linear;
+	-o-transition: all 0.15s linear;
+	transition: all 0.15s linear;
+	overflow: hidden;
+	mat-icon {
+		font-size: 48px;
+		height: 48px;
+		width: 48px;
 	}
 }
 
-.img-picker-wrapper:hover{
-	.img-picker-pic-wrapper.picker-controller{
-		opacity: 1;
+.img-picker-wrapper:hover {
+	.img-picker-pic-wrapper.picker-controller {
+		opacity: 0.4;
 	}
 }

@@ -67,7 +67,7 @@ export class LandingPageComponent implements OnInit {
 
 	manualLogin() {
 		this.loginProgress = true;
-		const httpParams = new HttpParams().set('username', this.loginForm.controls['username'].value).set('password', this.loginForm.controls['password'].value);
+		const httpParams = new HttpParams().set('username', this.loginForm.get('username')!.value).set('password', this.loginForm.get('password')!.value);
 		this.bambiService.API('login', httpParams);
 	}
 
@@ -129,7 +129,7 @@ export class LandingPageComponent implements OnInit {
 	proceedToBambi(logintype: 'manual' | 'cookie' | 'anon') {
 
 		// saving cookie
-		if (logintype === 'cookie' || (logintype === 'manual' && this.loginForm.controls['wantcookie'].value)) { localStorage.setItem('bambi_cookie', this.bambiService.userInfo.cookie) }
+		if (logintype === 'cookie' || (logintype === 'manual' && this.loginForm.get('wantcookie')!.value)) { localStorage.setItem('bambi_cookie', this.bambiService.userInfo.cookie) }
 
 
 		// setting theme / language from user

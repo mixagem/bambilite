@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IDetailsProduct, IListProduct } from '../interfaces/FdTypes';
+import { IDetailsProduct, IListProduct } from '../interfaces/Fd';
 
 export type LoginChannelResult = { sucess: boolean, details?: string }
 export type ProductChannelResult = { sucess: boolean, products?: IListProduct[], product?: IDetailsProduct, details?: string }

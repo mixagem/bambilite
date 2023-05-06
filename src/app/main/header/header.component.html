@@ -6,11 +6,11 @@
 
 	<div id="input-section" class="header-section">
 
-		<div id="products-input" *ngIf="headerService.currentRoute === 'products'">
-			<form [formGroup]="inputsForm">
+		<div id="products-input" *ngIf="router.url === '/fd/products'">
+			<form [formGroup]="headerService.inputsForm">
 				<mat-form-field appearance="outline" class="no-hint" color="accent">
 					<mat-label>{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>
-					<input id="product-query-input" matInput formControlName="products" (ngModelChange)="inputSearch()">
+					<input id="product-query-input" matInput formControlName="simpleQueryFormControl" (ngModelChange)="inputSearch()">
 					<mat-icon matSuffix>search</mat-icon>
 				</mat-form-field>
 			</form>
@@ -60,12 +60,12 @@
 
 				<span class="option-label">{{'APPHEADER.THEMEPICKER' | translation}}</span>
 
-				<button class="menu-entry" mat-menu-item (click)="themeSwap('waikiki')">
+				<button class="menu-entry waikiki" mat-menu-item (click)="themeSwap('waikiki')">
 					<span>{{'APPHEADER.THEMEWAIKIKI' | translation}}</span><mat-icon
 						*ngIf="bambiService.appTheme === 'waikiki'">checked</mat-icon>
 				</button>
 
-				<button class="menu-entry" mat-menu-item (click)="themeSwap('vice')">
+				<button class="menu-entry vice" mat-menu-item (click)="themeSwap('vice')">
 					<span>{{'APPHEADER.THEMEVICE' | translation}}</span><mat-icon
 						*ngIf="bambiService.appTheme === 'vice'">checked</mat-icon>
 

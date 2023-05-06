@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-
-type HeaderRoute = '' | 'dashboard' | 'products'
+import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -9,9 +9,13 @@ type HeaderRoute = '' | 'dashboard' | 'products'
 
 export class HeaderService {
 
-	currentRoute: HeaderRoute = '';
+	inputsForm: FormGroup = new FormGroup({
+		simpleQueryFormControl: new FormControl('')
+	})
 
-	constructor(){
+
+	constructor(public router: Router) {
 	}
+
 
 }

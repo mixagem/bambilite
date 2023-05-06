@@ -41,18 +41,12 @@ $vice-theme: mat.define-dark-theme(
 	@include mat.core-theme($waikiki-theme);
 	@include mat.all-component-themes($waikiki-theme);
 	@include lgpal.theme($waikiki-theme);
-	#drawer-wrapper {
-		background-color: #fff;
-	}
 }
 
 .vice-theme {
 	@include mat.core-theme($vice-theme);
 	@include mat.all-component-colors($vice-theme);
 	@include lgpal.theme($vice-theme, true);
-	#drawer-wrapper {
-		background-color: #222;
-	}
 }
 
 html,
@@ -181,17 +175,19 @@ body {
 		}
 	}
 
-	.record-details-wrapper {
+	.dialog-details-wrapper {
 		padding: 0px 20px;
-		height: calc(100% - 75px - 6px);
+		height: calc(100% - 75px - 4px); //75 from header, 4 from progress-bar
 		.ng-scroll-content {
-			height: calc(100% - 40px);
+			height: 100%;
 		}
 
 		.scrollbar-details-wrapper {
-			justify-content: flex-end;
 			display: flex;
-			height: calc(100% - 40px);
+			flex-wrap: wrap;
+			padding-top: 20px;
+			justify-content: flex-end;
+			height: calc(100% - 40px); //40 from footer actions
 			padding-top: 20px;
 			p {
 				width: 100%;
@@ -207,16 +203,6 @@ body {
 				margin: 0 5px;
 			}
 		}
-	}
-}
-
-/* ng-scrollbar overrides */
-#menu-scroll {
-	&.waikiki-theme {
-		background-color: var(--waikiki-accent);
-	}
-	&.vice-theme {
-		background-color: var(--vice-accent);
 	}
 }
 

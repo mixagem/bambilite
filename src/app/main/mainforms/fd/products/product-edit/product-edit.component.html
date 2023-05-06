@@ -3,11 +3,12 @@
 <div class="mainform-header">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
-		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}} - {{productDetailsDraft.title}}</h1>
+		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}} -
+			{{!!productDetailsDraft.title ? !!productDetailsDraft.stamp ? 'A editar' : 'A duplicar' : 'A introduzir'}}
+			 {{!!productDetailsDraft.title ? productDetailsDraft.title:''}}</h1>
 	</div>
 
 	<div class="header-actions">
-		{{!!productDetailsDraft.stamp ? 'edição' : 'introdução'}}
 		<!-- ^^ to replace with chip -->
 		<button mat-mini-fab color="primary" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
 		<button mat-mini-fab color="warn" (click)="closeEditMode()"><mat-icon>close</mat-icon></button>
@@ -26,11 +27,11 @@
 					style="margin: 20px auto 45px;width: 156px;height: 156px;cursor: pointer;">
 
 					<div class="img-picker-pic-wrapper"
-						style="width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;margin: auto;">
+						style="width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;border-width: 6px;margin: auto;">
 						<img [src]="fdService.tempB64Img"></div>
 
 					<div class="img-picker-pic-wrapper picker-controller" (click)="newPicUpload()"
-						style="position:relative;top:-156px;width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;background-color:rgba(123,195,45,.3);margin: auto;justify-content:center;align-items: center;">
+						style="position:relative;top:-156px;width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid 6px transparent;margin: auto;justify-content:center;align-items: center;">
 						<mat-icon>add_a_photo</mat-icon>
 					</div>
 

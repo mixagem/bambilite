@@ -2,8 +2,9 @@ import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AppLanguage, AppTheme, BambiService } from 'src/app/services/bambi.service';
 import { HeaderService } from './header.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { FdService } from '../mainforms/fd/fd.service';
+import {  Router } from '@angular/router';
 
 @Component({
 	selector: 'bambi-header',
@@ -12,14 +13,11 @@ import { FdService } from '../mainforms/fd/fd.service';
 })
 export class HeaderComponent implements OnInit {
 
-	inputsForm: FormGroup = new FormGroup({})
 
-	constructor(public bambiService: BambiService, public headerService: HeaderService, private _fdService: FdService) {
-
+	constructor(public bambiService: BambiService, public headerService: HeaderService, private _fdService: FdService, public router: Router) {
 	}
 
 	ngOnInit(): void {
-		this.inputsForm.addControl('products', new FormControl(''))
 	}
 
 	themeSwap(theme: AppTheme) {
@@ -43,9 +41,9 @@ export class HeaderComponent implements OnInit {
 
 	inputSearch() {
 
-		switch (this.headerService.currentRoute) {
-			case 'products':
-				this._fdService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.inputsForm.controls['products'].value));
+		switch (this.router.url) {
+			case '/fd/products':
+				this._fdService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 		}
 

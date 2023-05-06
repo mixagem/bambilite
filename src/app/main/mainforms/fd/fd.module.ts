@@ -18,7 +18,7 @@ import { ProductEditComponent } from './products/product-edit/product-edit.compo
 		RecipebookComponent,
 		MealsComponent,
 		ProductDetailsComponent,
-  ProductEditComponent
+		ProductEditComponent
 	],
 	imports: [
 		CommonModule,

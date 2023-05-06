@@ -1,29 +1,34 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsProduct, IListProduct } from 'src/app/interfaces/FdTypes';
+import { IDetailsProduct } from 'src/app/interfaces/Fd';
+import { ProductObject } from 'src/app/interfaces/Generic';
 import { BambiService } from 'src/app/services/bambi.service';
 import { SubjectChannelsService } from 'src/app/services/subject-channels.service';
 
-type ProductObject = { sucess: boolean; productList?: IListProduct[]; productDetails?: IDetailsProduct; details?: string }
-
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 
 export class FdService {
-
-	drawerOpen: boolean = false;
-	drawerFadeout: boolean = false;
-	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	// progress bar control
 	executingQuery: boolean = false;
+
+	// drawer status control
+	drawerOpen: boolean = false;
+	// drawer animations control
+	drawerFadeout: boolean = false;
+
+	// current previewd product
+	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+
+	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';
-	loadingComplete: boolean = false;
 
-	constructor(private _http: HttpClient, private _bambiService: BambiService, private _channelsService: SubjectChannelsService) {
+	constructor(
+		private _http: HttpClient,
+		private _bambiService: BambiService,
+		private _channelsService: SubjectChannelsService) { }
 
-	}
-
+	// db calls
 	API(operation: string, httpParameters: HttpParams | null = null) {
 
 		this.executingQuery = true;
@@ -87,8 +92,7 @@ export class FdService {
 		});
 	}
 
-
-
+	// error handler
 	private handleError(error: HttpErrorResponse) {
 		if (error.status === 0) {
 			// A client-side or network error

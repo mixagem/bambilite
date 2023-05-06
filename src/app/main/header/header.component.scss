@@ -1,5 +1,4 @@
 * {
-	color: #000; //overide dark theme
 	// animação transição tema
 	-webkit-transition: all 0.6s linear;
 	-moz-transition: all 0.6s linear;
@@ -56,36 +55,40 @@
 .theme-menu-wrapper {
 	.menu-entry {
 		min-height: 42px !important;
-		&:first-of-type {
+		border-width: 4px 0 0 4px;
+		border-style: solid;
+		&:hover {
+			border-width: 5px 0 0 8px;
+		}
+		span {
+			font-size: 14px;
+		}
+
+		&.waikiki {
+			border-color: #eee;
 			background-color: #eee;
-			border-top: 4px solid #eee;
-			border-left: 4px solid #eee;
 			&:hover {
-				border-top: 4px solid #2d8fff;
-				border-left: 4px solid orange;
+				border-color: var(--waikiki-primary) transparent transparent var(--waikiki-accent);
 			}
 			mat-icon {
-				color: #2d8fff;
+				color: var(--waikiki-primary);
 			}
 			span {
-				color: black;
-				font-size: 14px;
+				color: #000;
 			}
 		}
-		&:last-of-type {
+
+		&.vice {
+			border-color: #222;
 			background-color: #222;
-			border-top: 4px solid #222;
-			border-left: 4px solid #222;
 			&:hover {
-				border-top: 4px solid limegreen;
-				border-left: 4px solid #2d8fff;
+				border-color: var(--vice-primary) transparent transparent var(--vice-accent);
 			}
 			mat-icon {
-				color: limegreen;
+				color: var(--vice-accent);
 			}
 			span {
 				color: #fff;
-				font-size: 14px;
 			}
 		}
 	}
@@ -147,8 +150,5 @@
 		mat-form-field {
 			width: 100%;
 		}
-	}
-	input {
-		color: #000;  //overide dark theme
 	}
 }

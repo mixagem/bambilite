@@ -45,17 +45,8 @@
 
 	.dialog-header-wrapper {
 		background-color: mat.get-color-from-palette($accent-palette);
-		@if $isDarkTheme {
-			.dialog-header-title {
-				* {
-					color: #000;
-				}
-			}
-		}
-
 		&.warn-dialog {
 			background-color: mat.get-color-from-palette($warn-palette);
-
 			.dialog-header-title {
 				* {
 					color: #fff;
@@ -65,29 +56,17 @@
 	}
 }
 
-@mixin buttons($theme, $isDarkTheme) {
-	@if $isDarkTheme {
-		mat-checkbox.mat-primary:not(.mat-mdc-checkbox-disabled),
-		mat-checkbox.mat-accent:not(.mat-mdc-checkbox-disabled) {
-			.mdc-checkbox {
-				* {
-					color: #000;
-				}
-			}
-		}
-	}
-}
-
-@mixin menu($theme, $isDarkTheme) {
+@mixin menus($theme, $isDarkTheme) {
 	$color-config: mat.get-color-config($theme);
 	$primary-palette: map.get($color-config, "primary");
 	$accent-palette: map.get($color-config, "accent");
 
+	// main-menu entries
 	#entries-wrapper {
 		background-color: mat.get-color-from-palette($accent-palette);
 		color: #000;
 	}
-
+	// main-menu "open" button
 	.menu-toggler {
 		background-color: mat.get-color-from-palette($primary-palette);
 		@if ($isDarkTheme) {
@@ -96,7 +75,7 @@
 			}
 		}
 	}
-
+	// main-menu :hover effect
 	#open-menu-wrapper {
 		.main-entry:hover,
 		.sub-entry:hover {
@@ -106,9 +85,14 @@
 			}
 		}
 	}
+	// main-menu ng-scrollbar bg color
+	#menu-scroll {
+		background-color: mat.get-color-from-palette($accent-palette);
+	}
 }
 
 @mixin formfields($theme, $isDarkTheme: false) {
+	//default form-fields override
 	@if $isDarkTheme {
 		.mdc-text-field--outlined:not(.mdc-text-field--disabled) {
 			.mdc-notched-outline__leading,
@@ -117,7 +101,6 @@
 				border-color: rgba(255, 255, 255, 0.2);
 			}
 		}
-
 		#header-wrapper {
 			#input-section {
 				.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) {
@@ -142,22 +125,35 @@
 @mixin imagepicker($theme) {
 	$color-config: mat.get-color-config($theme);
 	$accent-palette: map.get($color-config, "accent");
+	$primary-palette: map.get($color-config, "primary");
 
 	.img-picker-pic-wrapper {
 		border-color: mat.get-color-from-palette($accent-palette);
 	}
-}
-
-@mixin generic($theme, $isDarkTheme: false) {
-	@if $isDarkTheme {
-		.record-details-wrapper {
-			color: rgba(255, 255, 255, 0.87);
+	.picker-controller {
+		border-color: transparent;
+		background: mat.get-color-from-palette($primary-palette);
+		mat-icon {
+			color: #fff;
 		}
 	}
 }
 
-@mixin icons($theme, $isDarkTheme: false) {
+@mixin generic($theme, $isDarkTheme: false) {
+	$color-config: mat.get-color-config($theme);
+	$accent-palette: map.get($color-config, "accent");
+
+	#drawer-wrapper {
+		background-color: #fff;
+	}
+
 	@if $isDarkTheme {
+		.dialog-details-wrapper {
+			color: rgba(255, 255, 255, 0.87);
+		}
+		#drawer-wrapper {
+			background-color: #222;
+		}
 		.mat-mdc-form-field-icon-suffix {
 			color: rgba(255, 255, 255, 0.87);
 		}
@@ -176,8 +172,11 @@
 			}
 		}
 	}
+}
 
+@mixin mainforms($theme, $isDarkTheme: false) {
 	@if $isDarkTheme {
+		//product details disabled fab override
 		.mat-mdc-mini-fab[disabled][disabled] {
 			--mdc-fab-container-color: rgba(0, 0, 0, 0.12);
 		}
@@ -195,14 +194,13 @@
 	$color-config: mat.get-color-config($theme);
 	@if $color-config != null {
 		@include divider($theme);
-		@include menu($theme, $isDarkTheme);
+		@include menus($theme, $isDarkTheme);
 		@include header($theme, $isDarkTheme);
 		@include formfields($theme, $isDarkTheme);
-		@include buttons($theme, $isDarkTheme);
 		@include dialogs($theme, $isDarkTheme);
 		@include chips($theme, $isDarkTheme);
 		@include imagepicker($theme);
 		@include generic($theme, $isDarkTheme);
-		@include icons($theme, $isDarkTheme);
+		@include mainforms($theme, $isDarkTheme);
 	}
 }
