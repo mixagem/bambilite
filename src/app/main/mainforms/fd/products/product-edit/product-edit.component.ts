@@ -73,6 +73,7 @@ export class ProductEditComponent implements OnInit {
 		this.formControlsUpdate();
 
 		// subs
+		this._channelsService.productUpdateChannel = new Subject<ProductChannelResult>;
 		this._channelsService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
 
 		// disabling header search input
@@ -80,8 +81,8 @@ export class ProductEditComponent implements OnInit {
 	}
 
 	ngOnDestroy(): void {
-		// channel reset
-		this._channelsService.productUpdateChannel = new Subject<ProductChannelResult>;
+		// subs
+		this._channelsService.productUpdateChannel.complete();
 		// wise to clean any images that are not used
 		this.fdService.tempB64Img = '';
 		// re-enabling header search input

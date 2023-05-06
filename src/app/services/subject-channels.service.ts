@@ -38,7 +38,7 @@ export class SubjectChannelsService {
 
 	LoginChannelFire(result: boolean, errorCode: string = ''): void {
 		this.loginChannel.next({ sucess: result, details: errorCode });
-		if (result) { this.loginChannel.complete(); }
+		if (result) { this.loginChannel.complete(); this.cookieLoginChannel.complete(); }
 	}
 
 	ProductListChannelFire(result: boolean, errorCode: string = '', productList?: IListProduct[],): void {
@@ -47,17 +47,14 @@ export class SubjectChannelsService {
 
 	ProductDetailsChannelFire(result: boolean, errorCode: string = '', productDetails?: IDetailsProduct): void {
 		this.productDetailsChannel.next({ sucess: result, product: productDetails, details: errorCode });
-		this.productDetailsChannel.complete();
 	}
 
 	ProductUpdateChannelFire(result: boolean, errorCode: string = ''): void {
 		this.productUpdateChannel.next({ sucess: result, details: errorCode });
-		if (result) { this.productUpdateChannel.complete(); }
 	}
 
-	ProductDeleteChannelFire(result: boolean, code: string){
+	ProductDeleteChannelFire(result: boolean, code: string) {
 		this.productDeleteChannel.next({ sucess: result, details: code });
-
 	}
 
 	ImageUploadChannelFire(result: boolean, imageB64: string, errorCode: string = ''): void {

@@ -1,2 +1,10 @@
+terminar refract
 css tabela main-form (modo lista)
-css 1 class para as animações 0.6s, .3s, e .15s
+open from component (mat dialog, injetar data "a la mat-snackbar"? )
+:hover image picker (tirar opacity do mat icon e repensar esquema de cores)
+repensar no partilhado / inativo
+turbinar procura produtos
+idioma paginator
+repensar standardização dialogs
+repensar standardização snackbars +  colorização snackbars
+4ª opção color mat -> sucess

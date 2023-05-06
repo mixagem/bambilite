@@ -143,6 +143,10 @@
 	$color-config: mat.get-color-config($theme);
 	$accent-palette: map.get($color-config, "accent");
 
+	.mat-mdc-table {
+		background: transparent !important;
+	}
+
 	#drawer-wrapper {
 		background-color: #fff;
 	}
@@ -166,6 +170,9 @@
 
 	#header-wrapper {
 		background-color: mat.get-color-from-palette($primary-palette);
+		* {
+			color: #000;
+		}
 		@if $isDarkTheme {
 			* {
 				color: rgba(255, 255, 255, 0.87);

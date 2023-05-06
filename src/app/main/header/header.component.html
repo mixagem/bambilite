@@ -1,4 +1,4 @@
-<div id="header-wrapper">
+<div class="bambi-fx-60" id="header-wrapper">
 
 	<div id="logo-section" class="header-section">
 		<img src="http://localhost/bambiapi/images/bambi.svg" style="max-height:80%;margin-left:20px;">
@@ -6,11 +6,11 @@
 
 	<div id="input-section" class="header-section">
 
-		<div id="products-input" *ngIf="router.url === '/fd/products'">
+		<div id="products-input" class="bambi-fx-15" *ngIf="router.url === '/fd/products'">
 			<form [formGroup]="headerService.inputsForm">
-				<mat-form-field appearance="outline" class="no-hint" color="accent">
-					<mat-label>{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>
-					<input id="product-query-input" matInput formControlName="simpleQueryFormControl" (ngModelChange)="inputSearch()">
+				<mat-form-field appearance="outline" class="bambi-fx-30-inline no-hint" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" id="product-query-input" matInput formControlName="simpleQueryFormControl" (ngModelChange)="inputSearch()">
 					<mat-icon matSuffix>search</mat-icon>
 				</mat-form-field>
 			</form>
@@ -26,7 +26,7 @@
 		<button class="header-button" mat-icon-button mat-icon-button (click)="bambiService.Disconnect(true)"><mat-icon
 				fontSet="material-icons-outlined">power_settings_new</mat-icon></button>
 		<mat-menu class="header-mini-menu" #langmenu="matMenu" xPosition="before">
-			<span class="lang-menu-wrapper">
+			<span class="lang-menu-wrapper bambi-fx-15">
 
 				<span class="option-label">{{'APPHEADER.LANGPICKER' | translation}}</span>
 
@@ -56,7 +56,7 @@
 				</button></span>
 		</mat-menu>
 		<mat-menu class="header-mini-menu" #thememenu="matMenu" xPosition="before">
-			<span class="theme-menu-wrapper">
+			<span class="theme-menu-wrapper bambi-fx-15">
 
 				<span class="option-label">{{'APPHEADER.THEMEPICKER' | translation}}</span>
 

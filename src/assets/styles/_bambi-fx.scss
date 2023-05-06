@@ -1,0 +1,81 @@
+.bambi-fx-60 * {
+	-webkit-transition: all 0.6s linear;
+	-moz-transition: all 0.6s linear;
+	-o-transition: all 0.6s linear;
+	transition: all 0.6s linear;
+}
+
+.bambi-fx-50 * {
+	-webkit-transition: all 0.5s linear;
+	-moz-transition: all 0.5s linear;
+	-o-transition: all 0.5s linear;
+	transition: all 0.5s linear;
+}
+
+.bambi-fx-30 * {
+	-webkit-transition: all 0.3s linear;
+	-moz-transition: all 0.3s linear;
+	-o-transition: all 0.3s linear;
+	transition: all 0.3s linear;
+}
+
+.bambi-fx-15 * {
+	-webkit-transition: all 0.15s linear;
+	-moz-transition: all 0.15s linear;
+	-o-transition: all 0.15s linear;
+	transition: all 0.15s linear;
+}
+
+.bambi-fx-10 * {
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
+	-o-transition: all 0.1s linear;
+	transition: all 0.1s linear;
+}
+
+.bambi-fx-0 * {
+	-webkit-transition: none;
+	-moz-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+
+.bambi-fx-30-inline {
+	-webkit-transition: all 0.3s linear !important;
+	-moz-transition: all 0.3s linear !important;
+	-o-transition: all 0.3s linear !important;
+	transition: all 0.3s linear !important;
+}
+
+.bambi-fx-15-inline {
+	-webkit-transition: all 0.15s linear !important;
+	-moz-transition: all 0.15s linear !important;
+	-o-transition: all 0.15s linear !important;
+	transition: all 0.15s linear !important;
+}
+
+.bambi-fx-10-inline {
+	-webkit-transition: all 0.1s linear !important;
+	-moz-transition: all 0.1s linear !important;
+	-o-transition: all 0.1s linear !important;
+	transition: all 0.1s linear !important;
+}
+
+.bambi-fx-0 {
+	-webkit-transition: none!important;
+	-moz-transition: none!important;
+	-o-transition: none!important;
+	transition: none!important;
+}
+
+.fx-speed-20-inline {
+	--animate-duration: 0.2s !important;
+}
+
+.fx-speed-80 * {
+	--animate-duration: 0.8s;
+}
+
+.fx-speed-150 * {
+	--animate-duration: 1.5s;
+}

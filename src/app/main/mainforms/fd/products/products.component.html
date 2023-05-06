@@ -15,7 +15,7 @@
 	</div>
 
 </div>
-<div class="mainform-content" *ngIf="loadingComplete && !!productList.length">
+<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!productList.length">
 
 	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
 
@@ -39,7 +39,7 @@
 	</table>
 
 	<ng-scrollbar>
-		<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + bambiService.appTheme">
 
 			<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
 

@@ -28,12 +28,13 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		// subs
+		this._channelsService.productDetailsChannel = new Subject<ProductChannelResult>;
 		this._channelsService.productDetailsChannel.subscribe(result => { this.showProductDetails(result); });
 	}
 
 	ngOnDestroy(): void {
-		// channel reset
-		this._channelsService.productDetailsChannel = new Subject<ProductChannelResult>;
+		// subs
+		this._channelsService.productDetailsChannel.complete();
 	}
 
 	// fire details modal

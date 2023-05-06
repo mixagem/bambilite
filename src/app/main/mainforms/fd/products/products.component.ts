@@ -40,6 +40,9 @@ export class ProductsComponent implements OnInit {
 
 	ngOnInit(): void {
 		// subs
+		this._channelsService.productListChannel = new Subject<ProductChannelResult>;
+		this._channelsService.productDeleteChannel = new Subject<ProductChannelResult>;
+
 		this._channelsService.productListChannel.subscribe(result => { this.showProductList(result); });
 		this._channelsService.productDeleteChannel.subscribe(result => { this.refreshProductListFromDelete(result); });
 
@@ -49,9 +52,9 @@ export class ProductsComponent implements OnInit {
 	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
 	ngOnDestroy(): void {
-		// channels reset
-		this._channelsService.productListChannel = new Subject<ProductChannelResult>;
-		this._channelsService.productDeleteChannel = new Subject<ProductChannelResult>;
+		// subs
+		this._channelsService.productListChannel.complete();
+		this._channelsService.productDeleteChannel.complete();
 	}
 
 	// listing (triggered by load subject)

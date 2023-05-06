@@ -1,21 +1,21 @@
-<div id="global-menu-wrapper" [ngClass]="menuService.menuOpen ? 'menu-open' : 'menu-close'">
+<div id="global-menu-wrapper" class="bambi-fx-10-inline" [ngClass]="menuService.menuOpen ? 'menu-open' : 'menu-close'">
 
 
 	<ng-container *ngIf="menuService.menuOpen">
 		<div id="open-menu-wrapper" [ngClass]="bambiService.appTheme + '-theme'">
 			<div class="menu-entry menu-toggler" (click)="menuService.ToggleMenu('close')">
-				<mat-icon class="animate__animated animate__rotateIn animate_evenfaster">close</mat-icon><span
-					class="animate__animated animate__fadeInLeft animate_evenfaster">{{'APPMENU.CLOSE'|
+				<mat-icon class="animate__animated animate__rotateIn fx-speed-20-inline">close</mat-icon><span
+					class="animate__animated animate__fadeInLeft fx-speed-20-inline">{{'APPMENU.CLOSE'|
 					translation}}</span>
 			</div>
 			<ng-scrollbar id="menu-scroll" [ngClass]="bambiService.appTheme + '-theme'">
-				<div id="entries-wrapper">
+				<div id="entries-wrapper" class="bambi-fx-15">
 					<div *ngFor="let menuEntry of menuService.bambiMenu">
-						<div class="menu-entry main-entry"
+						<div class="menu-entry bambi-fx-0-inline main-entry"
 							[routerLink]="menuEntry.subEntries.length === 0 ? menuEntry.route : null"
 							(click)="menuEntry.subEntries.length !== 0 ? menuService.ToggleGroup(menuEntry.id) : null">
 							<mat-icon fontSet="material-icons-outlined">{{menuEntry.icon}}</mat-icon><span
-								class="animate__animated animate__fadeInLeft animate_evenfaster">{{menuEntry.title |
+								class="animate__animated animate__fadeInLeft fx-speed-20-inline">{{menuEntry.title |
 								translation}}<mat-icon
 									*ngIf="menuEntry.subEntries!.length > 0">{{menuService.groupControl[menuEntry.id] ?
 									'expand_less' :
@@ -23,7 +23,7 @@
 						</div>
 						<div [routerLink]="menuSubEntry.route"
 							[ngClass]="!menuService.groupControl[menuEntry.id] ? 'no-display' : ''"
-							class="menu-entry sub-entry animate__animated animate__fadeInLeft animate_evenfaster"
+							class="menu-entry bambi-fx-0-inline sub-entry animate__animated animate__fadeInLeft fx-speed-20-inline"
 							*ngFor="let menuSubEntry of menuEntry.subEntries">
 							{{menuSubEntry.title | translation}}
 						</div>
@@ -37,7 +37,7 @@
 	<ng-container *ngIf="!menuService.menuOpen">
 		<div id="closed-menu-wrapper">
 			<div class="menu-entry menu-toggler" (click)="menuService.ToggleMenu('open')">
-				<mat-icon class="animate__animated animate__rotateIn animate_evenfaster">menu</mat-icon>
+				<mat-icon class="animate__animated animate__rotateIn fx-speed-20-inline">menu</mat-icon>
 			</div>
 			<ng-scrollbar id="menu-scroll" [ngClass]="bambiService.appTheme + '-theme'">
 				<div id="entries-wrapper">

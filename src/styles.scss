@@ -1,6 +1,7 @@
 @use "@angular/material" as mat;
 @use "./assets/styles/bambi-palettes" as lgpal;
 
+@import "./assets/styles/bambi-fx.scss";
 @import "~animate.css/animate.min.css";
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
@@ -66,6 +67,7 @@ body {
 	overflow-x: hidden;
 }
 
+
 /* default main-forms - list */
 
 //progressbar
@@ -112,16 +114,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	table {
-		// animação transição de tema
-		-webkit-transition: all 0.6s linear;
-		-moz-transition: all 0.6s linear;
-		-o-transition: all 0.6s linear;
-		transition: all 0.6s linear;
 		overflow: hidden;
 		//transition fix
-		&.mainform-table-vice {
-			background: #222;
-		}
 
 		mat-chip {
 			margin: 0 5px;
@@ -149,11 +143,6 @@ body {
 		height: 75px;
 		width: 100%;
 		padding: 0px 20px;
-		// animação transição de cor para delete mode
-		-webkit-transition: all 0.5s linear;
-		-moz-transition: all 0.5s linear;
-		-o-transition: all 0.5s linear;
-		transition: all 0.5s linear;
 
 		.dialog-header-title {
 			height: 100%;

@@ -1,6 +1,6 @@
-<div id="breadcumbs-wrapper">
+<div id="breadcumbs-wrapper" class="bambi-fx-60">
 	<div class="breadcumbs-section" [ngClass]="bambiService.appTheme + '-theme'"><mat-icon>star</mat-icon>
-		<div id="favourite-chips-wrapper" *ngIf="breadcumbsService.favourites"><span [ngClass]="bambiService.appTheme + '-theme'"
+		<div id="favourite-chips-wrapper" *ngIf="breadcumbsService.favourites"><span [ngClass]="bambiService.appTheme + '-theme'" class="bambi-fx-0-inline"
 				*ngFor="let favourite of breadcumbsService.favourites | slice: (breadcumbsService.favourites.length > 5 ? breadcumbsService.favourites.length - 5 : 0)"
 				(click)="breadcumbsService.BreadcumbClick(favourite.route)">{{favourite.name | translation}}</span>
 		</div>

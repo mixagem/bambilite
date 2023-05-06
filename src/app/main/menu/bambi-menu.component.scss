@@ -1,9 +1,4 @@
 #global-menu-wrapper {
-	//animação abertura do menu
-	-webkit-transition: all 0.1s linear;
-	-moz-transition: all 0.1s linear;
-	-o-transition: all 0.1s linear;
-	transition: all 0.1s linear;
 	height: 100%;
 
 	&.menu-close {
@@ -16,11 +11,6 @@
 
 	* {
 		color: #000; //overide dark theme
-		//restantes animações (transição tema, texto slide left, rotação menu icon)
-		-webkit-transition: all 0.6s linear;
-		-moz-transition: all 0.6s linear;
-		-o-transition: all 0.6s linear;
-		transition: all 0.6s linear;
 	}
 
 	#open-menu-wrapper,
@@ -50,20 +40,12 @@
 				}
 			}
 			&.main-entry {
-				-webkit-transition: none;
-				-moz-transition: none;
-				-o-transition: none;
-				transition: none;
 				font-weight: 500;
 			}
 			&.no-display {
 				display: none;
 			}
 			&.sub-entry {
-				-webkit-transition: none;
-				-moz-transition: none;
-				-o-transition: none;
-				transition: none;
 				min-height: 32px;
 				padding-left: 60px;
 			}
@@ -81,9 +63,5 @@
 				justify-content: space-between;
 			}
 		}
-	}
-
-	.animate_evenfaster {
-		--animate-duration: 0.2s;
 	}
 }
