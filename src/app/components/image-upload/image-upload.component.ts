@@ -14,13 +14,11 @@ import { ImageChannelResult, SubjectChannelsService } from 'src/app/services/sub
 export class ImageUploadComponent implements OnInit, OnDestroy {
 	loadingComplete: boolean = true;
 
-	constructor(public fdService: FdService, public bambiService: BambiService, private _channelsService: SubjectChannelsService, private _router: Router) {
-	}
-
-	imageSelected(fileInputEvent: any) {
-		this.loadingComplete = false;
-		const file = fileInputEvent.target!.files[0];
-		this.bambiService.ImageUpload(file);
+	constructor(
+		public fdService: FdService,
+		public bambiService: BambiService,
+		private _channelsService: SubjectChannelsService,
+		private _router: Router) {
 	}
 
 	ngOnInit(): void {
@@ -36,18 +34,25 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 		this._channelsService.imageUploadChannel = new Subject<ImageChannelResult>;
 	}
 
-	uploadFinished(result: ImageChannelResult) {
+
+	imageSelected(fileInputEvent: any): void {
+		this.loadingComplete = false;
+		const file = fileInputEvent.target!.files[0];
+		this.bambiService.ImageUpload(file);
+	}
+
+	uploadFinished(result: ImageChannelResult): void {
 		this.loadingComplete = true;
 		if (result.sucess) { this.bambiService.tempB64Img = result.b64! }
 	}
 
-	resetImage() { this.bambiService.tempB64Img = ''; }
-	saveChanges() {
+	resetImage(): void { this.bambiService.tempB64Img = ''; }
+
+	saveChanges(): void {
 		switch (this._router.url) {
 			case '/fd/products':
 				this.fdService.tempB64Img = this.bambiService.tempB64Img
 				break;
 		}
-
 	}
 }

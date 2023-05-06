@@ -6,9 +6,7 @@ export type LoginChannelResult = { sucess: boolean, details?: string }
 export type ProductChannelResult = { sucess: boolean, products?: IListProduct[], product?: IDetailsProduct, details?: string }
 export type ImageChannelResult = { sucess: boolean, b64?: string, details?: string }
 
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 
 export class SubjectChannelsService {
 
@@ -53,7 +51,7 @@ export class SubjectChannelsService {
 		this.productUpdateChannel.next({ sucess: result, details: errorCode });
 	}
 
-	ProductDeleteChannelFire(result: boolean, code: string) {
+	ProductDeleteChannelFire(result: boolean, code: string): void {
 		this.productDeleteChannel.next({ sucess: result, details: code });
 	}
 

@@ -1,10 +1,33 @@
-terminar refract
-css tabela main-form (modo lista)
-open from component (mat dialog, injetar data "a la mat-snackbar"? )
-:hover image picker (tirar opacity do mat icon e repensar esquema de cores)
-repensar no partilhado / inativo
-turbinar procura produtos
-idioma paginator
-repensar standardização dialogs
-repensar standardização snackbars +  colorização snackbars
-4ª opção color mat -> sucess
+# frontend
+1. css tabela main-form (modo lista)
+2. open from component (mat dialog, injetar data "a la mat-snackbar"? )
+3. :hover image picker (tirar opacity do mat icon e repensar esquema de cores)
+4. material paginator language
+5. strandardizar dialogs
+6. strandardizar snackbars
+7. terminar refract css/html
+8. 4th mat color? (sucess/green)
+
+
+# backend
+1. menu factory
+2. sql sanitize
+3. refract php
+
+
+# hybrid
+1. shared products brainstorm
+2. product search (turbinar procura)
+3. inactive products brainstorm
+
+
+# new features
+1. advanced search
+
+
+# menus yet to build
+* dashboard - mostra vários cartões de evoluções (peso do user, peso que consegue levantar no exercício X, última vez que fez o exercício Y, última vez que comeu K, etc etc etc...)
+* bobybuilding - regimes - template de dias detalhados de treinos + suplementação (a 7, 14 ou 28 dias)
+* calendario - vista geral - mostra alimentações (imagem das categorias de piteu consumido), suplementação (imagens do tipo de suplementação) e musculação (imagens das categorias de musculos)
+* calendário - evolução - track diário de peso (registos á la c/c)
+* parâmetros - utilizador e app

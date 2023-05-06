@@ -12,10 +12,13 @@ import { BambiService } from 'src/app/services/bambi.service';
 
 export class DeleteConfirmationDialogComponent {
 
-	constructor(public bambiService: BambiService, private _fdService: FdService, private _router: Router) {
+	constructor(
+		public bambiService: BambiService,
+		private _fdService: FdService,
+		private _router: Router) {
 	}
 
-	confirmDelete() {
+	confirmDelete(): void {
 		switch (this._router.url) {
 			case '/fd/products':
 				this._fdService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))

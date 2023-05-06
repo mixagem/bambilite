@@ -1,4 +1,5 @@
-<span class="bambi-fx-0 fx-speed-20" [ngClass]="bambiService.appTheme+'-theme'">
+<span class="bambi-fx-60 fx-speed-20" [ngClass]="bambiService.appTheme+'-theme'">
+
 	<svg id="svg-bg" xmlns="http://www.w3.org/2000/svg"
 		[ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
 		preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 90">
@@ -12,7 +13,7 @@
 			d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
 	</svg>
 	<mat-progress-bar mode="indeterminate" color="warn" *ngIf="loginProgress"></mat-progress-bar>
-	<div id="landing-page-wrapper">
+	<div id="landing-page-wrapper" class="bambi-fx-0">
 
 		<!-- first logo fade in -->
 		<ng-container *ngIf="introLogo">

@@ -1,5 +1,5 @@
-import { AppLanguage, AppTheme } from "../services/bambi.service";
 import { IUserFavourite } from "./BambiRoutes";
+import { AppLanguage, AppTheme } from "./Generic";
 
 export interface IUserSettings {
 	name: string;

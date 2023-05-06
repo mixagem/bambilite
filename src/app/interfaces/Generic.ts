@@ -1,4 +1,4 @@
-import { IListProduct, IDetailsProduct } from "./Fd";
-
 export type RecordOperation = 'update' | 'delete' | 'clone';
-export type ProductObject = { sucess: boolean; productList?: IListProduct[]; productDetails?: IDetailsProduct; details?: string }
+export type AppTheme = 'waikiki' | 'vice'
+export type AppLanguage = 'pt' | 'uk' | 'es'
+export type Locales = { [key: string]: string }

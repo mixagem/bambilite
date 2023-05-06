@@ -9,7 +9,8 @@ import { BambiService } from './services/bambi.service';
 
 export class AppComponent {
 	title = 'bambi'
-	constructor(public bambiService: BambiService) {
 
+	constructor(
+		public bambiService: BambiService) {
 	}
 }

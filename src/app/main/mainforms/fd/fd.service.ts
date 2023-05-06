@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsProduct } from 'src/app/interfaces/Fd';
-import { ProductObject } from 'src/app/interfaces/Generic';
+import { IDetailsProduct, IListProduct } from 'src/app/interfaces/Fd';
 import { BambiService } from 'src/app/services/bambi.service';
 import { SubjectChannelsService } from 'src/app/services/subject-channels.service';
+
+type ProductObject = { sucess: boolean; productList?: IListProduct[]; productDetails?: IDetailsProduct; details?: string }
 
 @Injectable({ providedIn: 'root' })
 

@@ -13,11 +13,13 @@ type Breadcumb = { name: string, route: string }
 })
 export class HeaderBreadcumbsService {
 
-
 	favourites: IUserFavourite[];
 	breadcumbs: Breadcumb[];
 
-	constructor(private _router: Router, private _menuService: BambiMenuService, private _bambiService: BambiService) {
+	constructor(
+		private _router: Router,
+		private _menuService: BambiMenuService,
+		private _bambiService: BambiService) {
 
 		this.breadcumbs = this.GetHistoryFromCache();
 		this.favourites = this._bambiService.userInfo.favourites
@@ -35,12 +37,12 @@ export class HeaderBreadcumbsService {
 		return historyFound ? JSON.parse(historyFound) : [];
 	}
 
-	BreadcumbClick(route: string) {
+	BreadcumbClick(route: string): void {
 		this._router.navigate([route]);
 		this.AddBreadcumbs(route);
 	}
 
-	AddBreadcumbs(route: string) {
+	AddBreadcumbs(route: string): void {
 
 		// checking for duplicates
 		for (let k = 0; k < this.breadcumbs.length; k++) {
@@ -73,7 +75,7 @@ export class HeaderBreadcumbsService {
 		}
 	}
 
-	IsEntityFavourited() {
+	IsEntityFavourited(): boolean {
 		const currentRoute: string = this._router.url;
 		for (let i = 0; i < this.favourites.length; i++) {
 			if (this.favourites[i].route === currentRoute) { return true }
@@ -81,13 +83,13 @@ export class HeaderBreadcumbsService {
 		return false;
 	}
 
-	AddToFavourites() {
+	AddToFavourites(): void {
 		const currentRoute: string = this._router.url;
 		const favouriteObject = this._generateFavouriteObject(currentRoute);
 		this.IsEntityFavourited() ? this._removeFromFavourites(favouriteObject) : this._addToFavourites(favouriteObject)
 	}
 
-	private _removeFromFavourites(favouriteObject: IUserFavourite) {
+	private _removeFromFavourites(favouriteObject: IUserFavourite): void {
 		for (let i = 0; i < this.favourites.length; i++) {
 			if (this.favourites[i].route !== favouriteObject.route) { continue }
 
@@ -97,15 +99,15 @@ export class HeaderBreadcumbsService {
 			this.favourites = arrayPart1.concat(arrayPart2);
 
 			const httpParams = new HttpParams().set('username', this._bambiService.userInfo.username).set('cookie', this._bambiService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
-			this._bambiService.API('favourite', httpParams, {addingFavourite:false})
+			this._bambiService.API('favourite', httpParams, { addingFavourite: false })
 			return
 		}
 	}
 
-	private _addToFavourites(favouriteObject: IUserFavourite) {
+	private _addToFavourites(favouriteObject: IUserFavourite): void {
 		this.favourites.push(favouriteObject)
 		const httpParams = new HttpParams().set('username', this._bambiService.userInfo.username).set('cookie', this._bambiService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
-		this._bambiService.API('favourite', httpParams, {addingFavourite:true})
+		this._bambiService.API('favourite', httpParams, { addingFavourite: true })
 	}
 
 	private _generateFavouriteObject(route: string): IUserFavourite {

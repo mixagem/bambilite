@@ -2,40 +2,43 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { IUserSettings } from '../interfaces/UserSettings';
 import { LoginChannelResult, SubjectChannelsService } from './subject-channels.service';
-import { Subject, catchError, retry, throwError } from 'rxjs';
+import { Observable, Subject, catchError, retry, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LandingPageSnackComponent } from '../components/snackbars/landing-page-snack/landing-page-snack.component';
 import { Router } from '@angular/router';
 import { AppSnackComponent } from '../components/snackbars/app-snack/app-snack.component';
+import { Locales, AppTheme, AppLanguage } from '../interfaces/Generic';
 
-export type AppTheme = 'waikiki' | 'vice'
-export type AppLanguage = 'pt' | 'uk' | 'es'
-type Locales = { [key: string]: string }
+
 type LoginObject = { validLogin: boolean; userSettings?: IUserSettings; details?: string }
 
-
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 
 export class BambiService {
 
+	// cons
 	BACKEND_URL: string = 'http://localhost/bambiapi/';
 	APP_VER: string = '2000';
 	LOCALES: Locales;
 	SESSION_LOOP: ReturnType<typeof setInterval> | null;
 
+	// vars
 	appTheme: AppTheme;
 	appLang: AppLanguage;
 	authorizedLogin: boolean = false;
 	userInfo: IUserSettings;
 
+	// middlemans
 	tempB64Img: string = "";
 	deleteSelection: string[] = [];
 
 	menuOpen: boolean;
 
-	constructor(private _http: HttpClient, private _channelsService: SubjectChannelsService, private _snackBar: MatSnackBar, private _router: Router) {
+	constructor(
+		private _http: HttpClient,
+		private _channelsService: SubjectChannelsService,
+		private _snackBar: MatSnackBar,
+		private _router: Router) {
 
 		this.LOCALES = {};
 		this.appTheme = this.LastThemeUsed();
@@ -66,7 +69,7 @@ export class BambiService {
 		return lastThemeUsed ? lastThemeUsed : 'waikiki';
 	}
 
-	GetLocales(lang: AppLanguage) {
+	GetLocales(lang: AppLanguage): void {
 		const call = this._http.get(`./assets/locales/bambi-locales-${lang}.json`)
 		call.subscribe({
 			next: (locales) => {
@@ -79,7 +82,7 @@ export class BambiService {
 		});
 	}
 
-	API(endpoint: string, httpParameters: HttpParams | null = null, extraParameters?: { [key: string]: string | number | boolean }) {
+	API(endpoint: string, httpParameters: HttpParams | null = null, extraParameters?: { [key: string]: string | number | boolean }): void {
 
 		const call = httpParameters ? this._http.post(this.BACKEND_URL + endpoint + '.php', httpParameters, { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
@@ -179,7 +182,7 @@ export class BambiService {
 		});
 	}
 
-	ImageUpload(file: File) {
+	ImageUpload(file: File): void {
 		const formData = new FormData();
 		formData.append('file', file);
 		const call = this._http.post(this.BACKEND_URL + 'imgupload.php', formData, { responseType: 'text' }).pipe(
@@ -194,8 +197,7 @@ export class BambiService {
 		});
 	}
 
-
-	Disconnect(softDisconnect: boolean = false) {
+	Disconnect(softDisconnect: boolean = false): void {
 		this.appLang = 'pt'
 		this.appTheme = 'waikiki'
 		this.userInfo = {
@@ -217,12 +219,12 @@ export class BambiService {
 		this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.appTheme}-snack`], data: { label: softDisconnect ? 'APPSNACKS.SOFTDISCONNECT' : 'APPSNACKS.HARDDISCONNECT', emoji: '🪂' } })
 	}
 
-	LiveSession() {
+	LiveSession(): void {
 		const httpParams = new HttpParams().set('username', this.userInfo.username).set('cookie', this.userInfo.cookie);
 		this.SESSION_LOOP = setInterval(() => { this.API('livesession', httpParams); }, 10000);
 	}
 
-	private handleError(error: HttpErrorResponse) {
+	private handleError(error: HttpErrorResponse): Observable<never> {
 		if (error.status === 0) {
 			// A client-side or network error
 			console.error('An error occurred:', error.error);

@@ -3,9 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 
 export class HeaderService {
 
@@ -13,8 +11,8 @@ export class HeaderService {
 		simpleQueryFormControl: new FormControl('')
 	})
 
-
-	constructor(public router: Router) {
+	constructor(
+		public router: Router) {
 	}
 
 

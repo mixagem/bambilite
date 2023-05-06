@@ -10,7 +10,9 @@ import { HeaderBreadcumbsService } from './header-breadcumbs.service';
 
 export class HeaderBreadcumbsComponent {
 
-	constructor(public breadcumbsService: HeaderBreadcumbsService, public bambiService:BambiService) {
+	constructor(
+		public breadcumbsService: HeaderBreadcumbsService,
+		public bambiService: BambiService) {
 
 	}
 }

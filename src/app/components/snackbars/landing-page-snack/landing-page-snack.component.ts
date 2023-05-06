@@ -10,6 +10,9 @@ type LandingPageSnackbar = { label: string, emoji: string }
 })
 
 export class LandingPageSnackComponent {
+
 	snackBarRef = inject(MatSnackBarRef);
-	constructor(@Inject(MAT_SNACK_BAR_DATA) public data : LandingPageSnackbar) { }
+
+	constructor(
+		@Inject(MAT_SNACK_BAR_DATA) public data: LandingPageSnackbar) { }
 }

@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 type MenuSubEntry = { title: string, id: string, route: string }
 type MenuEntry = { title: string, id: string, icon: string, route: string, subEntries: MenuSubEntry[] }
 
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
+
 export class BambiMenuService {
 
 	menuOpen: boolean;
@@ -15,17 +14,7 @@ export class BambiMenuService {
 	constructor() {
 		this.menuOpen = false;
 
-		// dashboard - mostra vários cartões de evoluções (peso do user, peso que consegue levantar no exercício X, última vez que fez o exercício Y, última vez que comeu K, etc etc etc...)
-
-		// bobybuilding - regimes - template de dias detalhados de treinos + suplementação (a 7, 14 ou 28 dias)
-
-		// calendario - vista geral - mostra alimentações (imagem das categorias de piteu consumido), suplementação (imagens do tipo de suplementação) e musculação (imagens das categorias de musculos)
-		// calendário - evolução - track diário de peso (registos á la c/c)
-
-		// parâmetros - utilizador e app
-
-
-
+		// to replace with backend generated menu
 		this.bambiMenu = [
 			{ title: 'APPMENU.DASHBOARD', id: 'dashboard', icon: 'space_dashboard', route: '/dashboard', subEntries: [] },
 			{
@@ -52,15 +41,15 @@ export class BambiMenuService {
 			{ title: 'APPMENU.SETTINGS', id: 'settings', icon: 'manage_accounts', route: '/dashboard', subEntries: [] },
 		]
 
-
-		this.groupControl = { 'title': false, 'snippets': false } //for each main entry that has subEntries
+		// to replace with an foreach (received menus that need control from db)
+		this.groupControl = { 'title': false, 'snippets': false }
 	}
 
-	ToggleMenu(operation: 'open' | 'close') {
+	ToggleMenu(operation: 'open' | 'close'): void {
 		operation === 'open' ? this.menuOpen = true : this.menuOpen = false;
 	}
 
-	ToggleGroup(groupID: string) {
+	ToggleGroup(groupID: string): void {
 		this.groupControl[`${groupID}`] = !this.groupControl[`${groupID}`]
 	}
 }
