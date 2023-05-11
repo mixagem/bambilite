@@ -1,89 +1,92 @@
-
-
 <div class="mainform-header">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
 		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}} -
 			{{!!productDetailsDraft.title ? !!productDetailsDraft.stamp ? 'A editar' : 'A duplicar' : 'A introduzir'}}
-			 {{!!productDetailsDraft.title ? productDetailsDraft.title:''}}</h1>
+			{{!!productDetailsDraft.title ? productDetailsDraft.title:''}}</h1>
 	</div>
 
 	<div class="header-actions">
-		<!-- ^^ to replace with chip -->
-		<button mat-mini-fab color="primary" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
-		<button mat-mini-fab color="warn" (click)="closeEditMode()"><mat-icon>close</mat-icon></button>
+		<span class="default-status" *ngIf="!isDiscarding">
+			<button mat-mini-fab color="primary" [disabled]="!productForm.valid" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
+			<button mat-mini-fab color="warn" (click)="isDiscarding = true"><mat-icon>close</mat-icon></button>
+		</span>
+		<span class="default-status" *ngIf="isDiscarding">
+			<span class="animate__animated animate__fadeInRight" style="padding-right:10px;">You sure?</span>
+			<button mat-mini-fab color="primary" class="animate__animated animate__headShake"
+				(click)="closeEditMode()"><mat-icon>check</mat-icon></button>
+			<button mat-mini-fab color="warn" (click)="isDiscarding = false"><mat-icon>close</mat-icon></button>
+		</span>
 	</div>
 
 </div>
 <div class="mainform-content">
 
 	<ng-scrollbar>
-		<div id="product-edit-form" [formGroup]="productForm" style="display: flex;padding: 20px;">
+		<div id="product-edit-form" [formGroup]="productForm">
 
-			<div class="product-edit-left" style="width:50%;margin-right: 10px;">
+			<div class="product-edit-left">
 
-
-				<div class="img-picker-wrapper"
-					style="margin: 20px auto 45px;width: 156px;height: 156px;cursor: pointer;">
-
-					<div class="img-picker-pic-wrapper"
-						style="width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;border-width: 6px;margin: auto;">
-						<img [src]="fdService.tempB64Img"></div>
-
-					<div class="img-picker-pic-wrapper picker-controller bambi-fx-15-inline" (click)="newPicUpload()"
-						style="position:relative;top:-156px;width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid 6px transparent;margin: auto;justify-content:center;align-items: center;">
+				<div class="img-picker-wrapper">
+					<div class="img-picker-pic-wrapper">
+						<img [src]="fdService.tempB64Img">
+					</div>
+					<div class="img-picker-pic-wrapper picker-controller bambi-fx-15-inline" (click)="newPicUpload()">
 						<mat-icon>add_a_photo</mat-icon>
 					</div>
-
 				</div>
 
-				<mat-form-field appearance="outline" style="width:50%" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}}</mat-label>
-					<input matInput formControlName="kcal">
-					<span style="padding-right:15px;" matSuffix>Kcal</span>
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
+					<span matSuffix>Kcal</span>
 				</mat-form-field>
 
-				<mat-form-field appearance="outline" style="width:50%" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}}</mat-label>
-					<input matInput formControlName="price">
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
 					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>
 
-				<mat-form-field appearance="outline" style="width:50%" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.UNIT' | translation}}</mat-label>
-					<input matInput formControlName="unit">
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNIT' | translation}}</mat-label>
+					<mat-select class="bambi-fx-15 bambi-fx-30-inline" formControlName="unit" style="margin-top: 13px;">
+						<mat-option *ngFor="let option of defaultOptions" [value]="option.value">
+							{{option.title}}
+						</mat-option>
+					</mat-select>
 					<mat-icon matSuffix>square_foot</mat-icon>
 				</mat-form-field>
 
-				<mat-form-field appearance="outline" style="width:50%" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.UNITVALUE' | translation}}</mat-label>
-					<input matInput formControlName="unitvalue">
-					<span style="padding-right:15px;" matSuffix>{{productForm.get('unit')!.value}}</span>
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNITVALUE' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="unitvalue">
+					<span matSuffix>{{productForm.get('unit')!.value}}</span>
 				</mat-form-field>
 
-				<div class="checkbox-wrapper" style="width: 50%;padding-left: 20px;display: inline-block;"><mat-checkbox
-						color="accent" formControlName="public">{{'FOOD.PRODUCTS.EDITING.PUBLIC' |
+				<div class="checkbox-wrapper"><mat-checkbox color="accent"
+						formControlName="public">{{'FOOD.PRODUCTS.EDITING.PUBLIC' |
 						translation}}</mat-checkbox></div>
 
-				<div class="checkbox-wrapper" style="width: 50%;padding-left: 20px;display: inline-block"><mat-checkbox
-						color="accent" formControlName="inactive">{{'FOOD.PRODUCTS.EDITING.INACTIVE' |
+				<div class="checkbox-wrapper"><mat-checkbox color="accent"
+						formControlName="inactive">{{'FOOD.PRODUCTS.EDITING.INACTIVE' |
 						translation}}</mat-checkbox>
 				</div>
 
 			</div>
 
 
-			<div class="product-edit-right" style="width:50%;margin-left: 10px;">
+			<div class="product-edit-right">
 
-				<mat-form-field appearance="outline" style="width:100%" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.TITLE' | translation}}</mat-label>
-					<input matInput formControlName="title">
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.TITLE' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="title">
 					<mat-icon matSuffix>title</mat-icon>
 				</mat-form-field>
 
-				<mat-form-field class="example-chip-list" appearance="outline" style="width:100%;min-height:160px;" color="accent">
-					<mat-label>{{'FOOD.PRODUCTS.EDITING.TAGS' | translation}}</mat-label>
-					<mat-chip-grid style="padding-top: 10px;" #chipGrid>
+				<mat-form-field class="product-chip-list" appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.TAGS' | translation}}</mat-label>
+					<mat-chip-grid #chipGrid>
 						<mat-chip-row *ngFor="let tag of productDetailsDraft.tags" (removed)="removeTag(tag)"
 							[editable]="true" (edited)="editTag(tag, $event)">
 							{{tag}}
@@ -91,10 +94,9 @@
 								<mat-icon>cancel</mat-icon>
 							</button>
 						</mat-chip-row>
-						<input style="height: 32px!important;"
-							placeholder="{{'FOOD.PRODUCTS.EDITING.NEWTAG' | translation}}" [matChipInputFor]="chipGrid"
-							[matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
-							(matChipInputTokenEnd)="addTag($event)" />
+						<input placeholder="{{'FOOD.PRODUCTS.EDITING.NEWTAG' | translation}}"
+							[matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+							[matChipInputAddOnBlur]="true" (matChipInputTokenEnd)="addTag($event)" />
 					</mat-chip-grid>
 				</mat-form-field>
 

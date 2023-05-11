@@ -19,7 +19,7 @@ export class FdService {
 	drawerFadeout: boolean = false;
 
 	// current previewd product
-	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
 
 	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';
@@ -92,6 +92,7 @@ export class FdService {
 			}
 		});
 	}
+
 
 	// error handler
 	private handleError(error: HttpErrorResponse) {

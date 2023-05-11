@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { BambiService } from 'src/app/services/bambi.service';
 import { MatPaginator } from '@angular/material/paginator';
-import {  ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
+import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
 import { FdService } from '../fd.service';
 import { HttpParams } from '@angular/common/http';
 import { IListProduct } from 'src/app/interfaces/Fd';
@@ -131,7 +131,7 @@ export class ProductsComponent implements OnInit {
 			image: '',
 			tags: [],
 			kcal: 0,
-			unit: '',
+			unit: 'g',
 			unitvalue: 0,
 			price: 0,
 			owner: this.bambiService.userInfo.username,

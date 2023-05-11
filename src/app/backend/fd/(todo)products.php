@@ -85,6 +85,7 @@ switch ($operation) {
 
 	case 'getqueriedlist':
 		$query = strtolower($_POST["query"]);
+		$query = str_replace("'","''",$query);
 		$OR_CLAUSE = "LOWER(title) LIKE '%" . $query . "%' OR LOWER(tags) LIKE '%" . $query . "%'";
 
 		if (is_numeric($query)) {
@@ -157,9 +158,9 @@ switch ($operation) {
 			LeggeraError($products_object, $SQL_CON, "user-not-owner");
 			return;
 		}
-
+		str_replace("'","''",$product['title']);
 		// validations over, product collection
-		$SQL_QUERY = "UPDATE products SET title = '" . $product['title'] . "', kcal = " . $product['kcal'] . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . $product['unitvalue'] . ", price = " . $product['price'] . ", tags = '" . json_encode($product['tags']) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
+		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'","''",$product['title']) . "', kcal = " . str_replace("'","''",$product['kcal']) . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . str_replace("'","''",$product['unitvalue']) . ", price = " . str_replace("'","''",$product['price']) . ", tags = '" . str_replace("'","''",json_encode($product['tags'])) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
@@ -176,7 +177,9 @@ switch ($operation) {
 
 		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . $product['title'] . "'," . $product['kcal'] . ",'" . $product['image'] . "','" . $product['unit'] . "'," . $product['unitvalue'] . "," . $product['price'] . ",'" . json_encode($product['tags']) . "','" . $owner . "', " . $product['timestamp'] . " )";
+
+		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'","''",$product['title']) . "'," . str_replace("'","''",$product['kcal']) . ",'" . $product['image'] . "','" . $product['unit'] . "'," . str_replace("'","''",$product['unitvalue']) . "," . str_replace("'","''",$product['price']) . ",'" . str_replace("'","''",json_encode($product['tags'])) . "','" . $owner . "', " . $product['timestamp'] . " )";
+
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error creating element

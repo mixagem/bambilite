@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { LoginChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
 import { BambiService } from 'src/app/services/bambi.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { LandingPageSnackComponent } from 'src/app/components/snackbars/landing-page-snack/landing-page-snack.component';
 import { LoginSnackComponent } from 'src/app/components/snackbars/login-snack/login-snack.component';
 

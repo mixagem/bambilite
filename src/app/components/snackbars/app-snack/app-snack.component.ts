@@ -10,7 +10,7 @@ type AppSnackbar = { label: string, emoji: string }
 })
 
 export class AppSnackComponent {
-	
+
 	snackBarRef = inject(MatSnackBarRef);
 
 	constructor(

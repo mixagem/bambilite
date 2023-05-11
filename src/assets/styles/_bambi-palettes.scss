@@ -152,6 +152,10 @@
 	}
 
 	@if $isDarkTheme {
+		#app-wrapper {
+			background: #222;
+		}
+
 		.dialog-details-wrapper {
 			color: rgba(255, 255, 255, 0.87);
 		}

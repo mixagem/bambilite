@@ -17,6 +17,7 @@ export class SubjectChannelsService {
 	productUpdateChannel: Subject<ProductChannelResult>;
 	productDeleteChannel: Subject<ProductChannelResult>;
 	imageUploadChannel: Subject<ImageChannelResult>;
+	discardChangesChannel: Subject<true>;
 
 	constructor() {
 		this.cookieLoginChannel = new Subject<LoginChannelResult>;
@@ -26,6 +27,7 @@ export class SubjectChannelsService {
 		this.productUpdateChannel = new Subject<ProductChannelResult>;
 		this.productDeleteChannel = new Subject<ProductChannelResult>;
 		this.imageUploadChannel = new Subject<ImageChannelResult>;
+		this.discardChangesChannel = new Subject<true>;
 	}
 
 	CookieLoginChannelFire(result: boolean, errorCode: string = ''): void {
@@ -57,6 +59,10 @@ export class SubjectChannelsService {
 
 	ImageUploadChannelFire(result: boolean, imageB64: string, errorCode: string = ''): void {
 		this.imageUploadChannel.next({ sucess: result, b64: imageB64, details: errorCode });
+	}
+
+	discardChangesChannelFire(): void {
+		this.discardChangesChannel.next(true);
 	}
 
 }

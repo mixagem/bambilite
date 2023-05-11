@@ -1,29 +1,53 @@
-# frontend
-1. css tabela main-form (modo lista)
-2. open from component (mat dialog, injetar data "a la mat-snackbar"? )
-3. :hover image picker (tirar opacity do mat icon e repensar esquema de cores)
-4. material paginator language
-5. strandardizar dialogs
-6. strandardizar snackbars
-7. terminar refract css/html
-8. 4th mat color? (sucess/green)
+# ts
+2. material paginator language
+3. 4th mat color (sucess/green)
 
+# css / html
+1. tabela produtos main-form (modo lista)
+2. :hover image picker redo
 
-# backend
-1. menu factory
-2. sql sanitize
-3. refract php
+# mobile
+1. componentes próprios para formfield com inputs a la bootstrap, para dar resposta para vista mobile
+2. vista mobile nos restantes componentes
 
+# php
+1. refract php
+2. password hash and salt
 
 # hybrid
-1. shared products brainstorm
-2. product search (turbinar procura)
-3. inactive products brainstorm
+1. menu factory
+2. product - last consumed
 
+# whiteboard
+1. shared products brainstorm ✅
+  \-> flag invisivel que serve apenas para fornecer ao utilizador os produtos default.
+  \-> o utilizador pode esconder todos, e duplicar. nao pode apagar nem editar.
+  \-> futuramente ao tratar da entidade de consumos, o utilizador logo pode alterar os valores que preferir.
+  \-> estes valores são guardados apenas numa coluna na tabela de consumos, no formato json[worst case, fazer mais uma tabela, consumos lines ]
 
-# new features
-1. advanced search
+2. inactive products brainstorm ✅
+  \-> flag que serve para esconder o produto dos autocompletes de receitas e consumos
+  \-> posso deixar apagar qualquer registo. como na coleção dos consumos tenho os detalhes que preciso e o stamp original, sempre que consultar um consumo com um registo apagado (tenmho de fazer query para ir ler aimagem) dou disable á navegação e mostro uma imagem generica (posso tambem mostrar um badge so naquela just like)
 
+3. simple search ✅
+	3.1 - adicionar mais campos para procura exata
+
+				SELECT * FROM PRODUCTS WHERE
+					COL1 = X OR COL2 = X OR COL3 = X OR COL[unitvalue]COL[unit] = X
+														^^ suportar pesquisa de medidas definidas (p.e. 100g)
+
+	3.2. - turbinar procura simples
+	\-> fazemos slice ao input (transformar em array)
+	\-> executar uma segunda query, na qual o array de slices é uma AND clause
+
+				SELECT * FROM PRODUCTS WHERE
+					COL1 = X OR COL2 = X OR COL3 = X
+					AND
+					COL1 = Y OR COL2 = Y OR COL3 = Y
+					AND
+					COL1 = Z OR COL2 = Z OR COL3 = Z
+
+	\-> fazer união com distinct das queries 3.1 e 3.2
 
 # menus yet to build
 * dashboard - mostra vários cartões de evoluções (peso do user, peso que consegue levantar no exercício X, última vez que fez o exercício Y, última vez que comeu K, etc etc etc...)
@@ -31,3 +55,33 @@
 * calendario - vista geral - mostra alimentações (imagem das categorias de piteu consumido), suplementação (imagens do tipo de suplementação) e musculação (imagens das categorias de musculos)
 * calendário - evolução - track diário de peso (registos á la c/c)
 * parâmetros - utilizador e app
+
+
+
+# v2
+* advanced search -
+
+# mainform produtos
+1. redo campos nutricionais e preço:
+
+	unidade de medida 🚧 -> só pode ser gramas, ou millilitros
+	valor unidade de medida 🚧 - > peso/volume de 1 qtd
+	Kcal 🚧
+		\-> kcal de 1 qtd
+		\-> kcal 100g / 100ml   (ao preencher 1, calcula o outro)
+	Preço 🚧
+		\-> € por qtd
+		\-> € por Kg / Lt       (ao preencher 1, calcula o outro)
+
+
+		details:
+
+		[valor][unidade]
+		kcal / qtd (kcal/100 invi)
+		preço unit:    ||      preço kg
+									^ booleano na ficha de artigo (exibir preço alternativo)
+
+
+
+1.2
+	ao utilizar o produto, escolho se consumi qtd ou gramas/millilitros

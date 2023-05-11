@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FdService } from 'src/app/main/mainforms/fd/fd.service';
 import { BambiService } from 'src/app/services/bambi.service';

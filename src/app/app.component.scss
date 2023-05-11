@@ -1,16 +1,3 @@
-
-.bambi-theme {
-	#app-wrapper {
-		background: #eee;
-	}
-}
-
-.vice-theme {
-	#app-wrapper {
-		background: #222;
-	}
-}
-
 #app-wrapper {
 	display: flex;
 	width: 100%;
@@ -27,10 +14,12 @@
 	#content-wrapper {
 		width: 100%;
 		height: 100%;
+		
 		bambi-header {
 			height: 70px;
 			width: 100%;
 		}
+
 		#router-wrapper{
 			height: calc(100% - 70px);
 			width: 100%;

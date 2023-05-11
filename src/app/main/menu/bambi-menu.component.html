@@ -1,6 +1,5 @@
 <div id="global-menu-wrapper" class="bambi-fx-10-inline" [ngClass]="menuService.menuOpen ? 'menu-open' : 'menu-close'">
 
-
 	<ng-container *ngIf="menuService.menuOpen">
 		<div id="open-menu-wrapper" [ngClass]="bambiService.appTheme + '-theme'">
 			<div class="menu-entry menu-toggler" (click)="menuService.ToggleMenu('close')">

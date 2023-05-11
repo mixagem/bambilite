@@ -11,7 +11,7 @@ function CookieGenerator($stampsize = 25)
 	return $randomString;
 }
 
-$username = $_POST["username"];
+$username = str_replace("'","''",$_POST["username"]);
 $password = $_POST["password"];
 
 header('Access-Control-Allow-Origin: *');

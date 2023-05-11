@@ -12,20 +12,24 @@
 
 		<div class="dialog-header-actions" *ngIf="!deletingRecord">
 
-			<button mat-mini-fab color="primary" [disabled]="!loadingComplete"
-				 (click)="recordOperation('clone')">
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
+				(click)="recordOperation('delete')">
+				<mat-icon>delete</mat-icon>
+			</button>
+
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete" (click)="recordOperation('clone')">
 				<mat-icon>file_copy</mat-icon>
 			</button>
 
 			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || fdService.productDetails.public"
-				 (click)="recordOperation('update')">
+				(click)="recordOperation('update')">
 				<mat-icon>edit</mat-icon>
 			</button>
-
-			<button mat-mini-fab color="warn" [disabled]="!loadingComplete || fdService.productDetails.public"
-				 (click)="recordOperation('delete')">
-				<mat-icon>delete</mat-icon>
+			
+			<button mat-mini-fab color="warn" mat-dialog-close>
+				<mat-icon>close</mat-icon>
 			</button>
+
 		</div>
 		<div class="dialog-header-actions" *ngIf="deletingRecord">
 		</div>
@@ -41,10 +45,9 @@
 
 			<div class="scrollbar-details-wrapper">
 
-				<div class="product-info-left" style="height:100%;width:30%;display: flex;">
-					<div class="product-mini-info" style="width:100%;display: flex;flex-direction: column;">
-						<img src="{{fdService.productDetails.image}}"
-							style="max-width: 100%;margin:0 auto 5px;border-radius: 25%;">
+				<div class="product-info-left">
+					<div class="product-mini-info">
+						<img src="{{fdService.productDetails.image}}">
 						<div><mat-icon color="primary"
 								fontSet="material-icons-outlined">bolt</mat-icon><span>{{fdService.productDetails.kcal}}
 								kcal</span></div>
@@ -60,28 +63,30 @@
 				</div>
 
 
-				<div class="product-info-right" style="height:100%;width:70%;display: flex;flex-direction: column;">
-					<div class="product-title" style="margin-bottom: 10px;">
-						<h1 style="margin:0">{{fdService.productDetails.title}}</h1>
+				<div class="product-info-right">
+					<div class="product-title">
+						<h1>{{fdService.productDetails.title}}</h1>
 					</div>
 
-					<p class="product-chips" style="margin-bottom: 10px;">
+					<p class="product-chips">
 						<mat-chip-listbox>
 							<mat-chip-option disabled
 								*ngFor="let tag of fdService.productDetails.tags">{{tag}}</mat-chip-option>
 						</mat-chip-listbox>
 					</p>
 
-					<div class="recipes-list" class="animate__animated animate__fadeIn" *ngIf="!deletingRecord"
-						style="display: flex;align-items: center;justify-content: center;">
+					<div class="recipes-list animate__animated animate__fadeIn" *ngIf="!deletingRecord">
 						aqui a lista de receitas que utilizam este produto</div>
 
 
-					<div class="delete-confirmation" *ngIf="deletingRecord" class="animate__animated animate__fadeIn" style="padding-top:10px;">
-						<p style="text-align:center">{{'FOOD.PRODUCTS.DETAILS.TEXT-1' | translation}}<br>{{'FOOD.PRODUCTS.DETAILS.TEXT-2' | translation}}</p>
-						<div style="display: flex;align-items: center;justify-content: center;padding-top:10px;">
-							<button mat-stroked-button color="warn" (click)="deletingRecord = false" style="margin: 0 10px">{{'APP.GENERIC.CANCEL' | translation}}</button>
-							<button mat-dialog-close mat-flat-button color="warn" (click)="deleteRecord()" style="margin: 0 5px">{{'FOOD.PRODUCTS.DETAILS.DELETEBUTTON' | translation}}</button>
+					<div *ngIf="deletingRecord" class="delete-confirmation animate__animated animate__fadeIn">
+						<p>{{'FOOD.PRODUCTS.DETAILS.TEXT-1' | translation}}<br>{{'FOOD.PRODUCTS.DETAILS.TEXT-2' |
+							translation}}</p>
+						<div>
+							<button mat-stroked-button color="warn"
+								(click)="deletingRecord = false">{{'APP.GENERIC.CANCEL' | translation}}</button>
+							<button mat-dialog-close mat-flat-button color="warn"
+								(click)="deleteRecord()">{{'FOOD.PRODUCTS.DETAILS.DELETEBUTTON' | translation}}</button>
 						</div>
 					</div>
 

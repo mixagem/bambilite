@@ -5,6 +5,9 @@
 }
 
 .product-mini-info {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 	mat-icon {
 		margin-right: 10px;
 	}
@@ -17,9 +20,61 @@
 			margin-top: 4px;
 		}
 	}
+
+	img {
+		max-width: 100%;
+		margin: 0 auto 5px;
+		border-radius: 25%;
+	}
 }
 
 .product-info-left,
 .product-info-right {
 	padding: 0 10px;
+	height: 100%;
+	display: flex;
+}
+
+.product-info-left {
+	width: 30%;
+}
+
+.product-info-right {
+	width: 70%;
+	flex-direction: column;
+
+	.product-title {
+		margin-bottom: 10px;
+		h1 {
+			margin: 0;
+		}
+	}
+
+	.product-chips {
+		margin-bottom: 10px;
+	}
+
+	.recipes-list {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.delete-confirmation {
+		padding-top: 10px;
+
+		p {
+			text-align: center;
+		}
+
+		div {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding-top: 10px;
+			button {
+				margin: 0 10px;
+			}
+		}
+	}
 }

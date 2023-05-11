@@ -5,7 +5,7 @@ import { AppSnackComponent } from '../components/snackbars/app-snack/app-snack.c
 import { PipesModule } from './pipes.module';
 import { MenuSidebarComponent } from '../main/menu/bambi-menu.component';
 import { HeaderComponent } from '../main/header/header.component';
-import { HeaderBreadcumbsComponent } from '../main/header-breadcumbs/header-breadcumbs.component';
+import { HeaderBreadcumbsComponent } from '../main/(header-breadcumbs)/header-breadcumbs.component';
 import { MaterialImportsModule } from './material-imports.module';
 import { RouterModule } from '@angular/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';

@@ -9,11 +9,16 @@ import { BambiService } from 'src/app/services/bambi.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpParams } from '@angular/common/http';
 import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject, map, startWith } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { NavigationStart, Router } from '@angular/router';
 import { HeaderService } from 'src/app/main/header/header.service';
+
+type AutocompleteOption = {
+	title: string,
+	value: string
+}
 
 @Component({
 	selector: 'bl-product-edit',
@@ -21,12 +26,25 @@ import { HeaderService } from 'src/app/main/header/header.service';
 	styleUrls: ['./product-edit.component.scss']
 })
 
+
 export class ProductEditComponent implements OnInit {
 	// progress bar control
 	loadingComplete: boolean = false;
 
+	defaultOptions: AutocompleteOption[] = [
+		{ title: "Grama (g)", value: "g" },
+		{ title: "Kilograma (kg)", value: "kg" },
+		{ title: "Mililitro (ml)", value: "ml" },
+		{ title: "Litro (L)", value: "L" }
+	]
+
+	filteredOptions: Observable<AutocompleteOption[]> = new Observable<AutocompleteOption[]>;
+
 	// operation type (new / update) control
 	isNewProduct: boolean = false;
+
+	// discard control
+	isDiscarding: boolean = false;
 
 	// mat-chips input separator
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
@@ -78,7 +96,9 @@ export class ProductEditComponent implements OnInit {
 
 		// disabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
+
 	}
+
 
 	ngOnDestroy(): void {
 		// subs
@@ -95,10 +115,19 @@ export class ProductEditComponent implements OnInit {
 				case 'stamp':
 				case 'owner':
 				case 'tags':
-				case 'image': // fields not to create form control
+				case 'image':
+					// fields not to create form control
 					break;
-				case 'title': //required fields
+				case 'unit':
+				case 'title':
+					// required fields
 					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key], [Validators.required]));
+					break;
+				case 'kcal':
+				case 'unitvalue':
+				case 'price':
+					// number patterns validator
+					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key], [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,2}){0,1}$")]));
 					break;
 				default:
 					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key as keyof typeof this.productDetailsDraft]));
@@ -106,6 +135,7 @@ export class ProductEditComponent implements OnInit {
 		});
 	}
 
+	// Validators.pattern("^[0-9]*$")
 	// mainform action click
 	saveProduct(): void {
 		this.loadingComplete = false;
