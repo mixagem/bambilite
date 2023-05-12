@@ -11,15 +11,16 @@ import { HttpParams } from '@angular/common/http';
 import { FdService, RecipeChannelResult } from '../fd.service';
 import { RecipesService } from './recipes.service';
 import { MatPaginator } from '@angular/material/paginator';
+import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 
 @Component({
-	selector: 'bl-recipebook',
-	templateUrl: './recipebook.component.html',
-	styleUrls: ['./recipebook.component.scss']
+	selector: 'bl-recipes',
+	templateUrl: './recipes.component.html',
+	styleUrls: ['./recipes.component.scss']
 })
 
 
-export class RecipebookComponent implements OnInit, OnDestroy {
+export class RecipesComponent implements OnInit, OnDestroy {
 	//progress bar control
 	loadingComplete: boolean = false;
 
@@ -157,7 +158,11 @@ export class RecipebookComponent implements OnInit, OnDestroy {
 			}
 		}
 
-		
-	showDetails(x:any){}
+
+		// product details dialog
+		showDetails(productstamp: string): void {
+			this._dialog.open(RecipeDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
+			this.recipeService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
+		}
 
 }

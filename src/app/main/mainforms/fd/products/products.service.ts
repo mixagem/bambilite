@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsProduct, IListProduct } from 'src/app/interfaces/Fd';
+import { IDetailsProduct,  IListProduct } from 'src/app/interfaces/Fd';
 import { BambiService } from 'src/app/services/bambi.service';
 import { FdService } from '../fd.service';
 
@@ -88,79 +88,6 @@ export class ProductsService {
 		});
 	}
 
-	GetPriceByRatio(price: number, unitvalue: number, unit: string): number {
-
-		let ajustedPriced = 0;
-
-		if (isNaN(price)) { return ajustedPriced }
-
-		switch (unit) {
-			case 'L': case 'kg':
-				ajustedPriced = price / unitvalue
-				break;
-			case 'ml': case 'g':
-				ajustedPriced = (1000 * price / unitvalue)
-				break;
-		}
-
-		return Number(ajustedPriced.toFixed(3));
-
-	}
-
-	GetPriceByQuantity(price: number, unitvalue: number, unit: string): number {
-
-		let ajustedPriced = 0;
-
-		if (isNaN(price)) { return ajustedPriced }
-
-		switch (unit) {
-			case 'L': case 'kg':
-				ajustedPriced = unitvalue * price
-				break;
-			case 'ml': case 'g':
-				ajustedPriced = unitvalue / 1000 * price
-				break;
-		}
-
-		return Number(ajustedPriced.toFixed(3));
-
-	}
-
-	GetKcalBy100(kcal: number, unitvalue: number, unit: string): number {
-
-		let ajustedKcals = 0;
-
-		if (isNaN(kcal)) { return ajustedKcals }
-
-		switch (unit) {
-			case 'L': case 'kg':
-				ajustedKcals = kcal / unitvalue / 10
-				break;
-			case 'ml': case 'g':
-				ajustedKcals = kcal / unitvalue * 100
-				break;
-		}
-
-		return Number(ajustedKcals.toFixed(3));
-	}
-
-	GetKcal(kcalby100: number, unitvalue: number, unit: string): number {
-
-		let ajustedKcals = 0;
-
-		if (isNaN(kcalby100)) { return ajustedKcals }
-
-		switch (unit) {
-			case 'L': case 'kg':
-				ajustedKcals = kcalby100 * 10 * unitvalue
-				break;
-			case 'ml': case 'g':
-				ajustedKcals = kcalby100 / 100 * unitvalue
-				break;
-		}
-
-		return Number(ajustedKcals.toFixed(3));
-	}
 
 
 	// error handler

@@ -151,6 +151,10 @@ switch ($operation) {
 			return;
 		}
 		$product = json_decode($_POST["product"], true);
+
+		if ($product['inactive'] == '') {
+			$product['inactive'] = 0;
+		}
 		// get og owner
 		$SQL_QUERY = "SELECT owner FROM products WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
@@ -173,7 +177,8 @@ switch ($operation) {
 		}
 		str_replace("'", "''", $product['title']);
 		// validations over, product collection
-		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'", "''", $product['title']) . "', kcal = " . str_replace("'", "''", $product['kcal']) . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . str_replace("'", "''", $product['unitvalue']) . ", price = " . str_replace("'", "''", $product['price']) . ", tags = '" . str_replace("'", "''", json_encode($product['tags'])) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
+		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'", "''", $product['title']) . "', kcal = " . str_replace("'", "''", $product['kcal']) . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . str_replace("'", "''", $product['unitvalue']) . ", price = " . str_replace("'", "''", $product['price']) . ", tags = '" . str_replace("'", "''", json_encode($product['tags'])) . "', timestamp = " . $product['timestamp'] . ", inactive = " . $product['inactive'] . " WHERE stamp = '" . $product['stamp'] . "'";
+
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
@@ -194,8 +199,11 @@ switch ($operation) {
 		$product = json_decode($_POST["product"], true);
 		$stampgen = LeggeraStamp();
 
+		if ($product['inactive'] == '') {
+			$product['inactive'] = false;
+		}
 
-		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $product['title']) . "'," . str_replace("'", "''", $product['kcal']) . ",'" . $product['image'] . "','" . $product['unit'] . "'," . str_replace("'", "''", $product['unitvalue']) . "," . str_replace("'", "''", $product['price']) . ",'" . str_replace("'", "''", json_encode($product['tags'])) . "','" . $owner . "', " . $product['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp,inactive) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $product['title']) . "'," . str_replace("'", "''", $product['kcal']) . ",'" . $product['image'] . "','" . $product['unit'] . "'," . str_replace("'", "''", $product['unitvalue']) . "," . str_replace("'", "''", $product['price']) . ",'" . str_replace("'", "''", json_encode($product['tags'])) . "','" . $owner . "', " . $product['timestamp'] . ", " . $product['inactive'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 

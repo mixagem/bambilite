@@ -6,7 +6,7 @@
 
 	<div id="input-section" class="header-section">
 
-		<div id="products-input" class="bambi-fx-15" *ngIf="router.url === '/fd/products'">
+		<div id="products-input" class="bambi-fx-15" *ngIf="simpleQueryAllowedMainforms.includes(router.url)">
 			<form [formGroup]="headerService.inputsForm">
 				<mat-form-field appearance="outline" class="bambi-fx-30-inline no-hint" color="accent">
 					<mat-label class="bambi-fx-15-inline">{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>

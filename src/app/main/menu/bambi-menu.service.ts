@@ -29,7 +29,7 @@ export class BambiMenuService {
 		// 	{
 		// 		title: 'APPMENU.FOOD', id: 'food', icon: 'restaurant_menu', route: '/fd', subEntries: [
 		// 			{ title: 'APPMENU.FOOD.PRODUCTS', id: 'products', route: '/fd/products' },
-		// 			{ title: 'APPMENU.FOOD.RECIPEBOOK', id: 'recipebook', route: '/fd/recipes' },
+		// 			{ title: 'APPMENU.FOOD.RECIPEBOOK', id: 'recipes', route: '/fd/recipes' },
 		// 			{ title: 'APPMENU.FOOD.MEALS', id: 'meals', route: '/fd/meals' }
 		// 		]
 		// 	},

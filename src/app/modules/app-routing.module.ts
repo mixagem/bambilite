@@ -4,7 +4,7 @@ import { DashboardComponent } from '../main/mainforms/dashboard/dashboard.compon
 import { FoodComponent } from '../main/mainforms/fd/food.component';
 import { MealsComponent } from '../main/mainforms/fd/meals/meals.component';
 import { ProductsComponent } from '../main/mainforms/fd/products/products.component';
-import { RecipebookComponent } from '../main/mainforms/fd/recipebook/recipebook.component';
+import { RecipesComponent } from '../main/mainforms/fd/recipes/recipes.component';
 import { ConsumptionComponent } from '../main/mainforms/sp/consumption/consumption.component';
 import { SuplementationComponent } from '../main/mainforms/sp/suplementation.component';
 import { SupplementsComponent } from '../main/mainforms/sp/supplements/supplements.component';
@@ -21,7 +21,7 @@ const routes: Routes = [
 			{
 				path: 'products', component: ProductsComponent
 			}, {
-				path: 'recipes', component: RecipebookComponent
+				path: 'recipes', component: RecipesComponent
 			}, {
 				path: 'meals', component: MealsComponent
 			}]

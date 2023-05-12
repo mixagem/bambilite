@@ -2,6 +2,7 @@
 @use "./assets/styles/bambi-palettes" as lgpal;
 
 @import "./assets/styles/bambi-fx.scss";
+@import "./assets/styles/bambi-mainforms.scss";
 @import "~animate.css/animate.min.css";
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
@@ -39,13 +40,11 @@ $vice-theme: mat.define-dark-theme(
 );
 
 .waikiki-theme {
-	@include mat.core-theme($waikiki-theme);
-	@include mat.all-component-themes($waikiki-theme);
+	@include mat.all-component-colors($waikiki-theme);
 	@include lgpal.theme($waikiki-theme);
 }
 
 .vice-theme {
-	@include mat.core-theme($vice-theme);
 	@include mat.all-component-colors($vice-theme);
 	@include lgpal.theme($vice-theme, true);
 }
@@ -67,133 +66,6 @@ body {
 	overflow-x: hidden;
 }
 
-
-/* default main-forms - list */
-
-//progressbar
-.progress-bar-wrapper {
-	height: 4px;
-}
-
-//mainform header
-.mainform-header {
-	display: flex;
-	justify-content: space-between;
-	height: 80px;
-	padding: 0 30px;
-	* {
-		display: flex;
-		align-items: center;
-	}
-	.header-title {
-		width: 50%;
-		mat-icon {
-			font-size: 30px;
-			width: 30px;
-			height: 30px;
-		}
-		h1 {
-			margin: 0;
-			padding-left: 10px;
-		}
-	}
-	.header-actions {
-		justify-content: flex-end;
-		width: 50%;
-		padding-right: 10px;
-		button {
-			margin: 0 5px;
-		}
-	}
-}
-
-//mainform content (table)
-.mainform-content {
-	margin: 0px 20px;
-	height: calc(100vh - 4px - 80px - 70px);
-	display: flex;
-	flex-direction: column;
-	table {
-		overflow: hidden;
-		//transition fix
-
-		mat-chip {
-			margin: 0 5px;
-		}
-	}
-}
-
-// transparent table paginators
-.mat-mdc-paginator {
-	background: transparent !important;
-}
-
-// record details (mat-dialog structure)
-
-.master-dialog-wrapper {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-
-	.dialog-header-wrapper {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		height: 75px;
-		width: 100%;
-		padding: 0px 20px;
-
-		.dialog-header-title {
-			height: 100%;
-			display: flex;
-			align-items: center;
-			font-size: 20px;
-			mat-icon {
-				margin-top: -1px;
-			}
-			span {
-				padding-left: 10px;
-			}
-		}
-
-		.dialog-header-actions {
-			button {
-				margin: 0 5px;
-			}
-		}
-	}
-
-	.dialog-details-wrapper {
-		padding: 0px 20px;
-		height: calc(100% - 75px - 4px); //75 from header, 4 from progress-bar
-		.ng-scroll-content {
-			height: 100%;
-		}
-
-		.scrollbar-details-wrapper {
-			display: flex;
-			flex-wrap: wrap;
-			padding-top: 20px;
-			justify-content: flex-end;
-			height: calc(100% - 40px); //40 from footer actions
-			padding-top: 20px;
-			p {
-				width: 100%;
-			}
-		}
-
-		.dialog-footer-actions-wrapper {
-			height: 40px;
-			display: flex;
-			justify-content: flex-end;
-			margin-top: -10px;
-			button {
-				margin: 0 5px;
-			}
-		}
-	}
-}
 
 /* material overrides */
 mat-form-field {

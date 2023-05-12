@@ -19,7 +19,7 @@
 		background-color: mat.get-color-from-palette($primary-palette);
 	}
 	// chip modo edição
-	#product-edit-form {
+	#record-edit-form {
 		mat-chip-row {
 			background-color: mat.get-color-from-palette($accent-palette);
 			@if ($isDarkTheme) {
@@ -141,8 +141,11 @@
 
 @mixin generic($theme, $isDarkTheme: false) {
 	$color-config: mat.get-color-config($theme);
-	$accent-palette: map.get($color-config, "accent");
+	$warn-palette: map.get($color-config, "warn");
 
+	.discarding-label {
+		color: mat.get-color-from-palette($warn-palette);
+	}
 	.mat-mdc-table {
 		background: transparent !important;
 	}

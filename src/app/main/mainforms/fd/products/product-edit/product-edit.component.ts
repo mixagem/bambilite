@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductsService } from '../products.service';
 import { IDetailsProduct } from 'src/app/interfaces/Fd';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -8,7 +8,7 @@ import { ImageUploadComponent } from 'src/app/components/image-upload/image-uplo
 import { BambiService } from 'src/app/services/bambi.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpParams } from '@angular/common/http';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { NavigationStart, Router } from '@angular/router';
@@ -27,9 +27,22 @@ type AutocompleteOption = {
 })
 
 
-export class ProductEditComponent implements OnInit {
+export class ProductEditComponent implements OnInit, OnDestroy{
+	// product details clone (so we can freely change and discard changes without BD calls)
+	productDetailsDraft: IDetailsProduct
+
+	// form
+	productForm: FormGroup = new FormGroup({});
+
+
 	// progress bar control
-	loadingComplete: boolean = false;
+	loadingComplete: boolean = true;
+
+	// operation type (new / update) control
+	isNewProduct: boolean = false;
+
+	// discard control
+	isDiscarding: boolean = false;
 
 	defaultOptions: AutocompleteOption[] = [
 		{ title: "Grama (g)", value: "g" },
@@ -40,26 +53,8 @@ export class ProductEditComponent implements OnInit {
 
 	filteredOptions: Observable<AutocompleteOption[]> = new Observable<AutocompleteOption[]>;
 
-	// operation type (new / update) control
-	isNewProduct: boolean = false;
-
-	// discard control
-	isDiscarding: boolean = false;
-
 	// mat-chips input separator
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
-
-	// product details clone (so we can freely change and discard changes without BD calls)
-	productDetailsDraft: IDetailsProduct
-
-	/*
-	[user uploads here>] bambiService -> uploaded/reseted image used in the imagepicker component.
-	[if he accepts the changes in the imagepicker>] productsService -> image of the current draft, used in the edit view and imagepicker component
-	[if he saves the changes to the record, we productDetailsDraft -> first record's image - not used because we need middleman (productsService) beeween the imagepicker and this component
-	*/
-
-	// form
-	productForm: FormGroup = new FormGroup({});
 
 	constructor(
 		public productsService: ProductsService,
@@ -89,43 +84,46 @@ export class ProductEditComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.formControlsUpdate();
+		// disabling header search input
+		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
 
 		// subs
 		this.fdService.productUpdateChannel = new Subject<ProductChannelResult>;
 		this.fdService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
 
-		// disabling header search input
-		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
-
-		this.productForm.get('price')!.valueChanges.subscribe((price: number) => {
-			if (!price || isNaN(Number(price))) { return }
-			this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(price, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		// automatic calculations
+		this.productForm.get('price')!.valueChanges.subscribe(_ => {
+			if (!_ || isNaN(Number(_)) || _ == 0) { return }
+			this.productForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
 		})
 
-		this.productForm.get('pricebyratio')!.valueChanges.subscribe((pricebyratio: number) => {
-			if (!pricebyratio || isNaN(Number(pricebyratio))) { return }
-			this.productForm.get('price')!.setValue(this.productsService.GetPriceByQuantity(pricebyratio, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		this.productForm.get('pricebyratio')!.valueChanges.subscribe(_ => {
+			if (!_ || isNaN(Number(_)) || _ == 0) { return }
+			this.productForm.get('price')!.setValue(this.fdService.GetPriceByQuantity(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
 		})
 
-		this.productForm.get('unit')!.valueChanges.subscribe(_ => { this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, _), { emitEvent: false }) })
+		this.productForm.get('unit')!.valueChanges.subscribe(_ => {
+			this.productForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, _), { emitEvent: false })
+			this.productForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, _), { emitEvent: false })
+		})
 
 		this.productForm.get('unitvalue')!.valueChanges.subscribe(_ => {
 			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, _, this.productForm.get('unit')!.value), { emitEvent: false })
+			this.productForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(this.productForm.get('price')!.value, _, this.productForm.get('unit')!.value), { emitEvent: false })
+			this.productForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(this.productForm.get('price')!.value, _, this.productForm.get('unit')!.value), { emitEvent: false })
 		})
 
 		this.productForm.get('kcal')!.valueChanges.subscribe(_ => {
 			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.productForm.get('kcalby100')!.setValue(this.productsService.GetKcalBy100(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+			this.productForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
 		})
 
 		this.productForm.get('kcalby100')!.valueChanges.subscribe(_ => {
 			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.productForm.get('kcal')!.setValue(this.productsService.GetKcal(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+			this.productForm.get('kcal')!.setValue(this.fdService.GetKcal(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
 		})
 
 	}
-
 
 	ngOnDestroy(): void {
 		// subs
@@ -134,6 +132,20 @@ export class ProductEditComponent implements OnInit {
 		this.productsService.tempB64Img = '';
 		// re-enabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.enable({ emitEvent: false });
+	}
+
+	discardPrompt(operation: 'open' | 'close'): void {
+
+		switch (operation) {
+			case 'open':
+				this.productForm.disable({emitEvent:false})
+				this.isDiscarding = true;
+				break;
+			case 'close':
+				this.productForm.enable({emitEvent:false})
+				this.isDiscarding = false;
+				break;
+		}
 	}
 
 	generateFormControls(): void {
@@ -161,13 +173,12 @@ export class ProductEditComponent implements OnInit {
 			}
 		});
 
-		let pbr = this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
-		let kb1 = this.productsService.GetKcalBy100(this.productForm.get('kcal')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
+		let pbr = this.fdService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
+		let kb1 = this.fdService.GetKcalBy100(this.productForm.get('kcal')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
 
-		this.productForm.addControl('pricebyratio', new FormControl(isNaN(pbr)? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
-
-		this.productForm.addControl('kcalby100', new FormControl(isNaN(kb1)? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]))
-
+		this.productForm.addControl('pricebyratio', new FormControl(isNaN(pbr) ? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
+		this.productForm.addControl('kcalby100', new FormControl(isNaN(kb1) ? 0 : kb1, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]))
+		this.productForm.addControl('chipgrid', new FormControl())
 	}
 
 	// Validators.pattern("^[0-9]*$")

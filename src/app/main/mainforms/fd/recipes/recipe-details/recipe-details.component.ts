@@ -1,19 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { ProductsService } from '../products.service';
-import { Subject } from 'rxjs';
 import { BambiService } from 'src/app/services/bambi.service';
-import { HttpParams } from '@angular/common/http';
+import { FdService, RecipeChannelResult } from '../../fd.service';
+import { RecipesService } from '../recipes.service';
+import { Subject } from 'rxjs/internal/Subject';
 import { RecordOperation } from 'src/app/interfaces/Generic';
-import { FdService, ProductChannelResult } from '../../fd.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
-	selector: 'bl-product-details',
-	templateUrl: './product-details.component.html',
-	styleUrls: ['./product-details.component.scss']
+	selector: 'bl-recipe-details',
+	templateUrl: './recipe-details.component.html',
+	styleUrls: ['./recipe-details.component.scss']
 })
 
-export class ProductDetailsComponent implements OnInit, OnDestroy {
+export class RecipeDetailsComponent implements OnInit, OnDestroy {
 	// progress bar control
 	loadingComplete: boolean = false;
 
@@ -21,25 +21,26 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 	deletingRecord: boolean = false;
 
 	constructor(
-		public productsService: ProductsService,
+		public recipesService: RecipesService,
 		private _dialogRef: MatDialogRef<any>,
 		private _bambiService: BambiService,
 		public fdService: FdService) { }
 
 	ngOnInit(): void {
 		// subs
-		this.fdService.productDetailsChannel = new Subject<ProductChannelResult>;
-		this.fdService.productDetailsChannel.subscribe(result => { this.showProductDetails(result); });
+		this.fdService.recipeDetailsChannel = new Subject<RecipeChannelResult>;
+		this.fdService.recipeDetailsChannel.subscribe(result => { this.showProductDetails(result); });
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.fdService.productDetailsChannel.complete();
+		this.fdService.recipeDetailsChannel.complete();
 	}
 
+
 	// fire details modal
-	showProductDetails(result: ProductChannelResult): void {
-		if (result.sucess) { this.productsService.productDetails = result.product!; }
+	showProductDetails(result: RecipeChannelResult): void {
+		if (result.sucess) { this.recipesService.recipeDetails = result.recipe!; }
 		this.loadingComplete = true;
 	}
 
@@ -48,10 +49,10 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 		switch (operation) {
 			case 'update': case 'clone':
 				if (operation === 'clone') {
-					this.productsService.productDetails.stamp = ''
-					this.productsService.productDetails.public = false
-					this.productsService.productDetails.inactive = false
-				 }
+					this.recipesService.recipeDetails.stamp = ''
+					this.recipesService.recipeDetails.public = false
+					this.recipesService.recipeDetails.inactive = false
+				}
 				this.fdService.drawerOpen = true;
 				this._dialogRef.close();
 				break;
@@ -63,13 +64,11 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 	// delete confirmed
 	deleteRecord(): void {
-		this.productsService.API('delete',
+		this.recipesService.API('delete',
 			new HttpParams()
 				.set('operation', 'delete')
 				.set('owner', this._bambiService.userInfo.username)
 				.set('cookie', this._bambiService.userInfo.cookie)
-				.set('stamps', this.productsService.productDetails.stamp))
+				.set('stamps', this.recipesService.recipeDetails.stamp))
 	}
-
 }
-

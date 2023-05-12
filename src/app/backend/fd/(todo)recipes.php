@@ -1,6 +1,8 @@
 <?php
 
-if(!isset($_POST["operation"]) || !isset($_POST["owner"]) || !isset($_POST["cookie"]) ){return;}
+if (!isset($_POST["operation"]) || !isset($_POST["owner"]) || !isset($_POST["cookie"])) {
+	return;
+}
 
 $operation = $_POST["operation"];
 $owner = $_POST["owner"];
@@ -86,11 +88,11 @@ switch ($operation) {
 
 	case 'getqueriedlist':
 		if (!isset($_POST["query"])) {
-			LeggeraError($products_object, $SQL_CON, "no-query-provided");
+			LeggeraError($recipes_object, $SQL_CON, "no-query-provided");
 			return;
 		}
 		$query = strtolower($_POST["query"]);
-		$query = str_replace("'","''",$query);
+		$query = str_replace("'", "''", $query);
 		$OR_CLAUSE = "LOWER(title) LIKE '%" . $query . "%' OR LOWER(tags) LIKE '%" . $query . "%'";
 
 		if (is_numeric($query)) {
@@ -118,7 +120,7 @@ switch ($operation) {
 
 	case 'getdetails':
 		if (!isset($_POST["stamp"])) {
-			LeggeraError($products_object, $SQL_CON, "no-stamp-provided");
+			LeggeraError($recipes_object, $SQL_CON, "no-stamp-provided");
 			return;
 		}
 		$recipesstamp = $_POST["stamp"];
@@ -145,12 +147,14 @@ switch ($operation) {
 		return;
 
 	case 'update':
-		if (!isset($_POST["recipe"])) {
-			LeggeraError($products_object, $SQL_CON, "no-product-provided");
+		if (!isset($_POST["record"])) {
+			LeggeraError($recipes_object, $SQL_CON, "no-product-provided");
 			return;
 		}
-		$recipe = json_decode($_POST["recipe"], true);
-
+		$recipe = json_decode($_POST["record"], true);
+		if ($recipe['inactive'] == '') {
+			$recipe['inactive'] = false;
+		}
 		// get og owner
 		$SQL_QUERY = "SELECT owner FROM recipes WHERE stamp = '" . $recipe['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
@@ -171,9 +175,9 @@ switch ($operation) {
 			LeggeraError($recipes_object, $SQL_CON, "user-not-owner");
 			return;
 		}
-		str_replace("'","''",$recipe['title']);
+		str_replace("'", "''", $recipe['title']);
 		// validations over, recipe collection
-		$SQL_QUERY = "UPDATE recipes SET title = '" . str_replace("'","''",$recipe['title']) . "', kcal = " . str_replace("'","''",$recipe['kcal']) . ", image = '" . $recipe['image'] . "', unit = '" . $recipe['unit'] . "', unitvalue = " . str_replace("'","''",$recipe['unitvalue']) . ", price = " . str_replace("'","''",$recipe['price']) . ", tags = '" . str_replace("'","''",json_encode($recipe['tags'])) . "', timestamp = " . $recipe['timestamp'] . " WHERE stamp = '" . $recipe['stamp'] . "'";
+		$SQL_QUERY = "UPDATE recipes SET title = '" . str_replace("'", "''", $recipe['title']) . "', kcal = " . str_replace("'", "''", $recipe['kcal']) . ", image = '" . $recipe['image'] . "', unit = '" . $recipe['unit'] . "', unitvalue = " . str_replace("'", "''", $recipe['unitvalue']) . ", price = " . str_replace("'", "''", $recipe['price']) . ", tags = '" . str_replace("'", "''", json_encode($recipe['tags'])) . "', timestamp = " . $recipe['timestamp'] . " WHERE stamp = '" . $recipe['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
@@ -186,15 +190,19 @@ switch ($operation) {
 		return;
 
 	case 'new':
-		if (!isset($_POST["recipe"])) {
-			LeggeraError($products_object, $SQL_CON, "no-product-provided");
+		if (!isset($_POST["record"])) {
+			LeggeraError($recipes_object, $SQL_CON, "no-product-provided");
 			return;
 		}
-		$recipe = json_decode($_POST["recipe"], true);
 
+		$recipe = json_decode($_POST["record"], true);
+
+		if ($recipe['inactive'] == '') {
+			$recipe['inactive'] = false;
+		}
 		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'","''",$recipe['title']) . "'," . str_replace("'","''",$recipe['kcal']) . ",'" . $recipe['image'] . "','" . $recipe['unit'] . "'," . str_replace("'","''",$recipe['unitvalue']) . "," . str_replace("'","''",$recipe['price']) . ",'" . str_replace("'","''",json_encode($recipe['tags'])) . "','" . $owner . "', " . $recipe['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $recipe['title']) . "'," . str_replace("'", "''", $recipe['kcal']) . ",'" . $recipe['image'] . "','" . $recipe['unit'] . "'," . str_replace("'", "''", $recipe['unitvalue']) . "," . str_replace("'", "''", $recipe['price']) . ",'" . str_replace("'", "''", json_encode($recipe['tags'])) . "','" . $owner . "', " . $recipe['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
@@ -209,7 +217,7 @@ switch ($operation) {
 
 	case 'delete':
 		if (!isset($_POST["stamps"])) {
-			LeggeraError($products_object, $SQL_CON, "no-stamplist-provided");
+			LeggeraError($recipes_object, $SQL_CON, "no-stamplist-provided");
 			return;
 		}
 		$recipestamps_str = str_replace(" ", "", $_POST["stamps"]);

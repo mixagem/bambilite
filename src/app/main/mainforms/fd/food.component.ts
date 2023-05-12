@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FdService } from './fd.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'bl-food',
@@ -10,6 +11,7 @@ import { FdService } from './fd.service';
 export class FoodComponent {
 
 	constructor(
-		public fdService: FdService) { }
+		public fdService: FdService,
+		public router: Router) { }
 
 }

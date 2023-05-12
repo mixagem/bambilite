@@ -7,10 +7,7 @@ import { FdService } from '../fd.service';
 
 type RecipeObject = { sucess: boolean; recipeList?: IListRecipe[]; recipeDetails?: IDetailsRecipe; details?: string }
 
-
-@Injectable({
-	providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 
 export class RecipesService {
 	// progress bar control
@@ -18,6 +15,9 @@ export class RecipesService {
 
 	// current previewd product
 	recipeDetails: IDetailsRecipe = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+
+	// middleman beetween imagepicker and components)
+	tempB64Img: string = '';
 
 	constructor(
 		private _http: HttpClient,

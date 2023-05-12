@@ -1,0 +1,316 @@
+/* default main-forms - list */
+
+//progressbar
+.progress-bar-wrapper {
+	height: 4px;
+}
+
+//mainform header
+.mainform-header {
+	display: flex;
+	justify-content: space-between;
+	height: 80px;
+	padding: 0 30px;
+	* {
+		display: flex;
+		align-items: center;
+	}
+	.header-title {
+		width: 50%;
+		mat-icon {
+			font-size: 30px;
+			width: 30px;
+			height: 30px;
+		}
+		h1 {
+			margin: 0;
+			padding-left: 10px;
+		}
+	}
+	.header-actions {
+		justify-content: flex-end;
+		width: 50%;
+		padding-right: 10px;
+		button {
+			margin: 0 5px;
+		}
+		.discarding-label {
+			font-weight: 500;
+			padding-right: 10px;
+		}
+	}
+}
+
+//mainform content (table)
+.mainform-content {
+	margin: 0px 20px;
+	height: calc(100vh - 4px - 80px - 70px);
+	display: flex;
+	flex-direction: column;
+	table {
+		overflow: hidden;
+		//transition fix
+
+		mat-chip {
+			margin: 0 5px;
+		}
+	}
+}
+
+// transparent table paginators
+.mat-mdc-paginator {
+	background: transparent !important;
+}
+
+// record details (mat-dialog structure)
+
+.master-dialog-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	.dialog-header-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 75px;
+		width: 100%;
+		padding: 0px 20px;
+
+		.dialog-header-title {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			font-size: 20px;
+			mat-icon {
+				margin-top: -1px;
+			}
+			span {
+				padding-left: 10px;
+			}
+		}
+
+		.dialog-header-actions {
+			button {
+				margin: 0 5px;
+			}
+		}
+	}
+
+	.dialog-details-wrapper {
+		padding: 0px 20px;
+		height: calc(100% - 75px - 4px); //75 from header, 4 from progress-bar
+		.ng-scroll-content {
+			height: 100%;
+		}
+
+		.scrollbar-details-wrapper {
+			display: flex;
+			flex-wrap: wrap;
+			padding-top: 20px;
+			justify-content: flex-end;
+			height: calc(100% - 40px); //40 from footer actions
+			padding-top: 20px;
+			p {
+				width: 100%;
+			}
+		}
+
+		.dialog-footer-actions-wrapper {
+			height: 40px;
+			display: flex;
+			justify-content: flex-end;
+			margin-top: -10px;
+			button {
+				margin: 0 5px;
+			}
+		}
+	}
+}
+
+// details
+.picker-controller {
+	opacity: 0;
+	overflow: hidden;
+	mat-icon {
+		font-size: 48px;
+		height: 48px;
+		width: 48px;
+	}
+}
+
+.img-picker-wrapper:hover {
+	.img-picker-pic-wrapper.picker-controller {
+		opacity: 0.4;
+	}
+}
+
+#record-edit-form {
+	display: flex;
+	padding: 40px 20px 20px 20px;
+
+	.record-edit-left {
+		width: 50%;
+		margin-right: 10px;
+
+		.img-picker-wrapper {
+			margin: 25px auto 70px;
+			width: 156px;
+			height: 156px;
+			cursor: pointer;
+
+			.img-picker-pic-wrapper {
+				width: 156px;
+				height: 156px;
+				overflow: clip;
+				display: flex;
+				border-radius: 25%;
+				margin: auto;
+
+				border-style: solid;
+				border-width: 6px;
+				&.picker-controller {
+					position: relative;
+					top: -156px;
+					border-style: solid 6px transparent;
+					justify-content: center;
+					align-items: center;
+				}
+			}
+		}
+
+		mat-form-field {
+			width: 45%;
+			margin: 0 2.5%;
+			span {
+				padding-right: 15px;
+			}
+		}
+
+		.checkbox-wrapper {
+			width: 50%;
+			padding-left: 20px;
+			display: inline-block;
+		}
+	}
+
+	.record-edit-right {
+		width: 50%;
+		margin-left: 10px;
+
+		.mdc-evolution-chip-set {
+			.mdc-evolution-chip {
+				height: 26px;
+			}
+		}
+
+		mat-form-field {
+			width: 90%;
+			margin: 0 5%;
+
+			&.record-chip-list {
+				min-height: 160px;
+			}
+
+			mat-chip-grid {
+				padding-top: 10px;
+
+				input {
+					height: 32px !important;
+				}
+			}
+		}
+
+		.recipe-wrapper {
+			width: 100%;
+		}
+	}
+
+	mat-select {
+		margin-top: 13px;
+	}
+}
+
+// details
+
+.dialog-details-wrapper {
+	.mat-mdc-standard-chip.mdc-evolution-chip--disabled {
+		opacity: 1;
+	}
+}
+
+.record-mini-info {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	mat-icon {
+		margin-right: 10px;
+	}
+
+	div {
+		display: flex;
+		align-content: center;
+		margin: 5px auto;
+		span {
+			margin-top: 4px;
+		}
+	}
+
+	img {
+		max-width: 100%;
+		margin: 0 auto 5px;
+		border-radius: 25%;
+	}
+}
+
+.record-info-left,
+.record-info-right {
+	padding: 0 10px;
+	height: 100%;
+	display: flex;
+}
+
+.record-info-left {
+	width: 30%;
+}
+
+.record-info-right {
+	width: 70%;
+	flex-direction: column;
+
+	.record-title {
+		margin-bottom: 10px;
+		h1 {
+			margin: 0;
+		}
+	}
+
+	.record-chips {
+		margin-bottom: 10px;
+	}
+
+	.recipes-list {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.delete-confirmation {
+		padding-top: 10px;
+
+		p {
+			text-align: center;
+		}
+
+		div {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding-top: 10px;
+			button {
+				margin: 0 10px;
+			}
+		}
+	}
+}
