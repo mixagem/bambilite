@@ -25,12 +25,12 @@ export class RecipesComponent implements OnInit, OnDestroy {
 	loadingComplete: boolean = false;
 
 	// mainform list
-	recipeList: IListRecipe[] = [];
+	recordList: IListRecipe[] = [];
 	dataSource: MatTableDataSource<IListRecipe> = new MatTableDataSource<IListRecipe>;
 	displayedColumns: string[] = ['check', 'image', 'title', 'tags'];
 
 	// checkboxes control
-	selectedRecipes: string[] = [];
+	selectedRecods: string[] = [];
 
 	constructor(
 		public bambiService: BambiService,
@@ -45,8 +45,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
 		this._fdService.recipeListChannel = new Subject<RecipeChannelResult>;
 		this._fdService.recipeDeleteChannel = new Subject<RecipeChannelResult>;
 
-		this._fdService.recipeListChannel.subscribe(result => { this.showRecipeList(result); });
-		this._fdService.recipeDeleteChannel.subscribe(result => { this.refreshRecipeListFromDelete(result); });
+		this._fdService.recipeListChannel.subscribe(result => { this.showRecordList(result); });
+		this._fdService.recipeDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
 
 		this.recipeService.API('getlist',new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
 	}
@@ -59,16 +59,16 @@ export class RecipesComponent implements OnInit, OnDestroy {
 	}
 
 	// listing (triggered by load subject)
-	showRecipeList(result: RecipeChannelResult): void {
+	showRecordList(result: RecipeChannelResult): void {
 		if (result.sucess) {
-			this.recipeList = result.recipes!;
-			this.dataSource = new MatTableDataSource<IListRecipe>(this.recipeList);
+			this.recordList = result.recordList!;
+			this.dataSource = new MatTableDataSource<IListRecipe>(this.recordList);
 		}
 
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'no-recipes-found':
-					this.recipeList = [];
+					this.recordList = [];
 					break;
 
 				case 'offline': default:
@@ -82,9 +82,9 @@ export class RecipesComponent implements OnInit, OnDestroy {
 	}
 
 	// introduction mode
-	addNewRecipe(): void {
+	addNewRecord(): void {
 		this._fdService.drawerOpen = true;
-		this.recipeService.recipeDetails = {
+		this.recipeService.recordDetails = {
 			stamp: '',
 			title: '',
 			image: '',
@@ -102,17 +102,17 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
 	// delete selected records
 	deleteSelected(): void {
-		this.bambiService.deleteSelection = this.selectedRecipes;
+		this.bambiService.deleteSelection = this.selectedRecods;
 		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.bambiService.appTheme + '-theme'] });
 	}
 
 	// listing (triggered by delete subject)
-	refreshRecipeListFromDelete(result: RecipeChannelResult): void {
+	refreshRecordListFromDelete(result: RecipeChannelResult): void {
 		// sucessfull deleted records
 		if (result.sucess) {
 			// reseting selection array
 			this.bambiService.deleteSelection = [];
-			this.selectedRecipes = [];
+			this.selectedRecods = [];
 
 			// snackbar fire
 			result.details === "user-owns-some" ?
@@ -147,14 +147,14 @@ export class RecipesComponent implements OnInit, OnDestroy {
 			const newTarget = target as HTMLInputElement;
 
 			// adding
-			if (newTarget.checked && !this.selectedRecipes.includes(stamp)) { this.selectedRecipes.push(stamp); }
+			if (newTarget.checked && !this.selectedRecods.includes(stamp)) { this.selectedRecods.push(stamp); }
 
 			// removing
-			if (!newTarget.checked && this.selectedRecipes.includes(stamp)) {
-				const productIndex = this.selectedRecipes.indexOf(stamp);
-				const slice1 = this.selectedRecipes.slice(0, productIndex);
-				const slice2 = this.selectedRecipes.slice(productIndex + 1);
-				this.selectedRecipes = [...slice1, ...slice2];
+			if (!newTarget.checked && this.selectedRecods.includes(stamp)) {
+				const productIndex = this.selectedRecods.indexOf(stamp);
+				const slice1 = this.selectedRecods.slice(0, productIndex);
+				const slice2 = this.selectedRecods.slice(productIndex + 1);
+				this.selectedRecods = [...slice1, ...slice2];
 			}
 		}
 

@@ -1,5 +1,24 @@
 <?php
 
+//gestão de suplementos
+//
+
+/*
+
+tabelas sql - suplements c/c
+quantidade entrada
+quantidade saída
+data adquisição -
+data validade -
+preço
+
+
+campos virutais suplements
+
+	snapshot com validades
+*/
+
+
 if (!isset($_POST["operation"]) || !isset($_POST["owner"]) || !isset($_POST["cookie"])) {
 	return;
 }
@@ -67,16 +86,16 @@ if (mysqli_affected_rows($SQL_CON) !== 1) {
 switch ($operation) {
 
 	case 'getlist':
-		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE owner = '" . $owner . "' OR public = 1 ORDER BY timestamp desc";
+		$SQL_QUERY = "SELECT stamp,title,image,tags FROM supplements WHERE owner = '" . $owner . "' OR public = 1 ORDER BY timestamp desc";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no products found
+		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($record_object, $SQL_CON, "no-products-found");
+			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
 			return;
 		}
 
-		// products loop
+		// supplements loop
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -98,17 +117,17 @@ switch ($operation) {
 		if (is_numeric($query)) {
 			$OR_CLAUSE .= " OR kcal LIKE '%" . $query . "%' OR unitvalue LIKE '%" . $query . "%' OR price LIKE '%" . $query . "%'";
 		}
-		$SQL_QUERY = "SELECT stamp,title,image,tags FROM products WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
+		$SQL_QUERY = "SELECT stamp,title,image,tags FROM supplements WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no products found
+		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($record_object, $SQL_CON, "no-products-found");
+			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
 			return;
 		}
 
-		// products loop
+		// supplements loop
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -123,17 +142,18 @@ switch ($operation) {
 			LeggeraError($record_object, $SQL_CON, "no-stamp-provided");
 			return;
 		}
-		$recordstamp = $_POST["stamp"];
-		$SQL_QUERY = "SELECT * FROM products WHERE stamp = '" . $recordstamp . "'";
+		$srecordstamp = $_POST["stamp"];
+
+		$SQL_QUERY = "SELECT * FROM supplements WHERE stamp = '" . $srecordstamp . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no product found
+		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "no-products-found");
+			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
 			return;
 		}
 
-		// fetching product details
+		// fetching supplements details
 		$record_object["recordDetails"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -147,21 +167,20 @@ switch ($operation) {
 
 	case 'update':
 		if (!isset($_POST["record"])) {
-			LeggeraError($record_object, $SQL_CON, "no-product-provided");
+			LeggeraError($record_object, $SQL_CON, "no-supplement-provided");
 			return;
 		}
 		$record = json_decode($_POST["record"], true);
-
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
 		}
 		// get og owner
-		$SQL_QUERY = "SELECT owner FROM products WHERE stamp = '" . $record['stamp'] . "'";
+		$SQL_QUERY = "SELECT owner FROM supplements WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// product not found
+		// supplement not found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "product-not-found");
+			LeggeraError($record_object, $SQL_CON, "supplement-not-found");
 			return;
 		}
 
@@ -176,14 +195,13 @@ switch ($operation) {
 			return;
 		}
 		str_replace("'", "''", $record['title']);
-		// validations over, product collection
-		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'", "''", $record['title']) . "', kcal = " . str_replace("'", "''", $record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . str_replace("'", "''", $record['unitvalue']) . ", price = " . str_replace("'", "''", $record['price']) . ", tags = '" . str_replace("'", "''", json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . ", inactive = " . $record['inactive'] . " WHERE stamp = '" . $record['stamp'] . "'";
-
+		// validations over, supplement collection
+		$SQL_QUERY = "UPDATE supplements SET title = '" . str_replace("'", "''", $record['title']) . "', kcal = " . str_replace("'", "''", $record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . str_replace("'", "''", $record['unitvalue']) . ", price = " . str_replace("'", "''", $record['price']) . ", tags = '" . str_replace("'", "''", json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "error-updating-product");
+			LeggeraError($record_object, $SQL_CON, "error-updating-supplement");
 			return;
 		}
 
@@ -192,24 +210,24 @@ switch ($operation) {
 
 	case 'new':
 		if (!isset($_POST["record"])) {
-			LeggeraError($record_object, $SQL_CON, "no-product-provided");
+			LeggeraError($record_object, $SQL_CON, "no-supplement-provided");
 			return;
 		}
 
 		$record = json_decode($_POST["record"], true);
-		$stampgen = LeggeraStamp();
 
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
 		}
+		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp,inactive) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $record['title']) . "'," . str_replace("'", "''", $record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . str_replace("'", "''", $record['unitvalue']) . "," . str_replace("'", "''", $record['price']) . ",'" . str_replace("'", "''", json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . ", " . $record['inactive'] . " )";
+		$SQL_QUERY = "INSERT INTO supplements (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $record['title']) . "'," . str_replace("'", "''", $record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . str_replace("'", "''", $record['unitvalue']) . "," . str_replace("'", "''", $record['price']) . ",'" . str_replace("'", "''", json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error creating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "error-creating-product");
+			LeggeraError($record_object, $SQL_CON, "error-creating-supplement");
 			return;
 		}
 
@@ -225,7 +243,7 @@ switch ($operation) {
 		$recordstamps_arr = explode(",", $recordstamps_str);
 
 		if ($recordstamps_str === "") {
-			LeggeraError($record_object, $SQL_CON, "no-products-selected");
+			LeggeraError($record_object, $SQL_CON, "no-supplements-selected");
 			return;
 		}
 
@@ -235,7 +253,7 @@ switch ($operation) {
 		}
 		$IN_CLAUSE = substr_replace($IN_CLAUSE, "", -1);
 
-		$SQL_QUERY = "SELECT COUNT(owner) as count FROM products WHERE public = 0 AND owner = '" . $owner . "' AND stamp IN (" . $IN_CLAUSE . ")";
+		$SQL_QUERY = "SELECT COUNT(owner) as count FROM supplements WHERE public = 0 AND owner = '" . $owner . "' AND stamp IN (" . $IN_CLAUSE . ")";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		if (mysqli_num_rows($SQL_RUN) === 0) {
@@ -253,12 +271,12 @@ switch ($operation) {
 			return;
 		}
 
-		$SQL_QUERY = "DELETE FROM products WHERE stamp IN (" . $IN_CLAUSE  . ") AND owner = '" . $owner . "' AND public = 0";
+		$SQL_QUERY = "DELETE FROM supplements WHERE stamp IN (" . $IN_CLAUSE  . ") AND owner = '" . $owner . "' AND public = 0";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// products not found
+		// supplement not found
 		if (mysqli_affected_rows($SQL_CON) === 0) {
-			LeggeraError($record_object, $SQL_CON, "error-deleting-products");
+			LeggeraError($record_object, $SQL_CON, "error-deleting-supplement");
 			return;
 		}
 

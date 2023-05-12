@@ -224,6 +224,10 @@ export class BambiService {
 		this.SESSION_LOOP = setInterval(() => { this.API('livesession', httpParams); }, 10000);
 	}
 
+	GetOperationLabel(title:string,stamp:string): string {
+		return !!title ? !!stamp ? 'APP.GENERIC.EDITRECORD' : 'APP.GENERIC.CLONERECORD' : 'APP.GENERIC.NEWRECORD'
+	}
+
 	private handleError(error: HttpErrorResponse): Observable<never> {
 		if (error.status === 0) {
 			// A client-side or network error

@@ -48,7 +48,7 @@ function LeggeraSucess($object, $con, $details = "")
 }
 
 // default state
-$recipes_object = [
+$record_object = [
 	"sucess" => false,
 	"details" => ""
 ];
@@ -59,7 +59,7 @@ $SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 // no owner/cookie match found
 if (mysqli_affected_rows($SQL_CON) !== 1) {
-	LeggeraError($recipes_object, $SQL_CON, "security");
+	LeggeraError($record_object, $SQL_CON, "security");
 	return;
 }
 
@@ -72,23 +72,23 @@ switch ($operation) {
 
 		// no recipes found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($recipes_object, $SQL_CON, "no-recipes-found");
+			LeggeraError($record_object, $SQL_CON, "no-recipes-found");
 			return;
 		}
 
 		// recipes loop
-		$recipes_object["recipeList"] = [];
+		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
-			array_push($recipes_object["recipeList"], $SQL_RESULT_ROW);
+			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 
-		LeggeraSucess($recipes_object, $SQL_CON);
+		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
 	case 'getqueriedlist':
 		if (!isset($_POST["query"])) {
-			LeggeraError($recipes_object, $SQL_CON, "no-query-provided");
+			LeggeraError($record_object, $SQL_CON, "no-query-provided");
 			return;
 		}
 		$query = strtolower($_POST["query"]);
@@ -96,7 +96,7 @@ switch ($operation) {
 		$OR_CLAUSE = "LOWER(title) LIKE '%" . $query . "%' OR LOWER(tags) LIKE '%" . $query . "%'";
 
 		if (is_numeric($query)) {
-			$OR_CLAUSE .= " OR kcal LIKE '%" . $query . "%' OR price LIKE '%" . $query . "%'";
+			$OR_CLAUSE .= " OR kcal LIKE '%" . $query . "%' OR unitvalue LIKE '%" . $query . "%' OR price LIKE '%" . $query . "%'";
 		}
 		$SQL_QUERY = "SELECT stamp,title,image,tags FROM recipes WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
 
@@ -104,64 +104,64 @@ switch ($operation) {
 
 		// no recipes found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($recipes_object, $SQL_CON, "no-recipes-found");
+			LeggeraError($record_object, $SQL_CON, "no-recipes-found");
 			return;
 		}
 
 		// recipes loop
-		$recipes_object["recipeList"] = [];
+		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
-			array_push($recipes_object["recipeList"], $SQL_RESULT_ROW);
+			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 
-		LeggeraSucess($recipes_object, $SQL_CON);
+		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
 	case 'getdetails':
 		if (!isset($_POST["stamp"])) {
-			LeggeraError($recipes_object, $SQL_CON, "no-stamp-provided");
+			LeggeraError($record_object, $SQL_CON, "no-stamp-provided");
 			return;
 		}
-		$recipesstamp = $_POST["stamp"];
+		$recordstamp = $_POST["stamp"];
 
-		$SQL_QUERY = "SELECT * FROM recipes WHERE stamp = '" . $recipesstamp . "'";
+		$SQL_QUERY = "SELECT * FROM recipes WHERE stamp = '" . $recordstamp . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// no recipes found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($recipes_object, $SQL_CON, "no-recipes-found");
+			LeggeraError($record_object, $SQL_CON, "no-recipes-found");
 			return;
 		}
 
 		// fetching recipes details
-		$recipes_object["recipeDetails"] = [];
+		$record_object["recordDetails"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
-			$recipes_object["recipeDetails"] = $SQL_RESULT_ROW;
-			$recipes_object["recipeDetails"]["inactive"] = boolval($recipes_object["recipeDetails"]["inactive"]);
-			$recipes_object["recipeDetails"]["public"] = boolval($recipes_object["recipeDetails"]["public"]);
+			$record_object["recordDetails"] = $SQL_RESULT_ROW;
+			$record_object["recordDetails"]["inactive"] = boolval($record_object["recordDetails"]["inactive"]);
+			$record_object["recordDetails"]["public"] = boolval($record_object["recordDetails"]["public"]);
 		}
 
-		LeggeraSucess($recipes_object, $SQL_CON);
+		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
 	case 'update':
 		if (!isset($_POST["record"])) {
-			LeggeraError($recipes_object, $SQL_CON, "no-product-provided");
+			LeggeraError($record_object, $SQL_CON, "no-recipe-provided");
 			return;
 		}
-		$recipe = json_decode($_POST["record"], true);
-		if ($recipe['inactive'] == '') {
-			$recipe['inactive'] = false;
+		$record = json_decode($_POST["record"], true);
+		if ($record['inactive'] == '') {
+			$record['inactive'] = 0;
 		}
 		// get og owner
-		$SQL_QUERY = "SELECT owner FROM recipes WHERE stamp = '" . $recipe['stamp'] . "'";
+		$SQL_QUERY = "SELECT owner FROM recipes WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// recipe not found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($recipes_object, $SQL_CON, "recipe-not-found");
+			LeggeraError($record_object, $SQL_CON, "recipe-not-found");
 			return;
 		}
 
@@ -172,65 +172,65 @@ switch ($operation) {
 
 		// user not owner
 		if ($ogowner !== $owner) {
-			LeggeraError($recipes_object, $SQL_CON, "user-not-owner");
+			LeggeraError($record_object, $SQL_CON, "user-not-owner");
 			return;
 		}
-		str_replace("'", "''", $recipe['title']);
+		str_replace("'", "''", $record['title']);
 		// validations over, recipe collection
-		$SQL_QUERY = "UPDATE recipes SET title = '" . str_replace("'", "''", $recipe['title']) . "', kcal = " . str_replace("'", "''", $recipe['kcal']) . ", image = '" . $recipe['image'] . "', unit = '" . $recipe['unit'] . "', unitvalue = " . str_replace("'", "''", $recipe['unitvalue']) . ", price = " . str_replace("'", "''", $recipe['price']) . ", tags = '" . str_replace("'", "''", json_encode($recipe['tags'])) . "', timestamp = " . $recipe['timestamp'] . " WHERE stamp = '" . $recipe['stamp'] . "'";
+		$SQL_QUERY = "UPDATE recipes SET title = '" . str_replace("'", "''", $record['title']) . "', kcal = " . str_replace("'", "''", $record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . str_replace("'", "''", $record['unitvalue']) . ", price = " . str_replace("'", "''", $record['price']) . ", tags = '" . str_replace("'", "''", json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($recipes_object, $SQL_CON, "error-updating-recipe");
+			LeggeraError($record_object, $SQL_CON, "error-updating-recipe");
 			return;
 		}
 
-		LeggeraSucess($recipes_object, $SQL_CON);
+		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
 	case 'new':
 		if (!isset($_POST["record"])) {
-			LeggeraError($recipes_object, $SQL_CON, "no-product-provided");
+			LeggeraError($record_object, $SQL_CON, "no-recipe-provided");
 			return;
 		}
 
-		$recipe = json_decode($_POST["record"], true);
+		$record = json_decode($_POST["record"], true);
 
-		if ($recipe['inactive'] == '') {
-			$recipe['inactive'] = false;
+		if ($record['inactive'] == '') {
+			$record['inactive'] = 0;
 		}
 		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $recipe['title']) . "'," . str_replace("'", "''", $recipe['kcal']) . ",'" . $recipe['image'] . "','" . $recipe['unit'] . "'," . str_replace("'", "''", $recipe['unitvalue']) . "," . str_replace("'", "''", $recipe['price']) . ",'" . str_replace("'", "''", json_encode($recipe['tags'])) . "','" . $owner . "', " . $recipe['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $record['title']) . "'," . str_replace("'", "''", $record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . str_replace("'", "''", $record['unitvalue']) . "," . str_replace("'", "''", $record['price']) . ",'" . str_replace("'", "''", json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error creating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($recipes_object, $SQL_CON, "error-creating-recipe");
+			LeggeraError($record_object, $SQL_CON, "error-creating-recipe");
 			return;
 		}
 
-		LeggeraSucess($recipes_object, $SQL_CON);
+		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
 	case 'delete':
 		if (!isset($_POST["stamps"])) {
-			LeggeraError($recipes_object, $SQL_CON, "no-stamplist-provided");
+			LeggeraError($record_object, $SQL_CON, "no-stamplist-provided");
 			return;
 		}
-		$recipestamps_str = str_replace(" ", "", $_POST["stamps"]);
-		$recipestamps_arr = explode(",", $recipestamps_str);
+		$recordstamps_str = str_replace(" ", "", $_POST["stamps"]);
+		$recordstamps_arr = explode(",", $recordstamps_str);
 
-		if ($recipestamps_str === "") {
-			LeggeraError($recipes_object, $SQL_CON, "no-recipes-selected");
+		if ($recordstamps_str === "") {
+			LeggeraError($record_object, $SQL_CON, "no-recipes-selected");
 			return;
 		}
 
 		$IN_CLAUSE = "";
-		foreach ($recipestamps_arr as &$recipestamp) {
-			$IN_CLAUSE .= "'" . $recipestamp . "',";
+		foreach ($recordstamps_arr as &$recordstamp) {
+			$IN_CLAUSE .= "'" . $recordstamp . "',";
 		}
 		$IN_CLAUSE = substr_replace($IN_CLAUSE, "", -1);
 
@@ -238,7 +238,7 @@ switch ($operation) {
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($recipes_object, $SQL_CON, "error-counting-owner-rows");
+			LeggeraError($record_object, $SQL_CON, "error-counting-owner-rows");
 			return;
 		}
 
@@ -248,7 +248,7 @@ switch ($operation) {
 
 
 		if ($rows_owner === 0) {
-			LeggeraError($recipes_object, $SQL_CON, "user-owns-none");
+			LeggeraError($record_object, $SQL_CON, "user-owns-none");
 			return;
 		}
 
@@ -257,10 +257,10 @@ switch ($operation) {
 
 		// recipe not found
 		if (mysqli_affected_rows($SQL_CON) === 0) {
-			LeggeraError($recipes_object, $SQL_CON, "error-deleting-recipe");
+			LeggeraError($record_object, $SQL_CON, "error-deleting-recipe");
 			return;
 		}
 
-		$details = $rows_owner !== count($recipestamps_arr) ? "user-owns-some" : "user-owns-all";
-		LeggeraSucess($recipes_object, $SQL_CON, $details);
+		$details = $rows_owner !== count($recordstamps_arr) ? "user-owns-some" : "user-owns-all";
+		LeggeraSucess($record_object, $SQL_CON, $details);
 }

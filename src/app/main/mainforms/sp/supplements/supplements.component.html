@@ -1,1 +1,73 @@
-<p>supplements works!</p>
+<div class="progress-bar-wrapper"><mat-progress-bar mode="indeterminate" color=warn
+	*ngIf="!loadingComplete || supplementsService.executingQuery"></mat-progress-bar></div>
+
+
+<div class="mainform-header" *ngIf="loadingComplete">
+<div class="header-title">
+	<mat-icon>restaurant_menu</mat-icon>
+	<h1>{{'SUPPLEMENTATION.SUPPLEMENTS.TITLE' | translation}}</h1>
+</div>
+
+<div class="header-actions">
+	<button mat-mini-fab color="primary" (click)="addNewRecord()"><mat-icon>add</mat-icon></button>
+	<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()"
+		*ngIf="!!selectedRecords.length" color="warn"><mat-icon>delete</mat-icon></button>
+</div>
+
+</div>
+<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
+
+<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+
+	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+	<ng-container matColumnDef="check">
+		<th mat-header-cell *matHeaderCellDef style="width:80px;"> </th>
+	</ng-container>
+
+	<ng-container matColumnDef="image">
+		<th mat-header-cell *matHeaderCellDef style="width:150px;"> </th>
+	</ng-container>
+
+	<ng-container matColumnDef="title">
+		<th mat-header-cell *matHeaderCellDef> {{'SUPPLEMENTATION.SUPPLEMENTS.LISTHEADER.TITLE' | translation}} </th>
+	</ng-container>
+
+	<ng-container matColumnDef="tags">
+		<th mat-header-cell *matHeaderCellDef> {{'SUPPLEMENTATION.SUPPLEMENTS.LISTHEADER.TAGS' | translation}} </th>
+	</ng-container>
+</table>
+
+<ng-scrollbar>
+	<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + bambiService.appTheme">
+
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
+
+		<ng-container matColumnDef="check">
+			<td mat-cell *matCellDef="let element" style="width:80px;"><mat-checkbox color=warn
+					(click)="selectItem($event.target!, element.stamp)"></mat-checkbox>
+			</td>
+		</ng-container>
+
+		<ng-container matColumnDef="image">
+			<td mat-cell *matCellDef="let element" (click)="showDetails(element.stamp)"
+				style="padding-top: 5px;width:150px;"><img src="{{element.image}}"
+					style="max-height: 75px;border-radius: 25px;"></td>
+		</ng-container>
+
+		<ng-container matColumnDef="title">
+			<td mat-cell *matCellDef="let element" (click)="showDetails(element.stamp)">{{element.title}}</td>
+		</ng-container>
+
+		<ng-container matColumnDef="tags">
+			<td mat-cell *matCellDef="let element" (click)="showDetails(element.stamp)"><mat-chip
+					*ngFor="let tag of element.tags">{{tag}}</mat-chip></td>
+		</ng-container>
+	</table>
+</ng-scrollbar>
+
+<mat-paginator [pageSizeOptions]="[10]" *ngIf="!this.supplementsService.executingQuery"></mat-paginator>
+</div>
+
+
+<div *ngIf="loadingComplete && !recordList.length">no-records</div>

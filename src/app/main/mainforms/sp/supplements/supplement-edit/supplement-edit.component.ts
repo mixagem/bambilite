@@ -1,19 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ProductsService } from '../products.service';
-import { IDetailsProduct } from 'src/app/interfaces/Fd';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/internal/Observable';
+import { IDetailsSupplement } from 'src/app/interfaces/Sp';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import { ImageUploadComponent } from 'src/app/components/image-upload/image-upload.component';
-import { BambiService } from 'src/app/services/bambi.service';
 import { MatDialog } from '@angular/material/dialog';
-import { HttpParams } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { NavigationStart, Router } from '@angular/router';
 import { HeaderService } from 'src/app/main/header/header.service';
-import { FdService, ProductChannelResult } from '../../fd.service';
+import { BambiService } from 'src/app/services/bambi.service';
+import { FdService, ProductChannelResult } from '../../../fd/fd.service';
+import { ProductsService } from '../../../fd/products/products.service';
+import { SupplementsService } from '../supplements.service';
+import { SpService, SupplementChannelResult } from '../../sp.service';
+import { Subject } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
+import { MatChipInputEvent, MatChipEditedEvent } from '@angular/material/chips';
+import { ImageUploadComponent } from 'src/app/components/image-upload/image-upload.component';
+import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
+
 
 type AutocompleteOption = {
 	title: string,
@@ -21,18 +25,19 @@ type AutocompleteOption = {
 }
 
 @Component({
-	selector: 'bl-product-edit',
-	templateUrl: './product-edit.component.html',
-	styleUrls: ['./product-edit.component.scss']
+	selector: 'bl-supplement-edit',
+	templateUrl: './supplement-edit.component.html',
+	styleUrls: ['./supplement-edit.component.scss']
 })
 
 
-export class ProductEditComponent implements OnInit, OnDestroy {
+export class SupplementEditComponent {
 	// product details clone (so we can freely change and discard changes without BD calls)
-	recordDetailsDraft: IDetailsProduct
+	recordDetailsDraft: IDetailsSupplement
 
 	// form
 	recordForm: FormGroup = new FormGroup({});
+
 
 	// progress bar control
 	loadingComplete: boolean = true;
@@ -56,13 +61,14 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
 	constructor(
-		public productsService: ProductsService,
+		public supplementsService: SupplementsService,
 		public router: Router,
 		public bambiService: BambiService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
-		public fdService: FdService,
+		public spService: SpService,
 		private _headerService: HeaderService) {
+
 
 		// closing drawer on changing to a diffrent fd child
 		router.events.forEach((event) => {
@@ -72,10 +78,10 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		});
 
 		// cloning last preview product
-		this.recordDetailsDraft = this.productsService.recordDetails
+		this.recordDetailsDraft = this.supplementsService.recordDetails
 
-		// productsService clone
-		this.productsService.tempB64Img = this.recordDetailsDraft.image;
+		// supplementsService clone
+		this.supplementsService.tempB64Img = this.recordDetailsDraft.image;
 
 		// form control gen
 		this.generateFormControls();
@@ -87,63 +93,30 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
 
 		// subs
-		this.fdService.productUpdateChannel = new Subject<ProductChannelResult>;
-		this.fdService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
+		this.spService.supplementUpdateChannel = new Subject<SupplementChannelResult>;
+		this.spService.supplementUpdateChannel.subscribe(result => { this.saveFinished(result); });
 
-		// automatic calculations
-		this.recordForm.get('price')!.valueChanges.subscribe(_ => {
-			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.recordForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(_, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value), { emitEvent: false })
-		})
-
-		this.recordForm.get('pricebyratio')!.valueChanges.subscribe(_ => {
-			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.recordForm.get('price')!.setValue(this.fdService.GetPrice(_, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value), { emitEvent: false })
-		})
-
-		this.recordForm.get('unit')!.valueChanges.subscribe(_ => {
-			this.recordForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(this.recordForm.get('price')!.value, this.recordForm.get('unitvalue')!.value, _), { emitEvent: false })
-			this.recordForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(this.recordForm.get('kcal')!.value, this.recordForm.get('unitvalue')!.value, _), { emitEvent: false })
-		})
-
-		this.recordForm.get('unitvalue')!.valueChanges.subscribe(_ => {
-			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.recordForm.get('pricebyratio')!.setValue(this.fdService.GetPriceByRatio(this.recordForm.get('price')!.value, _, this.recordForm.get('unit')!.value), { emitEvent: false })
-			this.recordForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(this.recordForm.get('kcal')!.value, _, this.recordForm.get('unit')!.value), { emitEvent: false })
-		})
-
-		this.recordForm.get('kcal')!.valueChanges.subscribe(_ => {
-			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.recordForm.get('kcalby100')!.setValue(this.fdService.GetKcalBy100(_, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value), { emitEvent: false })
-		})
-
-		this.recordForm.get('kcalby100')!.valueChanges.subscribe(_ => {
-			if (!_ || isNaN(Number(_)) || _ == 0) { return }
-			this.recordForm.get('kcal')!.setValue(this.fdService.GetKcal(_, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value), { emitEvent: false })
-		})
 
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.fdService.productUpdateChannel.complete();
+		this.spService.supplementUpdateChannel.complete();
 		// wise to clean any images that are not used
-		this.productsService.tempB64Img = '';
+		this.supplementsService.tempB64Img = '';
 		// re-enabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.enable({ emitEvent: false });
 	}
-
-
 
 	discardPrompt(operation: 'open' | 'close'): void {
 
 		switch (operation) {
 			case 'open':
-				this.recordForm.disable({ emitEvent: false })
+				this.recordForm.disable({emitEvent:false})
 				this.isDiscarding = true;
 				break;
 			case 'close':
-				this.recordForm.enable({ emitEvent: false })
+				this.recordForm.enable({emitEvent:false})
 				this.isDiscarding = false;
 				break;
 		}
@@ -174,22 +147,20 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		let pbr = this.fdService.GetPriceByRatio(this.recordForm.get('price')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
-		let kb1 = this.fdService.GetKcalBy100(this.recordForm.get('kcal')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
+		let pbr = this.spService.GetPriceByRatio(this.recordForm.get('price')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
+		let kb1 = this.spService.GetKcalBy100(this.recordForm.get('kcal')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
 
 		this.recordForm.addControl('pricebyratio', new FormControl(isNaN(pbr) ? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
 		this.recordForm.addControl('kcalby100', new FormControl(isNaN(kb1) ? 0 : kb1, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]))
 		this.recordForm.addControl('chipgrid', new FormControl())
 	}
 
-	// Validators.pattern("^[0-9]*$")
-	// mainform action click
 	saveRecord(): void {
 		this.loadingComplete = false;
 		this.isNewRecord = !this.recordDetailsDraft.stamp
 
 		this.recordDetailsDraft.timestamp = Date.now();
-		this.recordDetailsDraft.image = this.productsService.tempB64Img;
+		this.recordDetailsDraft.image = this.supplementsService.tempB64Img;
 		this.recordDetailsDraft.kcal = this.recordForm.get('kcal')!.value
 		this.recordDetailsDraft.title = this.recordForm.get('title')!.value
 		this.recordDetailsDraft.unit = this.recordForm.get('unit')!.value
@@ -206,7 +177,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 				.set('owner', this.bambiService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
-		this.productsService.API(operation, httpParams)
+		this.supplementsService.API(operation, httpParams)
 	}
 
 	// triggered by the response from the update product call
@@ -215,12 +186,12 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		// disparar snackbars aqui?
 		if (result.sucess) {
 			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.PRODUCTCREATED' : 'APPSNACKS.PRODUCTUPDATED', emoji: '🥝' } });
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.SUPPLEMENTCREATED' : 'APPSNACKS.SUPPLEMENTUPDATED', emoji: '🥝' } });
 		}
 		else {
 			switch (result.details) {
 				case 'product-not-found':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.PRODUCT-NOTFOUND', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.SUPPLEMENT-NOTFOUND', emoji: '🚫' } });
 					return;
 				case 'user-not-owner':
 					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
@@ -236,14 +207,14 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 	// triggered when update product api call is over, and also when discarding changes
 	closeEditMode(updatedProduct: boolean = false): void {
 		// drawer closing animation
-		this.fdService.drawerFadeout = true;
+		this.spService.drawerFadeout = true;
 		setTimeout(() => {
-			this.fdService.drawerOpen = false;
-			this.fdService.drawerFadeout = false;
+			this.spService.drawerOpen = false;
+			this.spService.drawerFadeout = false;
 		}, 1000);
 
 		if (updatedProduct) {
-			this.productsService.API('getlist',
+			this.supplementsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
 					.set('owner', this.bambiService.userInfo.username)
@@ -287,4 +258,12 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		const index = this.recordDetailsDraft.tags.indexOf(tag);
 		if (index >= 0) { this.recordDetailsDraft.tags[index] = value; }
 	}
+
+
 }
+
+
+
+
+
+

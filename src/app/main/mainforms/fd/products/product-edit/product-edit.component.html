@@ -6,14 +6,14 @@
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
 		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}} -
-			{{!!productDetailsDraft.title ? !!productDetailsDraft.stamp ? 'A editar' : 'A duplicar' : 'A introduzir'}}
-			{{!!productDetailsDraft.title ? productDetailsDraft.title:''}}</h1>
+			{{bambiService.GetOperationLabel(recordDetailsDraft.title,recordDetailsDraft.stamp) | translation}}
+			{{!!recordDetailsDraft.title ? recordDetailsDraft.title:''}}</h1>
 	</div>
 
 	<div class="header-actions">
 		<span *ngIf="!isDiscarding">
-			<button mat-mini-fab color="primary" [disabled]="!productForm.valid"
-				(click)="saveProduct()"><mat-icon>save</mat-icon></button>
+			<button mat-mini-fab color="primary" [disabled]="!recordForm.valid"
+				(click)="saveRecord()"><mat-icon>save</mat-icon></button>
 			<button mat-mini-fab color="warn" (click)="discardPrompt('open')"><mat-icon>close</mat-icon></button>
 		</span>
 		<span *ngIf="isDiscarding">
@@ -29,7 +29,7 @@
 <div class="mainform-content">
 
 	<ng-scrollbar>
-		<div id="record-edit-form" [formGroup]="productForm">
+		<div id="record-edit-form" [formGroup]="recordForm">
 
 			<div class="record-edit-left">
 
@@ -56,7 +56,7 @@
 					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNITVALUE' |
 						translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="unitvalue">
-					<span matSuffix>{{productForm.get('unit')!.value}}</span>
+					<span matSuffix>{{recordForm.get('unit')!.value}}</span>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
@@ -67,8 +67,8 @@
 
 				<mat-form-field appearance="outline" color="accent">
 					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}} / 100
-						{{productForm.get('unit')!.value === 'L' ? 'ml' : productForm.get('unit')!.value === 'kg' ? 'g'
-						: productForm.get('unit')!.value}}</mat-label>
+						{{recordForm.get('unit')!.value === 'L' ? 'ml' : recordForm.get('unit')!.value === 'kg' ? 'g'
+						: recordForm.get('unit')!.value}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcalby100">
 					<span matSuffix>Cal</span>
 				</mat-form-field>
@@ -81,8 +81,8 @@
 
 				<mat-form-field appearance="outline" color="accent">
 					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}} /
-						{{productForm.get('unit')!.value === 'ml' ? 'L' : productForm.get('unit')!.value === 'g' ? 'kg'
-						: productForm.get('unit')!.value}}</mat-label>
+						{{recordForm.get('unit')!.value === 'ml' ? 'L' : recordForm.get('unit')!.value === 'g' ? 'kg'
+						: recordForm.get('unit')!.value}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="pricebyratio">
 					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>
@@ -110,7 +110,7 @@
 				<mat-form-field class="record-chip-list" appearance="outline" color="accent">
 					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.TAGS' | translation}}</mat-label>
 					<mat-chip-grid #chipGrid formControlName="chipgrid">
-						<mat-chip-row *ngFor="let tag of productDetailsDraft.tags" (removed)="removeTag(tag)"
+						<mat-chip-row *ngFor="let tag of recordDetailsDraft.tags" (removed)="removeTag(tag)"
 							[editable]="true" (edited)="editTag(tag, $event)">
 							{{tag}}
 							<button matChipRemove>

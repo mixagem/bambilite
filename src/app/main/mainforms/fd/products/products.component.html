@@ -1,5 +1,5 @@
 <div class="progress-bar-wrapper"><mat-progress-bar mode="indeterminate" color=warn
-		*ngIf="!loadingComplete || this.productsService.executingQuery"></mat-progress-bar></div>
+		*ngIf="!loadingComplete || productsService.executingQuery"></mat-progress-bar></div>
 
 
 <div class="mainform-header" *ngIf="loadingComplete">
@@ -11,11 +11,11 @@
 	<div class="header-actions">
 		<button mat-mini-fab color="primary" (click)="addNewProduct()"><mat-icon>add</mat-icon></button>
 		<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()"
-			*ngIf="!!this.selectedProducts.length" color="warn"><mat-icon>delete</mat-icon></button>
+			*ngIf="!!selectedRecords.length" color="warn"><mat-icon>delete</mat-icon></button>
 	</div>
 
 </div>
-<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!productList.length">
+<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
 	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
 
@@ -70,4 +70,4 @@
 </div>
 
 
-<div *ngIf="loadingComplete && !productList.length">no-records</div>
+<div *ngIf="loadingComplete && !recordList.length">no-records</div>

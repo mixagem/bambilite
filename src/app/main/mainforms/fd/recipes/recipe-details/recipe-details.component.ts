@@ -40,7 +40,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 
 	// fire details modal
 	showProductDetails(result: RecipeChannelResult): void {
-		if (result.sucess) { this.recipesService.recipeDetails = result.recipe!; }
+		if (result.sucess) { this.recipesService.recordDetails = result.record!; }
 		this.loadingComplete = true;
 	}
 
@@ -49,9 +49,9 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 		switch (operation) {
 			case 'update': case 'clone':
 				if (operation === 'clone') {
-					this.recipesService.recipeDetails.stamp = ''
-					this.recipesService.recipeDetails.public = false
-					this.recipesService.recipeDetails.inactive = false
+					this.recipesService.recordDetails.stamp = ''
+					this.recipesService.recordDetails.public = false
+					this.recipesService.recordDetails.inactive = false
 				}
 				this.fdService.drawerOpen = true;
 				this._dialogRef.close();
@@ -69,6 +69,6 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 				.set('operation', 'delete')
 				.set('owner', this._bambiService.userInfo.username)
 				.set('cookie', this._bambiService.userInfo.cookie)
-				.set('stamps', this.recipesService.recipeDetails.stamp))
+				.set('stamps', this.recipesService.recordDetails.stamp))
 	}
 }

@@ -5,7 +5,7 @@ import { IDetailsProduct,  IListProduct } from 'src/app/interfaces/Fd';
 import { BambiService } from 'src/app/services/bambi.service';
 import { FdService } from '../fd.service';
 
-type ProductObject = { sucess: boolean; productList?: IListProduct[]; productDetails?: IDetailsProduct; details?: string }
+type ProductObject = { sucess: boolean; recordList?: IListProduct[]; recordDetails?: IDetailsProduct; details?: string }
 
 @Injectable({ providedIn: 'root' })
 
@@ -14,7 +14,7 @@ export class ProductsService {
 	executingQuery: boolean = false;
 
 	// current previewd product
-	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	recordDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
 
 	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';
@@ -39,24 +39,24 @@ export class ProductsService {
 
 		call.subscribe({
 			next: (data) => {
-				const productObject = data as ProductObject;
+				const recordObject = data as ProductObject;
 				switch (operation) {
 					case 'getlist':
 					case 'getqueriedlist':
-						productObject.sucess ? this._fdService.ProductListChannelFire(true, '', productObject.productList!) : this._fdService.ProductListChannelFire(false, productObject.details)
+						recordObject.sucess ? this._fdService.ProductListChannelFire(true, '', recordObject.recordList!) : this._fdService.ProductListChannelFire(false, recordObject.details)
 						break;
 
 					case 'getdetails':
-						productObject.sucess ? this._fdService.ProductDetailsChannelFire(true, '', productObject.productDetails!) : this._fdService.ProductDetailsChannelFire(false, productObject.details)
+						recordObject.sucess ? this._fdService.ProductDetailsChannelFire(true, '', recordObject.recordDetails!) : this._fdService.ProductDetailsChannelFire(false, recordObject.details)
 						break;
 
 					case 'update':
 					case 'new':
-						productObject.sucess ? this._fdService.ProductUpdateChannelFire(true) : this._fdService.ProductUpdateChannelFire(false, productObject.details)
+						recordObject.sucess ? this._fdService.ProductUpdateChannelFire(true) : this._fdService.ProductUpdateChannelFire(false, recordObject.details)
 						break;
 
 					case 'delete':
-						this._fdService.ProductDeleteChannelFire(productObject.sucess, productObject.details!);
+						this._fdService.ProductDeleteChannelFire(recordObject.sucess, recordObject.details!);
 						break;
 				}
 				this.executingQuery = false;

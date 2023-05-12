@@ -7,12 +7,16 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ConsumptionComponent } from './consumption/consumption.component';
 import { SuplementationComponent } from './suplementation.component';
 import { SupplementsComponent } from './supplements/supplements.component';
+import { SupplementDetailsComponent } from './supplements/supplement-details/supplement-details.component';
+import { SupplementEditComponent } from './supplements/supplement-edit/supplement-edit.component';
 
 @NgModule({
 	declarations: [
 		SupplementsComponent,
 		SuplementationComponent,
-		ConsumptionComponent
+		ConsumptionComponent,
+		SupplementDetailsComponent,
+		SupplementEditComponent
 	],
 	imports: [
 		CommonModule,

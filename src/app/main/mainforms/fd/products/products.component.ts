@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { BambiService } from 'src/app/services/bambi.service';
 import { MatPaginator } from '@angular/material/paginator';
@@ -19,17 +19,17 @@ import { FdService, ProductChannelResult } from '../fd.service';
 	styleUrls: ['./products.component.scss']
 })
 
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
 	//progress bar control
 	loadingComplete: boolean = false;
 
 	// mainform list
-	productList: IListProduct[] = [];
+	recordList: IListProduct[] = [];
 	dataSource: MatTableDataSource<IListProduct> = new MatTableDataSource<IListProduct>;
 	displayedColumns: string[] = ['check', 'image', 'title', 'tags'];
 
 	// checkboxes control
-	selectedProducts: string[] = [];
+	selectedRecords: string[] = [];
 
 	constructor(
 		public bambiService: BambiService,
@@ -43,13 +43,12 @@ export class ProductsComponent implements OnInit {
 		this.fdService.productListChannel = new Subject<ProductChannelResult>;
 		this.fdService.productDeleteChannel = new Subject<ProductChannelResult>;
 
-		this.fdService.productListChannel.subscribe(result => { this.showProductList(result); });
-		this.fdService.productDeleteChannel.subscribe(result => { this.refreshProductListFromDelete(result); });
+		this.fdService.productListChannel.subscribe(result => { this.showRecordList(result); });
+		this.fdService.productDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
 
 		this.productsService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
 	}
 
-	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
 	ngOnDestroy(): void {
 		// subs
@@ -57,17 +56,20 @@ export class ProductsComponent implements OnInit {
 		this.fdService.productDeleteChannel.complete();
 	}
 
+
+	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
+
 	// listing (triggered by load subject)
-	showProductList(result: ProductChannelResult): void {
+	showRecordList(result: ProductChannelResult): void {
 		if (result.sucess) {
-			this.productList = result.products!;
-			this.dataSource = new MatTableDataSource<IListProduct>(this.productList);
+			this.recordList = result.recordList!;
+			this.dataSource = new MatTableDataSource<IListProduct>(this.recordList);
 		}
 
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'no-products-found':
-					this.productList = [];
+					this.recordList = [];
 					break;
 
 				case 'offline': default:
@@ -81,12 +83,12 @@ export class ProductsComponent implements OnInit {
 	}
 
 	// listing (triggered by delete subject)
-	refreshProductListFromDelete(result: ProductChannelResult): void {
+	refreshRecordListFromDelete(result: ProductChannelResult): void {
 		// sucessfull deleted records
 		if (result.sucess) {
 			// reseting selection array
 			this.bambiService.deleteSelection = [];
-			this.selectedProducts = [];
+			this.selectedRecords = [];
 
 			// snackbar fire
 			result.details === "user-owns-some" ?
@@ -125,7 +127,7 @@ export class ProductsComponent implements OnInit {
 	// introduction mode
 	addNewProduct(): void {
 		this.fdService.drawerOpen = true;
-		this.productsService.productDetails = {
+		this.productsService.recordDetails = {
 			stamp: '',
 			title: '',
 			image: '',
@@ -146,20 +148,20 @@ export class ProductsComponent implements OnInit {
 		const newTarget = target as HTMLInputElement;
 
 		// adding
-		if (newTarget.checked && !this.selectedProducts.includes(stamp)) { this.selectedProducts.push(stamp); }
+		if (newTarget.checked && !this.selectedRecords.includes(stamp)) { this.selectedRecords.push(stamp); }
 
 		// removing
-		if (!newTarget.checked && this.selectedProducts.includes(stamp)) {
-			const productIndex = this.selectedProducts.indexOf(stamp);
-			const slice1 = this.selectedProducts.slice(0, productIndex);
-			const slice2 = this.selectedProducts.slice(productIndex + 1);
-			this.selectedProducts = [...slice1, ...slice2];
+		if (!newTarget.checked && this.selectedRecords.includes(stamp)) {
+			const recordIndex = this.selectedRecords.indexOf(stamp);
+			const slice1 = this.selectedRecords.slice(0, recordIndex);
+			const slice2 = this.selectedRecords.slice(recordIndex + 1);
+			this.selectedRecords = [...slice1, ...slice2];
 		}
 	}
 
 	// delete selected records
 	deleteSelected(): void {
-		this.bambiService.deleteSelection = this.selectedProducts;
+		this.bambiService.deleteSelection = this.selectedRecords;
 		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.bambiService.appTheme + '-theme'] });
 	}
 }

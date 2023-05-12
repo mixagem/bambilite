@@ -1,62 +1,66 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsRecipe, IListRecipe } from 'src/app/interfaces/Fd';
+import { IListSupplement, IDetailsSupplement } from 'src/app/interfaces/Sp';
 import { BambiService } from 'src/app/services/bambi.service';
-import { FdService } from '../fd.service';
+import { catchError, retry, throwError } from 'rxjs';
+import { SpService } from '../sp.service';
 
-type RecipeObject = { sucess: boolean; recordList?: IListRecipe[]; recordDetails?: IDetailsRecipe; details?: string }
+type SupplementObject = { sucess: boolean; recordList?: IListSupplement[]; recordDetails?: IDetailsSupplement; details?: string }
+
 
 @Injectable({ providedIn: 'root' })
 
-export class RecipesService {
+export class SupplementsService {
 	// progress bar control
 	executingQuery: boolean = false;
 
 	// current previewd product
-	recordDetails: IDetailsRecipe = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	recordDetails: IDetailsSupplement = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
 
 	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';
 
+
 	constructor(
 		private _http: HttpClient,
 		private _bambiService: BambiService,
-		private _fdService: FdService) { }
+		private _spService: SpService) { }
+
+
 
 	// db calls
 	API(operation: string, httpParameters: HttpParams | null = null) {
 
 		this.executingQuery = true;
 
-		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'fd/recipes.php', httpParameters, { responseType: 'json' }).pipe(
+		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'sp/supplements.php', httpParameters, { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
 			catchError(this.handleError), // then handle the error
-		) : this._http.get(this._bambiService.BACKEND_URL + 'fd/recipes.php').pipe(
+		) : this._http.get(this._bambiService.BACKEND_URL + 'sp/supplements.php').pipe(
 			retry(1),
 			catchError(this.handleError),
 		);
 
 		call.subscribe({
 			next: (data) => {
-				const recordObject = data as RecipeObject;
+				const recordObject = data as SupplementObject;
 				switch (operation) {
 					case 'getlist':
 					case 'getqueriedlist':
-						recordObject.sucess ? this._fdService.RecipeListChannelFire(true, '', recordObject.recordList!) : this._fdService.RecipeListChannelFire(false, recordObject.details)
+						recordObject.sucess ? this._spService.SupplementListChannelFire(true, '', recordObject.recordList!) : this._spService.SupplementListChannelFire(false, recordObject.details)
 						break;
 
 					case 'getdetails':
-						recordObject.sucess ? this._fdService.RecipeDetailsChannelFire(true, '', recordObject.recordDetails!) : this._fdService.RecipeDetailsChannelFire(false, recordObject.details)
+						recordObject.sucess ? this._spService.SupplementDetailsChannelFire(true, '', recordObject.recordDetails!) : this._spService.SupplementDetailsChannelFire(false, recordObject.details)
 						break;
 
 					case 'update':
 					case 'new':
-						recordObject.sucess ? this._fdService.RecipeUpdateChannelFire(true) : this._fdService.RecipeUpdateChannelFire(false, recordObject.details)
+						recordObject.sucess ? this._spService.SupplementUpdateChannelFire(true) : this._spService.SupplementUpdateChannelFire(false, recordObject.details)
 						break;
 
 					case 'delete':
-						this._fdService.RecipeDeleteChannelFire(recordObject.sucess, recordObject.details!);
+						this._spService.SupplementDeleteChannelFire(recordObject.sucess, recordObject.details!);
 						break;
 				}
 				this.executingQuery = false;
@@ -66,20 +70,20 @@ export class RecipesService {
 				switch (operation) {
 					case 'getlist':
 					case 'getqueriedlist':
-						this._fdService.RecipeListChannelFire(false, 'offline');
+						this._spService.SupplementListChannelFire(false, 'offline');
 						return;
 
 					case 'getdetails':
-						this._fdService.RecipeDetailsChannelFire(false, 'offline');
+						this._spService.SupplementDetailsChannelFire(false, 'offline');
 						return;
 
 					case 'update':
 					case 'new':
-						this._fdService.RecipeUpdateChannelFire(false, 'offline');
+						this._spService.SupplementUpdateChannelFire(false, 'offline');
 						return;
 
 					case 'delete':
-						this._fdService.RecipeDeleteChannelFire(false, 'offline');
+						this._spService.SupplementDeleteChannelFire(false, 'offline');
 						return;
 
 
@@ -87,6 +91,8 @@ export class RecipesService {
 			}
 		});
 	}
+
+
 
 	// error handler
 	private handleError(error: HttpErrorResponse) {
@@ -100,6 +106,5 @@ export class RecipesService {
 		}
 		return throwError(() => new Error('Something bad happened; please try again later.'));
 	}
-
 
 }

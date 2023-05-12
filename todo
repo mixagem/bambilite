@@ -1,3 +1,149 @@
+#
+phase 1
+1. Refract Locales (hierarquia de locales e locales genericas de mainform)
+2. Refract mensagens erro backend (verificar se bate certo com as mensagens do frontend)
+3. restaurar preenchimento automatico no supplementos
+4. tratar de exemplos para as 3 entidades
+5. refract total antes de passar á fase 2
+----
+phase 2
+1. receitas -> lista de produtos/suplementos que incluem a receita
+	\-> nova entidade invisivel -> recipelines
+		\-> criar interface generica - IRecipeLine (composta pelas propriedads comuns aos suplementos e produtos [é quase tudo mas whatever, futureproofing])
+			\-> stamp: stamp da linha
+			\-> product/supplementstamp: stamp do artigo original
+
+
+
+
+
+	modal da receita:
+
+	SELECT title,product/supplementstamp from recipelines WHERE recipestamp = 'XXX'
+
+
+	modo de edição:
+
+	criar um array de form groups, 1 para cada produto da receitra
+	os formgroups sao todos iguais
+
+	para introduzir, temos 2 botões, 1 adiciona uma linha de suplemento, outro uma linha de produto
+	cada tipo de linha faz query apenas á respetiva entidade
+
+	ao selecionar o artigo, temos um tipo de booleano: quantidade, peso/mliq, que serve para controlar o metodo de introdução na receita (por quantidade ou peso)
+
+		\-> caso quantidade
+
+		\-> quantidade | calorias | preço			v- hardcoded (1 unidade)   (unitvalue)<- readonly
+			\-> defaults com os valores do registo (1, kcal e price do registo)
+			\-> ao alterar quantidade:
+				new calorias = old calorias / old quantidadae * new quantidade
+				new preço = old preço / old quantidadae * new quantidade
+				new unitvalue = old unitvalue / old quantidadae * new quantidade
+				-- no cabeçalho da receita, atualizar sumatório de kcals, preço e peso (unitvalue)
+			\-> ao alterar calorias
+				-- no cabeçalho da receita, atualizar sumatório de kcals
+			\-> ao alterar preço
+				-- no cabeçalho da receita, atualizar sumatório de preço
+
+		\-> caso peso/liq
+
+		\->quantidade | calorias | preço
+			\-> defaults com os valores do registo (unitvalue, kcal e price do registo)
+			\-> ao alterar quantidade:
+				new calorias = old calorias / old quantidadae * new quantidade
+				new preço = old preço / old quantidadae * new quantidade
+				-- no cabeçalho da receita, atualizar sumatório de kcals, preço e peso
+			\-> ao alterar calorias
+				-- no cabeçalho da receita, atualizar sumatório de kcals
+			\-> ao alterar preço
+				-- no cabeçalho da receita, atualizar sumatório de preço
+
+		sumatorios cabeçalho: kcals de todos, preço de todos, calorias de todos, unitvalue dos caso quantidade, quantidade caso peso/liquido
+			\-> calculo automatico "a la produtos"
+
+
+
+	»»» fastfoward, no ecrã de refeição, vamos ter a mesma grelha, só que desta vez temos uma terceira maneira de adicionar (tinhamos suplemento, produto, e agora temos receita)
+
+
+
+
+2. suplementos + produtos -> lista de receitas nas quais está incluído (modo consulta)
+	\-> interface para representar linhas das receitas? -> IRecipeLite
+
+3. stocks - > movimentos de stocks
+	\-> ao introduzir,
+
+	1. dá para escolher que tipo de movimento é:
+		1- saldo inicial
+		2- compra
+		3- consumo
+		4- correção
+
+	2. scolhemos da lista de suplementos o suplemento a coize
+
+	3. definir quantidades de saída / entrada
+
+	4. data da entrada / saida
+
+	5. titulo : prenchido automaticamente com o nome da refeição no caso de consumo; else é free
+
+
+	campos:
+	stamp
+	type
+	supplementstamp
+	qtdin
+	qtdout
+	date
+	title
+
+
+	na modal do suplemento
+	query de stocks:
+	SELECT (SUM(qtdin) - SUM(qtdout)) as stock FROM supplements WHERE supplementstamp = 'XXX'
+
+
+	query de receitas:
+		-> tenho de ir buscar o recipestamp das recipelines que tenham o supplementstamp
+	@Stamps = SELECT recipestamp from recipelines WHERE supplementstamp = 'XXX'
+	SELECT title,stamp from recipes WHERE stamp in @Stamps
+
+
+
+
+4. refeição (ecrã c/c)
+
+	cabeçalho: titulo
+	date:
+	tipo: p.e. pequeno almoço, jantar
+	preço (sem preço / kg/l):
+	kcal (sem kcal / 100):
+
+	grelha de linhas:
+	-> ao introduzir, vai lançar em stock (apenas suplementos e receitas c/suplementos)
+	-> dá para introduzir produtos, receitas e suplementos
+	-> faz aqueles calculos malucos como no ecrã de receitas
+
+
+
+
+
+
+
+
+campos:
+- stamp
+- supplementstamp
+- qtd in
+- qtd out
+- data
+- descrição -> nome da refeição
+- categoria [enum proprio: 1-Entrada (compra/saldo inicial), 2-Saída (consumo), 3-Correção (perdas)]
+
+
+
 # ts
 2. material paginator language
 3. 4th mat color (sucess/green)
@@ -85,3 +231,11 @@
 
 1.2
 	ao utilizar o produto, escolho se consumi qtd ou gramas/millilitros
+
+
+
+
+
+	--
+
+	getters e setters de modo a tornar serviços privados

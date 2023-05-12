@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<div class="bambi-fx-60 fx-speed-80" class="mainform-wrapper">
+	<router-outlet></router-outlet>
+	<div id="drawer-wrapper" *ngIf="spService.drawerOpen" class="animate__animated"
+		[ngClass]="spService.drawerFadeout? 'animate__fadeOutRight':'animate__slideInRight'">
+		<bl-supplement-edit *ngIf="router.url==='/sp/supplements'"></bl-supplement-edit>
+	</div>
+</div>

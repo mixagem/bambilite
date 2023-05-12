@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IListProduct, IDetailsProduct, IListRecipe, IDetailsRecipe } from 'src/app/interfaces/Fd';
 
-export type ProductChannelResult = { sucess: boolean, products?: IListProduct[], product?: IDetailsProduct, details?: string }
-export type RecipeChannelResult = { sucess: boolean, recipes?: IListRecipe[], recipe?: IDetailsRecipe, details?: string }
+export type ProductChannelResult = { sucess: boolean, recordList?: IListProduct[], record?: IDetailsProduct, details?: string }
+export type RecipeChannelResult = { sucess: boolean, recordList?: IListRecipe[], record?: IDetailsRecipe, details?: string }
 
 
 @Injectable({ providedIn: 'root' })
@@ -39,11 +39,11 @@ export class FdService {
 	}
 
 	ProductListChannelFire(result: boolean, errorCode: string = '', productList?: IListProduct[],): void {
-		this.productListChannel.next({ sucess: result, products: productList, details: errorCode });
+		this.productListChannel.next({ sucess: result, recordList: productList, details: errorCode });
 	}
 
 	ProductDetailsChannelFire(result: boolean, errorCode: string = '', productDetails?: IDetailsProduct): void {
-		this.productDetailsChannel.next({ sucess: result, product: productDetails, details: errorCode });
+		this.productDetailsChannel.next({ sucess: result, record: productDetails, details: errorCode });
 	}
 
 	ProductUpdateChannelFire(result: boolean, errorCode: string = ''): void {
@@ -55,11 +55,11 @@ export class FdService {
 	}
 
 	RecipeListChannelFire(result: boolean, errorCode: string = '', recipeList?: IListRecipe[]): void {
-		this.recipeListChannel.next({ sucess: result, recipes: recipeList, details: errorCode });
+		this.recipeListChannel.next({ sucess: result, recordList: recipeList, details: errorCode });
 	}
 
 	RecipeDetailsChannelFire(result: boolean, errorCode: string = '', recipeDetails?: IDetailsRecipe): void {
-		this.recipeDetailsChannel.next({ sucess: result, recipe: recipeDetails, details: errorCode });
+		this.recipeDetailsChannel.next({ sucess: result, record: recipeDetails, details: errorCode });
 	}
 
 	RecipeUpdateChannelFire(result: boolean, errorCode: string = ''): void {
@@ -90,7 +90,7 @@ export class FdService {
 
 	}
 
-	GetPriceByQuantity(price: number, unitvalue: number, unit: string): number {
+	GetPrice(price: number, unitvalue: number, unit: string): number {
 
 		let ajustedPriced = 0;
 

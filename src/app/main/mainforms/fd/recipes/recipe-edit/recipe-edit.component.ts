@@ -55,7 +55,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
 	constructor(
-		private _bambiService: BambiService,
+		public bambiService: BambiService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
 		public router: Router,
@@ -70,7 +70,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		this.recordDetailsDraft = this.recipesService.recipeDetails
+		this.recordDetailsDraft = this.recipesService.recordDetails
 
 		// recipesService clone
 		this.recipesService.tempB64Img = this.recordDetailsDraft.image;
@@ -107,18 +107,18 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// disparar snackbars aqui?
 		if (result.sucess) {
 			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.PRODUCTCREATED' : 'APPSNACKS.PRODUCTUPDATED', emoji: '🥝' } });
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.RECIPECREATED' : 'APPSNACKS.RECIPEUPDATED', emoji: '🥝' } });
 		}
 		else {
 			switch (result.details) {
 				case 'product-not-found':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.PRODUCT-NOTFOUND', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.RECIPE-NOTFOUND', emoji: '🚫' } });
 					return;
 				case 'user-not-owner':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
 					return;
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this._bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
 					return;
 			}
 		}
@@ -157,8 +157,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		const httpParams =
 			new HttpParams()
 				.set('operation', operation)
-				.set('cookie', this._bambiService.userInfo.cookie)
-				.set('owner', this._bambiService.userInfo.username)
+				.set('cookie', this.bambiService.userInfo.cookie)
+				.set('owner', this.bambiService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
 		this.recipesService.API(operation, httpParams)
@@ -178,15 +178,15 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			this.recipesService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this._bambiService.userInfo.username)
-					.set('cookie', this._bambiService.userInfo.cookie));
+					.set('owner', this.bambiService.userInfo.username)
+					.set('cookie', this.bambiService.userInfo.cookie));
 		}
 	}
 
 
 	// imagepicker
 	newPicUpload(): void {
-		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this._bambiService.appTheme + '-theme'] });
+		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
 	}
 
 	// tags

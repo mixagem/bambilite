@@ -6,6 +6,7 @@ import { ProductsService } from '../mainforms/fd/products/products.service';
 import { Router } from '@angular/router';
 import { AppTheme, AppLanguage } from 'src/app/interfaces/Generic';
 import { RecipesService } from '../mainforms/fd/recipes/recipes.service';
+import { SupplementsService } from '../mainforms/sp/supplements/supplements.service';
 
 @Component({
 	selector: 'bambi-header',
@@ -15,14 +16,15 @@ import { RecipesService } from '../mainforms/fd/recipes/recipes.service';
 
 export class HeaderComponent {
 
-	simpleQueryAllowedMainforms : string[] = ['/fd/recipes','/fd/products']
+	simpleQueryAllowedMainforms: string[] = ['/fd/recipes', '/fd/products', '/sp/supplements']
 
 	constructor(
 		public bambiService: BambiService,
 		public headerService: HeaderService,
 		public router: Router,
 		private _productsService: ProductsService,
-		private _recipesService: RecipesService) {
+		private _recipesService: RecipesService,
+		private _supplementsService: SupplementsService) {
 	}
 
 	themeSwap(theme: AppTheme): void {
@@ -51,6 +53,9 @@ export class HeaderComponent {
 				break;
 			case '/fd/recipes':
 				this._recipesService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
+				break;
+				 case '/sp/supplements':
+				this._supplementsService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 		}
 	}

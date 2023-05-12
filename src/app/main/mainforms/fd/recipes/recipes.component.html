@@ -9,13 +9,13 @@
 	</div>
 
 	<div class="header-actions">
-		<button mat-mini-fab color="primary" (click)="addNewRecipe()"><mat-icon>add</mat-icon></button>
+		<button mat-mini-fab color="primary" (click)="addNewRecord()"><mat-icon>add</mat-icon></button>
 		<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()"
-			*ngIf="!!this.selectedRecipes.length" color="warn"><mat-icon>delete</mat-icon></button>
+			*ngIf="!!this.selectedRecods.length" color="warn"><mat-icon>delete</mat-icon></button>
 	</div>
 </div>
 
-<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recipeList.length">
+<div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
 	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
 
@@ -70,4 +70,4 @@
 </div>
 
 
-<div *ngIf="loadingComplete && !recipeList.length">no-records</div>
+<div *ngIf="loadingComplete && !recordList.length">no-records</div>

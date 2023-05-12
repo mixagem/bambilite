@@ -29,7 +29,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		// subs
 		this.fdService.productDetailsChannel = new Subject<ProductChannelResult>;
-		this.fdService.productDetailsChannel.subscribe(result => { this.showProductDetails(result); });
+		this.fdService.productDetailsChannel.subscribe(result => { this.showRecordDetails(result); });
 	}
 
 	ngOnDestroy(): void {
@@ -38,8 +38,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 	}
 
 	// fire details modal
-	showProductDetails(result: ProductChannelResult): void {
-		if (result.sucess) { this.productsService.productDetails = result.product!; }
+	showRecordDetails(result: ProductChannelResult): void {
+		if (result.sucess) { this.productsService.recordDetails = result.record!; }
 		this.loadingComplete = true;
 	}
 
@@ -48,9 +48,9 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 		switch (operation) {
 			case 'update': case 'clone':
 				if (operation === 'clone') {
-					this.productsService.productDetails.stamp = ''
-					this.productsService.productDetails.public = false
-					this.productsService.productDetails.inactive = false
+					this.productsService.recordDetails.stamp = ''
+					this.productsService.recordDetails.public = false
+					this.productsService.recordDetails.inactive = false
 				 }
 				this.fdService.drawerOpen = true;
 				this._dialogRef.close();
@@ -68,7 +68,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 				.set('operation', 'delete')
 				.set('owner', this._bambiService.userInfo.username)
 				.set('cookie', this._bambiService.userInfo.cookie)
-				.set('stamps', this.productsService.productDetails.stamp))
+				.set('stamps', this.productsService.recordDetails.stamp))
 	}
 
 }
