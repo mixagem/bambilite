@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FdService } from 'src/app/main/mainforms/fd/fd.service';
+import { ProductsService } from 'src/app/main/mainforms/fd/products/products.service';
 import { BambiService } from 'src/app/services/bambi.service';
 
 @Component({
@@ -14,14 +14,14 @@ export class DeleteConfirmationDialogComponent {
 
 	constructor(
 		public bambiService: BambiService,
-		private _fdService: FdService,
+		private _productsService: ProductsService,
 		private _router: Router) {
 	}
 
 	confirmDelete(): void {
 		switch (this._router.url) {
 			case '/fd/products':
-				this._fdService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))
+				this._productsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))
 				break;
 		}
 	}

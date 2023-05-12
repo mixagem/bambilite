@@ -9,7 +9,7 @@ if (isset($_FILES['file']['name'])) {
     // obtem o nome do ficheiro
     $filename = $_FILES['file']['name'];
     // dir onde guardar o ficheiro
-    $location = "uploads/" . $filename;
+    $location = "images/temp" . $filename;
     $imageFileType = pathinfo($location, PATHINFO_EXTENSION);
     $imageFileType = strtolower($imageFileType);
     // extensões suportadas

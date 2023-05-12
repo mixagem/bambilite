@@ -8,7 +8,8 @@
 
 	<div class="header-actions">
 		<span class="default-status" *ngIf="!isDiscarding">
-			<button mat-mini-fab color="primary" [disabled]="!productForm.valid" (click)="saveProduct()"><mat-icon>save</mat-icon></button>
+			<button mat-mini-fab color="primary" [disabled]="!productForm.valid"
+				(click)="saveProduct()"><mat-icon>save</mat-icon></button>
 			<button mat-mini-fab color="warn" (click)="isDiscarding = true"><mat-icon>close</mat-icon></button>
 		</span>
 		<span class="default-status" *ngIf="isDiscarding">
@@ -29,24 +30,12 @@
 
 				<div class="img-picker-wrapper">
 					<div class="img-picker-pic-wrapper">
-						<img [src]="fdService.tempB64Img">
+						<img [src]="productsService.tempB64Img">
 					</div>
 					<div class="img-picker-pic-wrapper picker-controller bambi-fx-15-inline" (click)="newPicUpload()">
 						<mat-icon>add_a_photo</mat-icon>
 					</div>
 				</div>
-
-				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}}</mat-label>
-					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
-					<span matSuffix>Kcal</span>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}}</mat-label>
-					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
-					<mat-icon matSuffix>euro</mat-icon>
-				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
 					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNIT' | translation}}</mat-label>
@@ -59,9 +48,37 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNITVALUE' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.UNITVALUE' |
+						translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="unitvalue">
 					<span matSuffix>{{productForm.get('unit')!.value}}</span>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
+					<span matSuffix>Kcal</span>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.KCAL' | translation}} / 100 {{productForm.get('unit')!.value === 'L' ? 'ml' : productForm.get('unit')!.value === 'kg' ? 'g'
+						: productForm.get('unit')!.value}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcalby100">
+					<span matSuffix>Kcal</span>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
+					<mat-icon matSuffix>euro</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent">
+					<mat-label class="bambi-fx-15-inline">{{'FOOD.PRODUCTS.EDITING.PRICE' | translation}} /
+						{{productForm.get('unit')!.value === 'ml' ? 'L' : productForm.get('unit')!.value === 'g' ? 'kg'
+						: productForm.get('unit')!.value}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="pricebyratio">
+					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>
 
 				<div class="checkbox-wrapper"><mat-checkbox color="accent"
@@ -99,6 +116,8 @@
 							[matChipInputAddOnBlur]="true" (matChipInputTokenEnd)="addTag($event)" />
 					</mat-chip-grid>
 				</mat-form-field>
+
+				<div style="width: 100%;">receitas aqui</div>
 
 			</div>
 

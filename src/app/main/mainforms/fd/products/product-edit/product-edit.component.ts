@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FdService } from '../../fd.service';
+import { ProductsService } from '../products.service';
 import { IDetailsProduct } from 'src/app/interfaces/Fd';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -8,12 +8,12 @@ import { ImageUploadComponent } from 'src/app/components/image-upload/image-uplo
 import { BambiService } from 'src/app/services/bambi.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpParams } from '@angular/common/http';
-import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
-import { Observable, Subject, map, startWith } from 'rxjs';
+import { Observable, Subject, forkJoin } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { NavigationStart, Router } from '@angular/router';
 import { HeaderService } from 'src/app/main/header/header.service';
+import { FdService, ProductChannelResult } from '../../fd.service';
 
 type AutocompleteOption = {
 	title: string,
@@ -54,20 +54,20 @@ export class ProductEditComponent implements OnInit {
 
 	/*
 	[user uploads here>] bambiService -> uploaded/reseted image used in the imagepicker component.
-	[if he accepts the changes in the imagepicker>] fdService -> image of the current draft, used in the edit view and imagepicker component
-	[if he saves the changes to the record, we productDetailsDraft -> first record's image - not used because we need middleman (fdService) beeween the imagepicker and this component
+	[if he accepts the changes in the imagepicker>] productsService -> image of the current draft, used in the edit view and imagepicker component
+	[if he saves the changes to the record, we productDetailsDraft -> first record's image - not used because we need middleman (productsService) beeween the imagepicker and this component
 	*/
 
 	// form
 	productForm: FormGroup = new FormGroup({});
 
 	constructor(
-		public fdService: FdService,
+		public productsService: ProductsService,
 		public router: Router,
 		private _bambiService: BambiService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
-		private _channelsService: SubjectChannelsService,
+		public fdService: FdService,
 		private _headerService: HeaderService) {
 
 		// closing drawer on changing to a diffrent fd child
@@ -78,10 +78,10 @@ export class ProductEditComponent implements OnInit {
 		});
 
 		// cloning last preview product
-		this.productDetailsDraft = this.fdService.productDetails
+		this.productDetailsDraft = this.productsService.productDetails
 
-		// fdService clone
-		this.fdService.tempB64Img = this.productDetailsDraft.image;
+		// productsService clone
+		this.productsService.tempB64Img = this.productDetailsDraft.image;
 
 		// form control gen
 		this.generateFormControls();
@@ -91,20 +91,47 @@ export class ProductEditComponent implements OnInit {
 		this.formControlsUpdate();
 
 		// subs
-		this._channelsService.productUpdateChannel = new Subject<ProductChannelResult>;
-		this._channelsService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
+		this.fdService.productUpdateChannel = new Subject<ProductChannelResult>;
+		this.fdService.productUpdateChannel.subscribe(result => { this.saveFinished(result); });
 
 		// disabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
+
+		this.productForm.get('price')!.valueChanges.subscribe((price: number) => {
+			if (!price || isNaN(Number(price))) { return }
+			this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(price, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		})
+
+		this.productForm.get('pricebyratio')!.valueChanges.subscribe((pricebyratio: number) => {
+			if (!pricebyratio || isNaN(Number(pricebyratio))) { return }
+			this.productForm.get('price')!.setValue(this.productsService.GetPriceByQuantity(pricebyratio, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		})
+
+		this.productForm.get('unit')!.valueChanges.subscribe(_ => { this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, _), { emitEvent: false }) })
+
+		this.productForm.get('unitvalue')!.valueChanges.subscribe(_ => {
+			if (!_ || isNaN(Number(_)) || _ == 0) { return }
+			this.productForm.get('pricebyratio')!.setValue(this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, _, this.productForm.get('unit')!.value), { emitEvent: false })
+		})
+
+		this.productForm.get('kcal')!.valueChanges.subscribe(_ => {
+			if (!_ || isNaN(Number(_)) || _ == 0) { return }
+			this.productForm.get('kcalby100')!.setValue(this.productsService.GetKcalBy100(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		})
+
+		this.productForm.get('kcalby100')!.valueChanges.subscribe(_ => {
+			if (!_ || isNaN(Number(_)) || _ == 0) { return }
+			this.productForm.get('kcal')!.setValue(this.productsService.GetKcal(_, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value), { emitEvent: false })
+		})
 
 	}
 
 
 	ngOnDestroy(): void {
 		// subs
-		this._channelsService.productUpdateChannel.complete();
+		this.fdService.productUpdateChannel.complete();
 		// wise to clean any images that are not used
-		this.fdService.tempB64Img = '';
+		this.productsService.tempB64Img = '';
 		// re-enabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.enable({ emitEvent: false });
 	}
@@ -127,12 +154,20 @@ export class ProductEditComponent implements OnInit {
 				case 'unitvalue':
 				case 'price':
 					// number patterns validator
-					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key], [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,2}){0,1}$")]));
+					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key], [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
 					break;
 				default:
 					this.productForm.addControl(key, new FormControl(this.productDetailsDraft[key as keyof typeof this.productDetailsDraft]));
 			}
 		});
+
+		let pbr = this.productsService.GetPriceByRatio(this.productForm.get('price')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
+		let kb1 = this.productsService.GetKcalBy100(this.productForm.get('kcal')!.value, this.productForm.get('unitvalue')!.value, this.productForm.get('unit')!.value);
+
+		this.productForm.addControl('pricebyratio', new FormControl(isNaN(pbr)? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
+
+		this.productForm.addControl('kcalby100', new FormControl(isNaN(kb1)? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]))
+
 	}
 
 	// Validators.pattern("^[0-9]*$")
@@ -142,7 +177,7 @@ export class ProductEditComponent implements OnInit {
 		this.isNewProduct = !this.productDetailsDraft.stamp
 
 		this.productDetailsDraft.timestamp = Date.now();
-		this.productDetailsDraft.image = this.fdService.tempB64Img;
+		this.productDetailsDraft.image = this.productsService.tempB64Img;
 		this.productDetailsDraft.kcal = this.productForm.get('kcal')!.value
 		this.productDetailsDraft.title = this.productForm.get('title')!.value
 		this.productDetailsDraft.unit = this.productForm.get('unit')!.value
@@ -159,7 +194,7 @@ export class ProductEditComponent implements OnInit {
 				.set('owner', this._bambiService.userInfo.username)
 				.set('product', JSON.stringify(this.productDetailsDraft))
 
-		this.fdService.API(operation, httpParams)
+		this.productsService.API(operation, httpParams)
 	}
 
 	// triggered by the response from the update product call
@@ -196,7 +231,7 @@ export class ProductEditComponent implements OnInit {
 		}, 1000);
 
 		if (updatedProduct) {
-			this.fdService.API('getlist',
+			this.productsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
 					.set('owner', this._bambiService.userInfo.username)

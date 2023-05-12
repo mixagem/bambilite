@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { BambiService } from 'src/app/services/bambi.service';
 import { MatPaginator } from '@angular/material/paginator';
-import { ProductChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
-import { FdService } from '../fd.service';
+import { ProductsService } from './products.service';
 import { HttpParams } from '@angular/common/http';
 import { IListProduct } from 'src/app/interfaces/Fd';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +11,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { FdService, ProductChannelResult } from '../fd.service';
 
 @Component({
 	selector: 'bl-products',
@@ -33,28 +33,28 @@ export class ProductsComponent implements OnInit {
 
 	constructor(
 		public bambiService: BambiService,
+		public productsService: ProductsService,
 		public fdService: FdService,
-		private _channelsService: SubjectChannelsService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar) { }
 
 	ngOnInit(): void {
 		// subs
-		this._channelsService.productListChannel = new Subject<ProductChannelResult>;
-		this._channelsService.productDeleteChannel = new Subject<ProductChannelResult>;
+		this.fdService.productListChannel = new Subject<ProductChannelResult>;
+		this.fdService.productDeleteChannel = new Subject<ProductChannelResult>;
 
-		this._channelsService.productListChannel.subscribe(result => { this.showProductList(result); });
-		this._channelsService.productDeleteChannel.subscribe(result => { this.refreshProductListFromDelete(result); });
+		this.fdService.productListChannel.subscribe(result => { this.showProductList(result); });
+		this.fdService.productDeleteChannel.subscribe(result => { this.refreshProductListFromDelete(result); });
 
-		this.fdService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
+		this.productsService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
 	}
 
 	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
 	ngOnDestroy(): void {
 		// subs
-		this._channelsService.productListChannel.complete();
-		this._channelsService.productDeleteChannel.complete();
+		this.fdService.productListChannel.complete();
+		this.fdService.productDeleteChannel.complete();
 	}
 
 	// listing (triggered by load subject)
@@ -94,7 +94,7 @@ export class ProductsComponent implements OnInit {
 				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.ALLPRODUCTDELETED', emoji: '🚮' } })
 
 			// fetch updated listing
-			this.fdService.API('getlist',
+			this.productsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
 					.set('owner', this.bambiService.userInfo.username)
@@ -119,13 +119,13 @@ export class ProductsComponent implements OnInit {
 	// product details dialog
 	showDetails(productstamp: string): void {
 		this._dialog.open(ProductDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
-		this.fdService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
+		this.productsService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
 	}
 
 	// introduction mode
 	addNewProduct(): void {
 		this.fdService.drawerOpen = true;
-		this.fdService.productDetails = {
+		this.productsService.productDetails = {
 			stamp: '',
 			title: '',
 			image: '',

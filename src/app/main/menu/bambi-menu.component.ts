@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BambiService } from 'src/app/services/bambi.service';
 import { BambiMenuService } from './bambi-menu.service';
 
@@ -8,10 +8,14 @@ import { BambiMenuService } from './bambi-menu.service';
 	styleUrls: ['./bambi-menu.component.scss']
 })
 
-export class MenuSidebarComponent {
+export class MenuSidebarComponent implements OnInit {
 
 	constructor(public menuService: BambiMenuService, public bambiService : BambiService) {
 
+	}
+
+	ngOnInit(): void {
+		this.menuService.GetMenus();
 	}
 
 }

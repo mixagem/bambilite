@@ -1,5 +1,8 @@
 <?php
 
+if (!isset($_POST["operation"]) || !isset($_POST["owner"]) || !isset($_POST["cookie"])) {
+	return;
+}
 
 $operation = $_POST["operation"];
 $owner = $_POST["owner"];
@@ -84,8 +87,12 @@ switch ($operation) {
 		return;
 
 	case 'getqueriedlist':
+		if (!isset($_POST["query"])) {
+			LeggeraError($products_object, $SQL_CON, "no-query-provided");
+			return;
+		}
 		$query = strtolower($_POST["query"]);
-		$query = str_replace("'","''",$query);
+		$query = str_replace("'", "''", $query);
 		$OR_CLAUSE = "LOWER(title) LIKE '%" . $query . "%' OR LOWER(tags) LIKE '%" . $query . "%'";
 
 		if (is_numeric($query)) {
@@ -112,8 +119,11 @@ switch ($operation) {
 		return;
 
 	case 'getdetails':
+		if (!isset($_POST["stamp"])) {
+			LeggeraError($products_object, $SQL_CON, "no-stamp-provided");
+			return;
+		}
 		$productstamp = $_POST["stamp"];
-
 		$SQL_QUERY = "SELECT * FROM products WHERE stamp = '" . $productstamp . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
@@ -136,8 +146,11 @@ switch ($operation) {
 		return;
 
 	case 'update':
+		if (!isset($_POST["product"])) {
+			LeggeraError($products_object, $SQL_CON, "no-product-provided");
+			return;
+		}
 		$product = json_decode($_POST["product"], true);
-
 		// get og owner
 		$SQL_QUERY = "SELECT owner FROM products WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
@@ -158,9 +171,9 @@ switch ($operation) {
 			LeggeraError($products_object, $SQL_CON, "user-not-owner");
 			return;
 		}
-		str_replace("'","''",$product['title']);
+		str_replace("'", "''", $product['title']);
 		// validations over, product collection
-		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'","''",$product['title']) . "', kcal = " . str_replace("'","''",$product['kcal']) . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . str_replace("'","''",$product['unitvalue']) . ", price = " . str_replace("'","''",$product['price']) . ", tags = '" . str_replace("'","''",json_encode($product['tags'])) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
+		$SQL_QUERY = "UPDATE products SET title = '" . str_replace("'", "''", $product['title']) . "', kcal = " . str_replace("'", "''", $product['kcal']) . ", image = '" . $product['image'] . "', unit = '" . $product['unit'] . "', unitvalue = " . str_replace("'", "''", $product['unitvalue']) . ", price = " . str_replace("'", "''", $product['price']) . ", tags = '" . str_replace("'", "''", json_encode($product['tags'])) . "', timestamp = " . $product['timestamp'] . " WHERE stamp = '" . $product['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		// error updating element
@@ -173,12 +186,16 @@ switch ($operation) {
 		return;
 
 	case 'new':
-		$product = json_decode($_POST["product"], true);
+		if (!isset($_POST["product"])) {
+			LeggeraError($products_object, $SQL_CON, "no-product-provided");
+			return;
+		}
 
+		$product = json_decode($_POST["product"], true);
 		$stampgen = LeggeraStamp();
 
 
-		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'","''",$product['title']) . "'," . str_replace("'","''",$product['kcal']) . ",'" . $product['image'] . "','" . $product['unit'] . "'," . str_replace("'","''",$product['unitvalue']) . "," . str_replace("'","''",$product['price']) . ",'" . str_replace("'","''",json_encode($product['tags'])) . "','" . $owner . "', " . $product['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO products (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $product['title']) . "'," . str_replace("'", "''", $product['kcal']) . ",'" . $product['image'] . "','" . $product['unit'] . "'," . str_replace("'", "''", $product['unitvalue']) . "," . str_replace("'", "''", $product['price']) . ",'" . str_replace("'", "''", json_encode($product['tags'])) . "','" . $owner . "', " . $product['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
@@ -192,6 +209,10 @@ switch ($operation) {
 		return;
 
 	case 'delete':
+		if (!isset($_POST["stamps"])) {
+			LeggeraError($products_object, $SQL_CON, "no-stamplist-provided");
+			return;
+		}
 		$productstamps_str = str_replace(" ", "", $_POST["stamps"]);
 		$productstamps_arr = explode(",", $productstamps_str);
 

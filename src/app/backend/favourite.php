@@ -1,5 +1,8 @@
 <?php
 
+if (!isset($_POST["username"]) || !isset($_POST["cookie"]) || !isset($_POST["favourite"])) {
+	return;
+}
 $username = $_POST["username"];
 $cookie = $_POST["cookie"];
 $favourite = $_POST["favourite"];

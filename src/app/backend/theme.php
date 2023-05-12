@@ -1,5 +1,9 @@
 <?php
 
+if (!isset($_POST["username"]) || !isset($_POST["cookie"]) || !isset($_POST["theme"])) {
+	return;
+}
+
 $username = $_POST["username"];
 $cookie = $_POST["cookie"];
 $theme = $_POST["theme"];

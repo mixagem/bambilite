@@ -10,7 +10,7 @@ export class TranslationPipe implements PipeTransform {
 	constructor(private _bambiService: BambiService){}
 
 	transform(localeID: string) : string {
-		return this._bambiService.LOCALES[`${localeID}`]
+		return !!this._bambiService.LOCALES[`${localeID}`] ? this._bambiService.LOCALES[`${localeID}`] : localeID
 	}
 
 }

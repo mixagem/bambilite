@@ -1,5 +1,7 @@
 <?php
 
+if(!isset($_POST["username"]) || !isset($_POST["cookie"]) || !isset($_POST["language"]) ){return;}
+
 $username = $_POST["username"];
 $cookie = $_POST["cookie"];
 $language = $_POST["language"];

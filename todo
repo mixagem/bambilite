@@ -11,12 +11,12 @@
 2. vista mobile nos restantes componentes
 
 # php
-1. refract php
+1. refract php (LeggeraError/LeggeraSucess > login/cookie login)
 2. password hash and salt
 
 # hybrid
-1. menu factory
-2. product - last consumed
+1. product - last consumed
+2. fix locales snackbars GetLocales/GetMenus (hardcoded atm)
 
 # whiteboard
 1. shared products brainstorm ✅

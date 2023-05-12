@@ -1,109 +1,71 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsProduct, IListProduct } from 'src/app/interfaces/Fd';
-import { BambiService } from 'src/app/services/bambi.service';
-import { SubjectChannelsService } from 'src/app/services/subject-channels.service';
+import { Subject } from 'rxjs';
+import { IListProduct, IDetailsProduct, IListRecipe, IDetailsRecipe } from 'src/app/interfaces/Fd';
 
-type ProductObject = { sucess: boolean; productList?: IListProduct[]; productDetails?: IDetailsProduct; details?: string }
+export type ProductChannelResult = { sucess: boolean, products?: IListProduct[], product?: IDetailsProduct, details?: string }
+export type RecipeChannelResult = { sucess: boolean, recipes?: IListRecipe[], recipe?: IDetailsRecipe, details?: string }
+
 
 @Injectable({ providedIn: 'root' })
 
 export class FdService {
-	// progress bar control
-	executingQuery: boolean = false;
 
 	// drawer status control
 	drawerOpen: boolean = false;
 	// drawer animations control
 	drawerFadeout: boolean = false;
 
-	// current previewd product
-	productDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	productListChannel: Subject<ProductChannelResult>;
+	productDetailsChannel: Subject<ProductChannelResult>;
+	productUpdateChannel: Subject<ProductChannelResult>;
+	productDeleteChannel: Subject<ProductChannelResult>;
 
-	// middleman beetween imagepicker and components)
-	tempB64Img: string = '';
-
-	constructor(
-		private _http: HttpClient,
-		private _bambiService: BambiService,
-		private _channelsService: SubjectChannelsService) { }
-
-	// db calls
-	API(operation: string, httpParameters: HttpParams | null = null) {
-
-		this.executingQuery = true;
-
-		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'fd/products.php', httpParameters, { responseType: 'json' }).pipe(
-			retry(1), // retry a failed request
-			catchError(this.handleError), // then handle the error
-		) : this._http.get(this._bambiService.BACKEND_URL + 'fd/products.php').pipe(
-			retry(1),
-			catchError(this.handleError),
-		);
-
-		call.subscribe({
-			next: (data) => {
-				const productObject = data as ProductObject;
-				switch (operation) {
-					case 'getlist':
-					case 'getqueriedlist':
-						productObject.sucess ? this._channelsService.ProductListChannelFire(true, '', productObject.productList!) : this._channelsService.ProductListChannelFire(false, productObject.details)
-						break;
-
-					case 'getdetails':
-						productObject.sucess ? this._channelsService.ProductDetailsChannelFire(true, '', productObject.productDetails!) : this._channelsService.ProductDetailsChannelFire(false, productObject.details)
-						break;
-
-					case 'update':
-					case 'new':
-						productObject.sucess ? this._channelsService.ProductUpdateChannelFire(true) : this._channelsService.ProductUpdateChannelFire(false, productObject.details)
-						break;
-
-					case 'delete':
-						this._channelsService.ProductDeleteChannelFire(productObject.sucess, productObject.details!);
-						break;
-				}
-				this.executingQuery = false;
-			},
-			error: () => {
-				this.executingQuery = false;
-				switch (operation) {
-					case 'getlist':
-					case 'getqueriedlist':
-						this._channelsService.ProductListChannelFire(false, 'offline');
-						return;
-
-					case 'getdetails':
-						this._channelsService.ProductDetailsChannelFire(false, 'offline');
-						return;
-
-					case 'update':
-					case 'new':
-						this._channelsService.ProductUpdateChannelFire(false, 'offline');
-						return;
-
-					case 'delete':
-						this._channelsService.ProductDeleteChannelFire(false, 'offline');
-						return;
+	recipeListChannel: Subject<RecipeChannelResult>;
+	recipeDetailsChannel: Subject<RecipeChannelResult>;
+	recipeUpdateChannel: Subject<RecipeChannelResult>;
+	recipeDeleteChannel: Subject<RecipeChannelResult>;
 
 
-				}
-			}
-		});
+	constructor() {
+		this.productListChannel = new Subject<ProductChannelResult>;
+		this.productDetailsChannel = new Subject<ProductChannelResult>;
+		this.productUpdateChannel = new Subject<ProductChannelResult>;
+		this.productDeleteChannel = new Subject<ProductChannelResult>;
+
+		this.recipeListChannel = new Subject<RecipeChannelResult>;
+		this.recipeDetailsChannel = new Subject<RecipeChannelResult>;
+		this.recipeUpdateChannel = new Subject<RecipeChannelResult>;
+		this.recipeDeleteChannel = new Subject<RecipeChannelResult>; }
+
+	ProductListChannelFire(result: boolean, errorCode: string = '', productList?: IListProduct[],): void {
+		this.productListChannel.next({ sucess: result, products: productList, details: errorCode });
 	}
 
+	ProductDetailsChannelFire(result: boolean, errorCode: string = '', productDetails?: IDetailsProduct): void {
+		this.productDetailsChannel.next({ sucess: result, product: productDetails, details: errorCode });
+	}
 
-	// error handler
-	private handleError(error: HttpErrorResponse) {
-		if (error.status === 0) {
-			// A client-side or network error
-			console.error('An error occurred:', error.error);
-		} else {
-			// The backend returned an unsuccessful response code.
-			console.error(
-				`Backend returned code ${error.status}, body was: `, error.error);
-		}
-		return throwError(() => new Error('Something bad happened; please try again later.'));
+	ProductUpdateChannelFire(result: boolean, errorCode: string = ''): void {
+		this.productUpdateChannel.next({ sucess: result, details: errorCode });
+	}
+
+	ProductDeleteChannelFire(result: boolean, code: string): void {
+		this.productDeleteChannel.next({ sucess: result, details: code });
+	}
+
+	RecipeListChannelFire(result: boolean, errorCode: string = '', recipeList?: IListRecipe[]): void {
+		this.recipeListChannel.next({ sucess: result, recipes: recipeList, details: errorCode });
+	}
+
+	RecipeDetailsChannelFire(result: boolean, errorCode: string = '', recipeDetails?: IDetailsRecipe): void {
+		this.recipeDetailsChannel.next({ sucess: result, recipe: recipeDetails, details: errorCode });
+	}
+
+	RecipeUpdateChannelFire(result: boolean, errorCode: string = ''): void {
+		this.recipeUpdateChannel.next({ sucess: result, details: errorCode });
+	}
+
+	RecipeDeleteChannelFire(result: boolean, code: string): void {
+		this.recipeDeleteChannel.next({ sucess: result, details: code });
 	}
 }

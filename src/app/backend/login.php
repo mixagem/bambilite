@@ -11,6 +11,8 @@ function CookieGenerator($stampsize = 25)
 	return $randomString;
 }
 
+if(!isset($_POST["username"]) || !isset($_POST["password"]) ){return;}
+
 $username = str_replace("'","''",$_POST["username"]);
 $password = $_POST["password"];
 

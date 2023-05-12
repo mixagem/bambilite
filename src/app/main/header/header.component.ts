@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { BambiService } from 'src/app/services/bambi.service';
 import { HeaderService } from './header.service';
-import { FdService } from '../mainforms/fd/fd.service';
+import { ProductsService } from '../mainforms/fd/products/products.service';
 import { Router } from '@angular/router';
 import { AppTheme, AppLanguage } from 'src/app/interfaces/Generic';
 
@@ -18,7 +18,7 @@ export class HeaderComponent {
 		public bambiService: BambiService,
 		public headerService: HeaderService,
 		public router: Router,
-		private _fdService: FdService) {
+		private _productsService: ProductsService) {
 	}
 
 	themeSwap(theme: AppTheme): void {
@@ -43,7 +43,7 @@ export class HeaderComponent {
 	inputSearch(): void {
 		switch (this.router.url) {
 			case '/fd/products':
-				this._fdService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
+				this._productsService.API('getqueriedlist', new HttpParams().set('operation', 'getqueriedlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 		}
 	}

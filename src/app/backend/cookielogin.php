@@ -11,7 +11,11 @@ function CookieGenerator($stampsize = 25)
 	return $randomString;
 }
 
-$cookie = str_replace("'","''",$_POST["cookie"]);
+if (!isset($_POST["cookie"])) {
+	return;
+}
+
+$cookie = str_replace("'", "''", $_POST["cookie"]);
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
