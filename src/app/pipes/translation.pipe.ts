@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { BambiService } from '../services/bambi.service';
+import { AppService } from '../services/app.service';
 
 @Pipe({
 	name: 'translation',
@@ -7,10 +7,10 @@ import { BambiService } from '../services/bambi.service';
 })
 export class TranslationPipe implements PipeTransform {
 
-	constructor(private _bambiService: BambiService){}
+	constructor(private _appService: AppService){}
 
 	transform(localeID: string) : string {
-		return !!this._bambiService.LOCALES[`${localeID}`] ? this._bambiService.LOCALES[`${localeID}`] : localeID
+		return !!this._appService.LOCALES[`${localeID}`] ? this._appService.LOCALES[`${localeID}`] : localeID
 	}
 
 }

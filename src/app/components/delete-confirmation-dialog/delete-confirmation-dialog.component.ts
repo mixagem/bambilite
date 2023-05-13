@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/main/mainforms/fd/products/products.service';
 import { RecipesService } from 'src/app/main/mainforms/fd/recipes/recipes.service';
 import { SupplementsService } from 'src/app/main/mainforms/sp/supplements/supplements.service';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
 	selector: 'bl-delete-confirmation-dialog',
@@ -15,7 +15,7 @@ import { BambiService } from 'src/app/services/bambi.service';
 export class DeleteConfirmationDialogComponent {
 
 	constructor(
-		public bambiService: BambiService,
+		public appService: AppService,
 		private _productsService: ProductsService,
 		private _recipesService: RecipesService,
 		private _supplementsService: SupplementsService,
@@ -25,13 +25,13 @@ export class DeleteConfirmationDialogComponent {
 	confirmDelete(): void {
 		switch (this._router.url) {
 			case '/fd/products':
-				this._productsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))
+				this._productsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
 				break;
 			case '/fd/recipes':
-				this._recipesService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))
+				this._recipesService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
 				break;
 			case '/sp/supplements':
-				this._supplementsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('stamps', this.bambiService.deleteSelection.toString()))
+				this._supplementsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
 				break;
 		}
 	}

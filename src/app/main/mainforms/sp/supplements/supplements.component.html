@@ -5,7 +5,7 @@
 <div class="mainform-header" *ngIf="loadingComplete">
 <div class="header-title">
 	<mat-icon>restaurant_menu</mat-icon>
-	<h1>{{'SUPPLEMENTATION.SUPPLEMENTS.TITLE' | translation}}</h1>
+	<h1>{{'SP.SUPPLEMENTS.TITLE' | translation}}</h1>
 </div>
 
 <div class="header-actions">
@@ -17,7 +17,7 @@
 </div>
 <div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
-<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + appService.appTheme">
 
 	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
@@ -30,16 +30,16 @@
 	</ng-container>
 
 	<ng-container matColumnDef="title">
-		<th mat-header-cell *matHeaderCellDef> {{'SUPPLEMENTATION.SUPPLEMENTS.LISTHEADER.TITLE' | translation}} </th>
+		<th mat-header-cell *matHeaderCellDef> {{'SP.SUPPLEMENTS.LIST.TITLE' | translation}} </th>
 	</ng-container>
 
 	<ng-container matColumnDef="tags">
-		<th mat-header-cell *matHeaderCellDef> {{'SUPPLEMENTATION.SUPPLEMENTS.LISTHEADER.TAGS' | translation}} </th>
+		<th mat-header-cell *matHeaderCellDef> {{'SP.SUPPLEMENTS.LIST.TAGS' | translation}} </th>
 	</ng-container>
 </table>
 
 <ng-scrollbar>
-	<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + bambiService.appTheme">
+	<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + appService.appTheme">
 
 		<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
 
@@ -66,7 +66,7 @@
 	</table>
 </ng-scrollbar>
 
-<mat-paginator [pageSizeOptions]="[10]" *ngIf="!this.supplementsService.executingQuery"></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10]" *ngIf="!supplementsService.executingQuery"></mat-paginator>
 </div>
 
 

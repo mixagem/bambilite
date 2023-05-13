@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router } from '@angular/router';
 import { HeaderService } from 'src/app/main/header/header.service';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { FdService, ProductChannelResult } from '../../../fd/fd.service';
 import { ProductsService } from '../../../fd/products/products.service';
 import { SupplementsService } from '../supplements.service';
@@ -63,7 +63,7 @@ export class SupplementEditComponent {
 	constructor(
 		public supplementsService: SupplementsService,
 		public router: Router,
-		public bambiService: BambiService,
+		public appService: AppService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
 		public spService: SpService,
@@ -173,31 +173,29 @@ export class SupplementEditComponent {
 		const httpParams =
 			new HttpParams()
 				.set('operation', operation)
-				.set('cookie', this.bambiService.userInfo.cookie)
-				.set('owner', this.bambiService.userInfo.username)
+				.set('cookie', this.appService.userInfo.cookie)
+				.set('owner', this.appService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
 		this.supplementsService.API(operation, httpParams)
 	}
 
 	// triggered by the response from the update product call
-	saveFinished(result: ProductChannelResult): void {
+	saveFinished(result: SupplementChannelResult): void {
 		this.loadingComplete = true;
 		// disparar snackbars aqui?
 		if (result.sucess) {
 			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.SUPPLEMENTCREATED' : 'APPSNACKS.SUPPLEMENTUPDATED', emoji: '🥝' } });
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'SNACKS.NEW-SUPPLEMENT' : 'SNACKS.UPDATED-SUPPLEMENT', emoji: '🥝' } });
 		}
 		else {
 			switch (result.details) {
-				case 'product-not-found':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.SUPPLEMENT-NOTFOUND', emoji: '🚫' } });
-					return;
 				case 'user-not-owner':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.USER-NOT-OWNER', emoji: '🚫' } });
 					return;
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
 					return;
 			}
 		}
@@ -217,8 +215,8 @@ export class SupplementEditComponent {
 			this.supplementsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.bambiService.userInfo.username)
-					.set('cookie', this.bambiService.userInfo.cookie));
+					.set('owner', this.appService.userInfo.username)
+					.set('cookie', this.appService.userInfo.cookie));
 		}
 	}
 
@@ -232,7 +230,7 @@ export class SupplementEditComponent {
 
 	// imagepicker
 	newPicUpload(): void {
-		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
+		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
 	}
 
 	// tags

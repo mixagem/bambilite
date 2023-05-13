@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
 import { IDetailsRecipe, IListRecipe } from 'src/app/interfaces/Fd';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { FdService } from '../fd.service';
 
 type RecipeObject = { sucess: boolean; recordList?: IListRecipe[]; recordDetails?: IDetailsRecipe; details?: string }
@@ -21,7 +21,7 @@ export class RecipesService {
 
 	constructor(
 		private _http: HttpClient,
-		private _bambiService: BambiService,
+		private _appService: AppService,
 		private _fdService: FdService) { }
 
 	// db calls
@@ -29,10 +29,10 @@ export class RecipesService {
 
 		this.executingQuery = true;
 
-		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'fd/recipes.php', httpParameters, { responseType: 'json' }).pipe(
+		const call = httpParameters ? this._http.post(this._appService.BACKEND_URL + 'fd/recipes.php', httpParameters, { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
 			catchError(this.handleError), // then handle the error
-		) : this._http.get(this._bambiService.BACKEND_URL + 'fd/recipes.php').pipe(
+		) : this._http.get(this._appService.BACKEND_URL + 'fd/recipes.php').pipe(
 			retry(1),
 			catchError(this.handleError),
 		);

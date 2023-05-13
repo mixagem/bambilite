@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { ProductsService } from './products.service';
 import { HttpParams } from '@angular/common/http';
@@ -32,97 +32,94 @@ export class ProductsComponent implements OnInit, OnDestroy {
 	selectedRecords: string[] = [];
 
 	constructor(
-		public bambiService: BambiService,
+		public appService: AppService,
 		public productsService: ProductsService,
 		public fdService: FdService,
 		private _dialog: MatDialog,
-		private _snackBar: MatSnackBar) { }
+		private _snackBar: MatSnackBar) { };
 
 	ngOnInit(): void {
-		// subs
+
 		this.fdService.productListChannel = new Subject<ProductChannelResult>;
 		this.fdService.productDeleteChannel = new Subject<ProductChannelResult>;
 
-		this.fdService.productListChannel.subscribe(result => { this.showRecordList(result); });
-		this.fdService.productDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
+		this.fdService.productListChannel.subscribe(result => { this.showRecordList(result) });
+		this.fdService.productDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result) });
 
-		this.productsService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
-	}
-
+		this.productsService.API('getlist',
+			new HttpParams()
+				.set('operation', 'getlist')
+				.set('owner', this.appService.userInfo.username)
+				.set('cookie', this.appService.userInfo.cookie));
+	};
 
 	ngOnDestroy(): void {
-		// subs
+
 		this.fdService.productListChannel.complete();
 		this.fdService.productDeleteChannel.complete();
-	}
+	};
 
+	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator };
 
-	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
-
-	// listing (triggered by load subject)
 	showRecordList(result: ProductChannelResult): void {
+		this.loadingComplete = true;
+
 		if (result.sucess) {
 			this.recordList = result.recordList!;
 			this.dataSource = new MatTableDataSource<IListProduct>(this.recordList);
-		}
+		};
 
 		if (!result.sucess) {
 			switch (result.details) {
-				case 'no-products-found':
+				case 'no-records-found':
 					this.recordList = [];
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
-					console.error('bambilite connection error: ' + result.details)
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
 					break;
-			}
-		}
+			};
+		};
+	};
 
-		this.loadingComplete = true;
-	}
-
-	// listing (triggered by delete subject)
 	refreshRecordListFromDelete(result: ProductChannelResult): void {
-		// sucessfull deleted records
+
 		if (result.sucess) {
-			// reseting selection array
-			this.bambiService.deleteSelection = [];
+
+			this.selectedRecords.length > 1 ?
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCTS', emoji: '🚮' } })
+				: this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCT', emoji: '🚮' } })
+
+			this.appService.deleteSelection = [];
 			this.selectedRecords = [];
 
-			// snackbar fire
-			result.details === "user-owns-some" ?
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.SOMEPRODUCTDELETED', emoji: '🚮' } }) :
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.ALLPRODUCTDELETED', emoji: '🚮' } })
-
-			// fetch updated listing
 			this.productsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.bambiService.userInfo.username)
-					.set('cookie', this.bambiService.userInfo.cookie));
-		}
+					.set('owner', this.appService.userInfo.username)
+					.set('cookie', this.appService.userInfo.cookie));
+		};
 
-		// error deleting records
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'user-owns-none':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.NONEPRODUCTDELETED', emoji: '🚯' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-PRODUCT', emoji: '🚯' } });
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details);
 					break;
-			}
-		}
-	}
+			};
+		};
+	};
 
 	// product details dialog
 	showDetails(productstamp: string): void {
-		this._dialog.open(ProductDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
-		this.productsService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
-	}
+		this._dialog.open(ProductDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
+		this.productsService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
+	};
 
 	// introduction mode
 	addNewProduct(): void {
@@ -136,12 +133,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
 			unit: 'g',
 			unitvalue: 0,
 			price: 0,
-			owner: this.bambiService.userInfo.username,
+			owner: this.appService.userInfo.username,
 			public: false,
 			inactive: false,
 			timestamp: Date.now()
 		};
-	}
+	};
 
 	// update selected records
 	selectItem(target: EventTarget, stamp: string): void {
@@ -157,11 +154,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
 			const slice2 = this.selectedRecords.slice(recordIndex + 1);
 			this.selectedRecords = [...slice1, ...slice2];
 		}
-	}
+	};
 
 	// delete selected records
 	deleteSelected(): void {
-		this.bambiService.deleteSelection = this.selectedRecords;
-		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.bambiService.appTheme + '-theme'] });
-	}
-}
+		this.appService.deleteSelection = this.selectedRecords;
+		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.appService.appTheme + '-theme'] });
+	};
+};

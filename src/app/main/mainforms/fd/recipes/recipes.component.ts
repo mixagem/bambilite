@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { IListRecipe } from 'src/app/interfaces/Fd';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { Subject } from 'rxjs';
@@ -30,10 +30,10 @@ export class RecipesComponent implements OnInit, OnDestroy {
 	displayedColumns: string[] = ['check', 'image', 'title', 'tags'];
 
 	// checkboxes control
-	selectedRecods: string[] = [];
+	selectedRecords: string[] = [];
 
 	constructor(
-		public bambiService: BambiService,
+		public appService: AppService,
 		public recipeService: RecipesService,
 		private _fdService: FdService,
 		private _dialog: MatDialog,
@@ -48,7 +48,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 		this._fdService.recipeListChannel.subscribe(result => { this.showRecordList(result); });
 		this._fdService.recipeDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
 
-		this.recipeService.API('getlist',new HttpParams().set('operation', 'getlist').set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
+		this.recipeService.API('getlist',new HttpParams().set('operation', 'getlist').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
 	}
 
 	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
@@ -67,12 +67,12 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
 		if (!result.sucess) {
 			switch (result.details) {
-				case 'no-recipes-found':
+				case 'no-records-found':
 					this.recordList = [];
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details)
 					break;
 			}
@@ -93,7 +93,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 			unit: 'g',
 			unitvalue: 0,
 			price: 0,
-			owner: this.bambiService.userInfo.username,
+			owner: this.appService.userInfo.username,
 			public: false,
 			inactive: false,
 			timestamp: Date.now()
@@ -102,40 +102,40 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
 	// delete selected records
 	deleteSelected(): void {
-		this.bambiService.deleteSelection = this.selectedRecods;
-		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.bambiService.appTheme + '-theme'] });
+		this.appService.deleteSelection = this.selectedRecords;
+		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.appService.appTheme + '-theme'] });
 	}
 
 	// listing (triggered by delete subject)
 	refreshRecordListFromDelete(result: RecipeChannelResult): void {
 		// sucessfull deleted records
 		if (result.sucess) {
-			// reseting selection array
-			this.bambiService.deleteSelection = [];
-			this.selectedRecods = [];
-
 			// snackbar fire
-			result.details === "user-owns-some" ?
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.SOMERECIPESDELETED', emoji: '🚮' } }) :
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.ALLRECIPESDELETED', emoji: '🚮' } })
+			this.selectedRecords.length > 1 ?
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPES', emoji: '🚮' } }) :
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPE', emoji: '🚮' } })
+
+			// reseting selection array
+			this.appService.deleteSelection = [];
+			this.selectedRecords = [];
 
 			// fetch updated listing
 			this.recipeService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.bambiService.userInfo.username)
-					.set('cookie', this.bambiService.userInfo.cookie));
+					.set('owner', this.appService.userInfo.username)
+					.set('cookie', this.appService.userInfo.cookie));
 		}
 
 		// error deleting records
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'user-owns-none':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.NONERECIPESDELETED', emoji: '🚯' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-RECIPE', emoji: '🚯' } });
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details);
 					break;
 			}
@@ -147,22 +147,22 @@ export class RecipesComponent implements OnInit, OnDestroy {
 			const newTarget = target as HTMLInputElement;
 
 			// adding
-			if (newTarget.checked && !this.selectedRecods.includes(stamp)) { this.selectedRecods.push(stamp); }
+			if (newTarget.checked && !this.selectedRecords.includes(stamp)) { this.selectedRecords.push(stamp); }
 
 			// removing
-			if (!newTarget.checked && this.selectedRecods.includes(stamp)) {
-				const productIndex = this.selectedRecods.indexOf(stamp);
-				const slice1 = this.selectedRecods.slice(0, productIndex);
-				const slice2 = this.selectedRecods.slice(productIndex + 1);
-				this.selectedRecods = [...slice1, ...slice2];
+			if (!newTarget.checked && this.selectedRecords.includes(stamp)) {
+				const productIndex = this.selectedRecords.indexOf(stamp);
+				const slice1 = this.selectedRecords.slice(0, productIndex);
+				const slice2 = this.selectedRecords.slice(productIndex + 1);
+				this.selectedRecords = [...slice1, ...slice2];
 			}
 		}
 
 
 		// product details dialog
 		showDetails(productstamp: string): void {
-			this._dialog.open(RecipeDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
-			this.recipeService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie));
+			this._dialog.open(RecipeDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
+			this.recipeService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
 		}
 
 }

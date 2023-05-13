@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BambiService } from './services/bambi.service';
+import { AppService } from './services/app.service';
 
 @Component({
 	selector: 'app-root',
@@ -8,9 +8,10 @@ import { BambiService } from './services/bambi.service';
 })
 
 export class AppComponent {
-	title = 'bambi'
+	title = 'myapp';
 
 	constructor(
-		public bambiService: BambiService) {
-	}
-}
+		private _appService: AppService) { };
+
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
+};

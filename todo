@@ -1,10 +1,11 @@
 #
 phase 1
-1. Refract Locales (hierarquia de locales e locales genericas de mainform)
-2. Refract mensagens erro backend (verificar se bate certo com as mensagens do frontend)
-3. restaurar preenchimento automatico no supplementos
-4. tratar de exemplos para as 3 entidades
-5. refract total antes de passar á fase 2
+1. refract total(falta recipes, suplementos, e edit/details do prodcuct)
+2. restaurar preenchimento automatico no supplementos
+3. tratar de exemplos para as 3 entidades
+
+
+
 ----
 phase 2
 1. receitas -> lista de produtos/suplementos que incluem a receita

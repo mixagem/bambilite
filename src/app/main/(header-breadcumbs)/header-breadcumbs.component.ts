@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { HeaderBreadcumbsService } from './header-breadcumbs.service';
 
 @Component({
@@ -12,7 +12,7 @@ export class HeaderBreadcumbsComponent {
 
 	constructor(
 		public breadcumbsService: HeaderBreadcumbsService,
-		public bambiService: BambiService) {
+		public appService: AppService) {
 
 	}
 }

@@ -33,7 +33,6 @@ header("Access-Control-Allow-Headers: X-Requested-With");
 
 $SQL_CON = mysqli_connect('localhost', 'root', '', 'bambilite');
 
-// stamp generator
 function LeggeraStamp()
 {
 	$microtime = microtime();
@@ -66,22 +65,21 @@ function LeggeraSucess($object, $con, $details = "")
 	mysqli_close($con);
 }
 
-// default state
-$record_object = [
-	"sucess" => false,
-	"details" => ""
-];
+function sanitizeInput($input)
+{
+	return str_replace("'", "''", $input);
+}
 
+
+$record_object = ["sucess" => false, "details" => ""];
 
 $SQL_QUERY = "SELECT name FROM users WHERE username = '" . $owner . "' AND cookie = '" . $cookie . "'";
 $SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-// no owner/cookie match found
 if (mysqli_affected_rows($SQL_CON) !== 1) {
 	LeggeraError($record_object, $SQL_CON, "security");
 	return;
 }
-
 
 switch ($operation) {
 
@@ -89,13 +87,11 @@ switch ($operation) {
 		$SQL_QUERY = "SELECT stamp,title,image,tags FROM supplements WHERE owner = '" . $owner . "' OR public = 1 ORDER BY timestamp desc";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
+			LeggeraError($record_object, $SQL_CON, "no-records-found");
 			return;
 		}
 
-		// supplements loop
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -106,28 +102,28 @@ switch ($operation) {
 		return;
 
 	case 'getqueriedlist':
+
 		if (!isset($_POST["query"])) {
 			LeggeraError($record_object, $SQL_CON, "no-query-provided");
 			return;
 		}
+
 		$query = strtolower($_POST["query"]);
-		$query = str_replace("'", "''", $query);
+		$query = sanitizeInput($query);
 		$OR_CLAUSE = "LOWER(title) LIKE '%" . $query . "%' OR LOWER(tags) LIKE '%" . $query . "%'";
 
 		if (is_numeric($query)) {
 			$OR_CLAUSE .= " OR kcal LIKE '%" . $query . "%' OR unitvalue LIKE '%" . $query . "%' OR price LIKE '%" . $query . "%'";
 		}
-		$SQL_QUERY = "SELECT stamp,title,image,tags FROM supplements WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
 
+		$SQL_QUERY = "SELECT stamp,title,image,tags FROM supplements WHERE ( " . $OR_CLAUSE . " ) AND ( owner = '" . $owner . "' OR public = 1 ) ORDER BY timestamp desc";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
+			LeggeraError($record_object, $SQL_CON, "no-records-found");
 			return;
 		}
 
-		// supplements loop
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -138,22 +134,21 @@ switch ($operation) {
 		return;
 
 	case 'getdetails':
+
 		if (!isset($_POST["stamp"])) {
 			LeggeraError($record_object, $SQL_CON, "no-stamp-provided");
 			return;
 		}
-		$srecordstamp = $_POST["stamp"];
 
+		$srecordstamp = $_POST["stamp"];
 		$SQL_QUERY = "SELECT * FROM supplements WHERE stamp = '" . $srecordstamp . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// no supplements found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "no-supplements-found");
+			LeggeraError($record_object, $SQL_CON, "no-records-found");
 			return;
 		}
 
-		// fetching supplements details
 		$record_object["recordDetails"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
@@ -166,42 +161,41 @@ switch ($operation) {
 		return;
 
 	case 'update':
+
 		if (!isset($_POST["record"])) {
 			LeggeraError($record_object, $SQL_CON, "no-supplement-provided");
 			return;
 		}
+
 		$record = json_decode($_POST["record"], true);
+
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
 		}
-		// get og owner
+
 		$SQL_QUERY = "SELECT owner FROM supplements WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// supplement not found
 		if (mysqli_num_rows($SQL_RUN) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "supplement-not-found");
+			LeggeraError($record_object, $SQL_CON, "record-not-found");
 			return;
 		}
 
-		// fetching og owner
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$ogowner = $SQL_RESULT_ROW["owner"];
 		}
 
-		// user not owner
 		if ($ogowner !== $owner) {
 			LeggeraError($record_object, $SQL_CON, "user-not-owner");
 			return;
 		}
-		str_replace("'", "''", $record['title']);
-		// validations over, supplement collection
-		$SQL_QUERY = "UPDATE supplements SET title = '" . str_replace("'", "''", $record['title']) . "', kcal = " . str_replace("'", "''", $record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . str_replace("'", "''", $record['unitvalue']) . ", price = " . str_replace("'", "''", $record['price']) . ", tags = '" . str_replace("'", "''", json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
+
+		$SQL_QUERY = "UPDATE supplements SET title = '" . sanitizeInput($record['title']) . "', kcal = " . sanitizeInput($record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . sanitizeInput($record['unitvalue']) . ", price = " . sanitizeInput($record['price']) . ", tags = '" . sanitizeInput(json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// error updating element
+
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
-			LeggeraError($record_object, $SQL_CON, "error-updating-supplement");
+			LeggeraError($record_object, $SQL_CON, "error-updating-record");
 			return;
 		}
 
@@ -209,8 +203,9 @@ switch ($operation) {
 		return;
 
 	case 'new':
+
 		if (!isset($_POST["record"])) {
-			LeggeraError($record_object, $SQL_CON, "no-supplement-provided");
+			LeggeraError($record_object, $SQL_CON, "no-record-provided");
 			return;
 		}
 
@@ -219,13 +214,13 @@ switch ($operation) {
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
 		}
+
 		$stampgen = LeggeraStamp();
 
-		$SQL_QUERY = "INSERT INTO supplements (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . str_replace("'", "''", $record['title']) . "'," . str_replace("'", "''", $record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . str_replace("'", "''", $record['unitvalue']) . "," . str_replace("'", "''", $record['price']) . ",'" . str_replace("'", "''", json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO supplements (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . sanitizeInput($record['title']) . "'," . sanitizeInput($record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . sanitizeInput($record['unitvalue']) . "," . sanitizeInput($record['price']) . ",'" . sanitizeInput(json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// error creating element
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
 			LeggeraError($record_object, $SQL_CON, "error-creating-supplement");
 			return;
@@ -235,15 +230,17 @@ switch ($operation) {
 		return;
 
 	case 'delete':
+
 		if (!isset($_POST["stamps"])) {
-			LeggeraError($record_object, $SQL_CON, "no-stamplist-provided");
+			LeggeraError($record_object, $SQL_CON, "no-stamp-provided");
 			return;
 		}
+
 		$recordstamps_str = str_replace(" ", "", $_POST["stamps"]);
 		$recordstamps_arr = explode(",", $recordstamps_str);
 
 		if ($recordstamps_str === "") {
-			LeggeraError($record_object, $SQL_CON, "no-supplements-selected");
+			LeggeraError($record_object, $SQL_CON, "no-records-selected");
 			return;
 		}
 
@@ -257,14 +254,13 @@ switch ($operation) {
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		if (mysqli_num_rows($SQL_RUN) === 0) {
-			LeggeraError($record_object, $SQL_CON, "error-counting-owner-rows");
+			LeggeraError($record_object, $SQL_CON, "error-counting-user-owner-rows");
 			return;
 		}
 
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			$rows_owner = intval($SQL_RESULT_ROW["count"]);
 		}
-
 
 		if ($rows_owner === 0) {
 			LeggeraError($record_object, $SQL_CON, "user-owns-none");
@@ -274,7 +270,6 @@ switch ($operation) {
 		$SQL_QUERY = "DELETE FROM supplements WHERE stamp IN (" . $IN_CLAUSE  . ") AND owner = '" . $owner . "' AND public = 0";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
-		// supplement not found
 		if (mysqli_affected_rows($SQL_CON) === 0) {
 			LeggeraError($record_object, $SQL_CON, "error-deleting-supplement");
 			return;

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IListSupplement, IDetailsSupplement } from 'src/app/interfaces/Sp';
 
-export type SupplementChannelResult = { sucess: boolean, supplements?: IListSupplement[], supplement?: IDetailsSupplement, details?: string }
+export type SupplementChannelResult = { sucess: boolean, recordList?: IListSupplement[], record?: IDetailsSupplement, details?: string }
 
 @Injectable({ providedIn: 'root' })
 
@@ -28,11 +28,11 @@ export class SpService {
 
 
 	SupplementListChannelFire(result: boolean, errorCode: string = '', supplementList?: IListSupplement[],): void {
-		this.supplementListChannel.next({ sucess: result, supplements: supplementList, details: errorCode });
+		this.supplementListChannel.next({ sucess: result, recordList: supplementList, details: errorCode });
 	}
 
 	SupplementDetailsChannelFire(result: boolean, errorCode: string = '', supplementDetails?: IDetailsSupplement): void {
-		this.supplementDetailsChannel.next({ sucess: result, supplement: supplementDetails, details: errorCode });
+		this.supplementDetailsChannel.next({ sucess: result, record: supplementDetails, details: errorCode });
 	}
 
 	SupplementUpdateChannelFire(result: boolean, errorCode: string = ''): void {

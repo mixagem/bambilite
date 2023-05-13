@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IDetailsRecipe } from 'src/app/interfaces/Fd';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { FdService, RecipeChannelResult } from '../../fd.service';
 import { Observable, Subject } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -55,7 +55,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
 	constructor(
-		public bambiService: BambiService,
+		public appService: AppService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
 		public router: Router,
@@ -107,18 +107,16 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// disparar snackbars aqui?
 		if (result.sucess) {
 			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.RECIPECREATED' : 'APPSNACKS.RECIPEUPDATED', emoji: '🥝' } });
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'SNACKS.NEW-RECIPE' : 'SNACKS.UPDATED-RECIPE', emoji: '🥝' } });
 		}
 		else {
 			switch (result.details) {
-				case 'product-not-found':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.RECIPE-NOTFOUND', emoji: '🚫' } });
-					return;
 				case 'user-not-owner':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.USER-NOT-OWNER', emoji: '🚫' } });
 					return;
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
 					return;
 			}
 		}
@@ -157,8 +155,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		const httpParams =
 			new HttpParams()
 				.set('operation', operation)
-				.set('cookie', this.bambiService.userInfo.cookie)
-				.set('owner', this.bambiService.userInfo.username)
+				.set('cookie', this.appService.userInfo.cookie)
+				.set('owner', this.appService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
 		this.recipesService.API(operation, httpParams)
@@ -178,15 +176,15 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			this.recipesService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.bambiService.userInfo.username)
-					.set('cookie', this.bambiService.userInfo.cookie));
+					.set('owner', this.appService.userInfo.username)
+					.set('cookie', this.appService.userInfo.cookie));
 		}
 	}
 
 
 	// imagepicker
 	newPicUpload(): void {
-		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
+		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
 	}
 
 	// tags

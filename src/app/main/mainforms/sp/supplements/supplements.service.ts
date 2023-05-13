@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IListSupplement, IDetailsSupplement } from 'src/app/interfaces/Sp';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { catchError, retry, throwError } from 'rxjs';
 import { SpService } from '../sp.service';
 
@@ -23,7 +23,7 @@ export class SupplementsService {
 
 	constructor(
 		private _http: HttpClient,
-		private _bambiService: BambiService,
+		private _appService: AppService,
 		private _spService: SpService) { }
 
 
@@ -33,10 +33,10 @@ export class SupplementsService {
 
 		this.executingQuery = true;
 
-		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'sp/supplements.php', httpParameters, { responseType: 'json' }).pipe(
+		const call = httpParameters ? this._http.post(this._appService.BACKEND_URL + 'sp/supplements.php', httpParameters, { responseType: 'json' }).pipe(
 			retry(1), // retry a failed request
 			catchError(this.handleError), // then handle the error
-		) : this._http.get(this._bambiService.BACKEND_URL + 'sp/supplements.php').pipe(
+		) : this._http.get(this._appService.BACKEND_URL + 'sp/supplements.php').pipe(
 			retry(1),
 			catchError(this.handleError),
 		);

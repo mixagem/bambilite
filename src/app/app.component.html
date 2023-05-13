@@ -1,10 +1,10 @@
-<span class="bambi-fx-60" [ngClass]="bambiService.appTheme + '-theme'">
+<span class="bambi-fx-60" [ngClass]="appService('appTheme') + '-theme'">
 
-	<ng-container id="landing-page" *ngIf="!bambiService.authorizedLogin">
+	<ng-container id="landing-page" *ngIf="!appService('authorizedLogin')">
 		<bl-landing-page></bl-landing-page>
 	</ng-container>
 
-	<ng-container *ngIf="bambiService.authorizedLogin">
+	<ng-container *ngIf="appService('authorizedLogin')">
 		<div id="app-wrapper">
 			<bl-menu></bl-menu>
 			<div id="content-wrapper">

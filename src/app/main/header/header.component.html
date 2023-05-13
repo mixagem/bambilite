@@ -9,7 +9,7 @@
 		<div id="products-input" class="bambi-fx-15" *ngIf="simpleQueryAllowedMainforms.includes(router.url)">
 			<form [formGroup]="headerService.inputsForm">
 				<mat-form-field appearance="outline" class="bambi-fx-30-inline no-hint" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'APPHEADER.INPUT.PRODUCTS' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'HEADER.INPUT.PRODUCTS' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" id="product-query-input" matInput formControlName="simpleQueryFormControl" (ngModelChange)="inputSearch()">
 					<mat-icon matSuffix>search</mat-icon>
 				</mat-form-field>
@@ -23,34 +23,34 @@
 				fontSet="material-icons-outlined">language</mat-icon></button>
 		<button class="header-button" mat-icon-button mat-icon-button [matMenuTriggerFor]="thememenu"><mat-icon
 				fontSet="material-icons-outlined">palette</mat-icon></button>
-		<button class="header-button" mat-icon-button mat-icon-button (click)="bambiService.Disconnect(true)"><mat-icon
+		<button class="header-button" mat-icon-button mat-icon-button (click)="appService.Disconnect(true)"><mat-icon
 				fontSet="material-icons-outlined">power_settings_new</mat-icon></button>
 		<mat-menu class="header-mini-menu" #langmenu="matMenu" xPosition="before">
 			<span class="lang-menu-wrapper bambi-fx-15">
 
-				<span class="option-label">{{'APPHEADER.LANGPICKER' | translation}}</span>
+				<span class="option-label">{{'HEADER.LANGPICKER' | translation}}</span>
 
 				<button id="pt-lang" class="menu-entry"
-					[ngClass]="bambiService.appLang === 'pt' ? 'selected-language' : ''" mat-menu-item
+					[ngClass]="appService.appLang === 'pt' ? 'selected-language' : ''" mat-menu-item
 					(click)="languageSwap('pt')">
 					<div><img src="https://hatscripts.github.io/circle-flags/flags/pt.svg" width="24">
-						<p>{{'APPHEADER.LANGPT' |
+						<p>{{'HEADER.LANGPT' |
 							translation}}</p>
 					</div>
 				</button>
 				<button id="uk-lang" class="menu-entry"
-					[ngClass]="bambiService.appLang === 'uk' ? 'selected-language' : ''" mat-menu-item
+					[ngClass]="appService.appLang === 'uk' ? 'selected-language' : ''" mat-menu-item
 					(click)="languageSwap('uk')">
 					<div><img src="https://hatscripts.github.io/circle-flags/flags/uk.svg" width="24">
-						<p>{{'APPHEADER.LANGUK' |
+						<p>{{'HEADER.LANGUK' |
 							translation}}</p>
 					</div>
 				</button>
 				<button id="es-lang" class="menu-entry"
-					[ngClass]="bambiService.appLang === 'es' ? 'selected-language' : ''" mat-menu-item
+					[ngClass]="appService.appLang === 'es' ? 'selected-language' : ''" mat-menu-item
 					(click)="languageSwap('es')">
 					<div><img src="https://hatscripts.github.io/circle-flags/flags/es.svg" width="24">
-						<p>{{'APPHEADER.LANGES' |
+						<p>{{'HEADER.LANGES' |
 							translation}}</p>
 					</div>
 				</button></span>
@@ -58,16 +58,16 @@
 		<mat-menu class="header-mini-menu" #thememenu="matMenu" xPosition="before">
 			<span class="theme-menu-wrapper bambi-fx-15">
 
-				<span class="option-label">{{'APPHEADER.THEMEPICKER' | translation}}</span>
+				<span class="option-label">{{'HEADER.THEMEPICKER' | translation}}</span>
 
 				<button class="menu-entry waikiki" mat-menu-item (click)="themeSwap('waikiki')">
-					<span>{{'APPHEADER.THEMEWAIKIKI' | translation}}</span><mat-icon
-						*ngIf="bambiService.appTheme === 'waikiki'">checked</mat-icon>
+					<span>{{'HEADER.THEMEWAIKIKI' | translation}}</span><mat-icon
+						*ngIf="appService.appTheme === 'waikiki'">checked</mat-icon>
 				</button>
 
 				<button class="menu-entry vice" mat-menu-item (click)="themeSwap('vice')">
-					<span>{{'APPHEADER.THEMEVICE' | translation}}</span><mat-icon
-						*ngIf="bambiService.appTheme === 'vice'">checked</mat-icon>
+					<span>{{'HEADER.THEMEVICE' | translation}}</span><mat-icon
+						*ngIf="appService.appTheme === 'vice'">checked</mat-icon>
 
 				</button>
 

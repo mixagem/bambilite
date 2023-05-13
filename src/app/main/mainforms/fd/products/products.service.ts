@@ -1,11 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, retry, throwError } from 'rxjs';
-import { IDetailsProduct,  IListProduct } from 'src/app/interfaces/Fd';
-import { BambiService } from 'src/app/services/bambi.service';
+import { IDetailsProduct, IListProduct } from 'src/app/interfaces/Fd';
+import { AppService } from 'src/app/services/app.service';
 import { FdService } from '../fd.service';
 
-type ProductObject = { sucess: boolean; recordList?: IListProduct[]; recordDetails?: IDetailsProduct; details?: string }
+type ProductObject = { sucess: boolean; recordList?: IListProduct[]; recordDetails?: IDetailsProduct; details?: string };
 
 @Injectable({ providedIn: 'root' })
 
@@ -21,24 +21,24 @@ export class ProductsService {
 
 	constructor(
 		private _http: HttpClient,
-		private _bambiService: BambiService,
-		private _fdService: FdService) { }
+		private _appService: AppService,
+		private _fdService: FdService) { };
 
 	// db calls
 	API(operation: string, httpParameters: HttpParams | null = null) {
 
 		this.executingQuery = true;
 
-		const call = httpParameters ? this._http.post(this._bambiService.BACKEND_URL + 'fd/products.php', httpParameters, { responseType: 'json' }).pipe(
-			retry(1), // retry a failed request
-			catchError(this.handleError), // then handle the error
-		) : this._http.get(this._bambiService.BACKEND_URL + 'fd/products.php').pipe(
-			retry(1),
-			catchError(this.handleError),
-		);
+		const call = httpParameters ?
+			this._http.post(this._appService.BACKEND_URL + 'fd/products.php', httpParameters, { responseType: 'json' })
+				.pipe(retry(1), catchError(this.handleError))
+
+			: this._http.get(this._appService.BACKEND_URL + 'fd/products.php')
+				.pipe(retry(1), catchError(this.handleError));
 
 		call.subscribe({
 			next: (data) => {
+				this.executingQuery = false;
 				const recordObject = data as ProductObject;
 				switch (operation) {
 					case 'getlist':
@@ -58,37 +58,28 @@ export class ProductsService {
 					case 'delete':
 						this._fdService.ProductDeleteChannelFire(recordObject.sucess, recordObject.details!);
 						break;
-				}
-				this.executingQuery = false;
+				};
 			},
 			error: () => {
 				this.executingQuery = false;
 				switch (operation) {
 					case 'getlist':
 					case 'getqueriedlist':
-						this._fdService.ProductListChannelFire(false, 'offline');
-						return;
+						return this._fdService.ProductListChannelFire(false, 'offline');
 
 					case 'getdetails':
-						this._fdService.ProductDetailsChannelFire(false, 'offline');
-						return;
+						return this._fdService.ProductDetailsChannelFire(false, 'offline');
 
 					case 'update':
 					case 'new':
-						this._fdService.ProductUpdateChannelFire(false, 'offline');
-						return;
+						return this._fdService.ProductUpdateChannelFire(false, 'offline');
 
 					case 'delete':
-						this._fdService.ProductDeleteChannelFire(false, 'offline');
-						return;
-
-
-				}
+						return this._fdService.ProductDeleteChannelFire(false, 'offline');
+				};
 			}
 		});
-	}
-
-
+	};
 
 	// error handler
 	private handleError(error: HttpErrorResponse) {
@@ -99,7 +90,7 @@ export class ProductsService {
 			// The backend returned an unsuccessful response code.
 			console.error(
 				`Backend returned code ${error.status}, body was: `, error.error);
-		}
+		};
 		return throwError(() => new Error('Something bad happened; please try again later.'));
-	}
-}
+	};
+};

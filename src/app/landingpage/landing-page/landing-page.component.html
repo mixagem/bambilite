@@ -1,4 +1,4 @@
-<span class="bambi-fx-60 fx-speed-20" [ngClass]="bambiService.appTheme+'-theme'">
+<span class="bambi-fx-60 fx-speed-20" [ngClass]="appService.appTheme+'-theme'">
 
 	<svg id="svg-bg" xmlns="http://www.w3.org/2000/svg"
 		[ngClass]="invalidLogin ? 'invalid-login' : (anonLogin ? 'anon-login' : '')"
@@ -20,7 +20,7 @@
 			<div id="startup-mi-logo"
 				[ngClass]="startupAnimationsHalfway ? 'animate__animated animate__fadeOut' : 'animate__animated animate__fadeIn'">
 				<img
-					[src]="bambiService.appTheme === 'waikiki' ? '/assets/img/mi-logo.png' : '/assets/img/mi-logo-r.png'">
+					[src]="appService.appTheme === 'waikiki' ? '/assets/img/mi-logo.png' : '/assets/img/mi-logo-r.png'">
 				<span>mambosinfinitos</span>
 			</div>
 		</ng-container>
@@ -62,7 +62,7 @@
 								<mat-divider></mat-divider>
 
 								<div id="login-type-separator"><span
-										[ngClass]="bambiService.appTheme === 'vice' ? 'dark-theme' : ''">{{'LANDINGPAGE.SEPARATORLABEL'
+										[ngClass]="appService.appTheme === 'vice' ? 'dark-theme' : ''">{{'LANDINGPAGE.SEPARATORLABEL'
 										| translation}}</span></div>
 
 								<button mat-flat-button color="primary"

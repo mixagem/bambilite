@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { FdService, RecipeChannelResult } from '../../fd.service';
 import { RecipesService } from '../recipes.service';
 import { Subject } from 'rxjs/internal/Subject';
@@ -23,7 +23,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 	constructor(
 		public recipesService: RecipesService,
 		private _dialogRef: MatDialogRef<any>,
-		private _bambiService: BambiService,
+		private _appService: AppService,
 		public fdService: FdService) { }
 
 	ngOnInit(): void {
@@ -40,8 +40,8 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 
 	// fire details modal
 	showProductDetails(result: RecipeChannelResult): void {
-		if (result.sucess) { this.recipesService.recordDetails = result.record!; }
 		this.loadingComplete = true;
+		result.sucess ? this.recipesService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
 	}
 
 	// details modal actions
@@ -67,8 +67,8 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 		this.recipesService.API('delete',
 			new HttpParams()
 				.set('operation', 'delete')
-				.set('owner', this._bambiService.userInfo.username)
-				.set('cookie', this._bambiService.userInfo.cookie)
+				.set('owner', this._appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie)
 				.set('stamps', this.recipesService.recordDetails.stamp))
 	}
 }

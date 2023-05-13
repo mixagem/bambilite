@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginChannelResult, SubjectChannelsService } from 'src/app/services/subject-channels.service';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LandingPageSnackComponent } from 'src/app/components/snackbars/landing-page-snack/landing-page-snack.component';
@@ -31,7 +31,7 @@ export class LandingPageComponent implements OnInit {
 	loginForm: FormGroup;
 
 	constructor(
-		public bambiService: BambiService,
+		public appService: AppService,
 		private _router: Router,
 		private _channelsService: SubjectChannelsService,
 		private _snackBar: MatSnackBar) {
@@ -71,14 +71,14 @@ export class LandingPageComponent implements OnInit {
 	manualLogin(): void {
 		this.loginProgress = true;
 		const httpParams = new HttpParams().set('username', this.loginForm.get('username')!.value).set('password', this.loginForm.get('password')!.value);
-		this.bambiService.API('login', httpParams);
+		this.appService.API('login', httpParams);
 	}
 
 	// triggered by login backend response
 	loginAttempt(result: LoginChannelResult): void {
 		this.loginProgress = false;
 		if (result.sucess) {
-			this._snackBar.openFromComponent(LoginSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.bambiService.appTheme}-snack`], data: { beforeNameLabel: 'LANDINGPAGE.WELCOME-BEFORENAMELABEL', name: this.bambiService.userInfo.name, afterNameLabel: 'LANDINGPAGE.WELCOME-AFTERNAMELABEL', emoji: '🚀' } });
+			this._snackBar.openFromComponent(LoginSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.appService.appTheme}-snack`], data: { beforeNameLabel: 'LANDINGPAGE.WELCOME-BEFORENAMELABEL', name: this.appService.userInfo.name, afterNameLabel: 'LANDINGPAGE.WELCOME-AFTERNAMELABEL', emoji: '🚀' } });
 			return this.proceedToBambi('manual');
 		}
 		this.loginAnimation('invalid');
@@ -95,7 +95,7 @@ export class LandingPageComponent implements OnInit {
 				snackbarData = { label: 'LANDINGPAGE.UNREACHABLESERVER', emoji: '🚧' }
 				break
 		}
-		this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 5000, panelClass: ['landing-page-snackbar', `${this.bambiService.appTheme}-snack`], data: snackbarData });
+		this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 5000, panelClass: ['landing-page-snackbar', `${this.appService.appTheme}-snack`], data: snackbarData });
 	}
 
 	// executed automatically if cached cookie found
@@ -110,25 +110,25 @@ export class LandingPageComponent implements OnInit {
 		}
 
 		const httpParams = new HttpParams().set('cookie', COOKIE!);
-		this.bambiService.API('cookielogin', httpParams);
+		this.appService.API('cookielogin', httpParams);
 	}
 
 	// triggered by cookie login backend response
 	loginAttemptViaCookiePart2(result: LoginChannelResult): void {
 
 		if (result.sucess) {
-			this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'LANDINGPAGE.COOKIELOGIN', emoji: '🍪' } });
+			this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'LANDINGPAGE.COOKIELOGIN', emoji: '🍪' } });
 			return this.proceedToBambi('cookie');
 		}
 
 		switch (result.details) {
 			case 'expired':
-				this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'LANDINGPAGE.EXPIREDCOOKIE', emoji: '🍪' } });
+				this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 3000, panelClass: ['landing-page-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'LANDINGPAGE.EXPIREDCOOKIE', emoji: '🍪' } });
 				localStorage.removeItem('bambi_cookie');
 				break;
 
 			case 'offline': default:
-				this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 5000, panelClass: ['landing-page-snackbar', `${this.bambiService.appTheme}-snack`], data: { label: 'LANDINGPAGE.UNREACHABLESERVER', emoji: '🚧' } });
+				this._snackBar.openFromComponent(LandingPageSnackComponent, { duration: 5000, panelClass: ['landing-page-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'LANDINGPAGE.UNREACHABLESERVER', emoji: '🚧' } });
 		}
 
 		this._router.navigate(['/']);
@@ -139,28 +139,28 @@ export class LandingPageComponent implements OnInit {
 	proceedToBambi(logintype: 'manual' | 'cookie' | 'anon'): void {
 
 		// saving cookie
-		if (logintype === 'cookie' || (logintype === 'manual' && this.loginForm.get('wantcookie')!.value)) { localStorage.setItem('bambi_cookie', this.bambiService.userInfo.cookie) }
+		if (logintype === 'cookie' || (logintype === 'manual' && this.loginForm.get('wantcookie')!.value)) { localStorage.setItem('bambi_cookie', this.appService.userInfo.cookie) }
 
 
 		// setting theme / language from user
 		if (logintype !== 'anon') {
 
-			this.bambiService.appTheme = this.bambiService.userInfo.theme;
-			if (this.bambiService.appLang !== this.bambiService.userInfo.language) {
-				this.bambiService.appLang = this.bambiService.userInfo.language
-				this.bambiService.GetLocales(this.bambiService.appLang)
+			this.appService.appTheme = this.appService.userInfo.theme;
+			if (this.appService.appLang !== this.appService.userInfo.language) {
+				this.appService.appLang = this.appService.userInfo.language
+				this.appService.GetLocales(this.appService.appLang)
 			}
-			localStorage.setItem('bambi_language', this.bambiService.appLang);
-			localStorage.setItem('bambi_theme', this.bambiService.appTheme);
+			localStorage.setItem('bambi_language', this.appService.appLang);
+			localStorage.setItem('bambi_theme', this.appService.appTheme);
 		}
 
 		// no version mismatch
-		if (parseInt(this.bambiService.userInfo.version) === parseInt(this.bambiService.APP_VER)) {
+		if (parseInt(this.appService.userInfo.version) === parseInt(this.appService.APP_VER)) {
 			//timeout to dashboard
 			setTimeout(() => {
-				this.bambiService.authorizedLogin = true;
+				this.appService.authorizedLogin = true;
 				if (this._router.url === '/') { this._router.navigate([`/dashboard`]) }
-				if (this.bambiService.userInfo.username !== 'anon') { this.bambiService.LiveSession(); }
+				if (this.appService.userInfo.username !== 'anon') { this.appService.LiveSession(); }
 			}, 0); //5000
 
 			// end card and respective animations
@@ -168,7 +168,7 @@ export class LandingPageComponent implements OnInit {
 			return;
 		};
 
-		parseInt(this.bambiService.userInfo.version) < parseInt(this.bambiService.APP_VER) ? this.versionMismatch = 'olduser' : this.versionMismatch = 'oldbambi';
+		parseInt(this.appService.userInfo.version) < parseInt(this.appService.APP_VER) ? this.versionMismatch = 'olduser' : this.versionMismatch = 'oldbambi';
 		this.extraPanelAnimation(logintype === 'cookie');
 	}
 
@@ -204,11 +204,11 @@ export class LandingPageComponent implements OnInit {
 	markAsRead(): void {
 		this.extraPanelFadeout = true;
 		setTimeout(() => {
-			this.bambiService.authorizedLogin = true;
+			this.appService.authorizedLogin = true;
 			this._router.navigate([`/dashboard`]);
 		}, 2500);
 
-		const httpParams = new HttpParams().set('username', this.bambiService.userInfo.username).set('cookie', this.bambiService.userInfo.cookie).set('version', this.bambiService.APP_VER);
-		this.bambiService.API('versionupdate', httpParams);
+		const httpParams = new HttpParams().set('username', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('version', this.appService.APP_VER);
+		this.appService.API('versionupdate', httpParams);
 	}
 }

@@ -1,7 +1,7 @@
 <div class="bambi-fx-60 fx-speed-80" class="mainform-wrapper">
 	<router-outlet></router-outlet>
-	<div id="drawer-wrapper" *ngIf="fdService.drawerOpen" class="animate__animated"
-		[ngClass]="fdService.drawerFadeout? 'animate__fadeOutRight':'animate__slideInRight'">
+	<div id="drawer-wrapper" *ngIf="fdService('drawerOpen')" class="animate__animated"
+		[ngClass]="fdService('drawerFadeout') ? 'animate__fadeOutRight':'animate__slideInRight'">
 		<bl-product-edit *ngIf="router.url==='/fd/products'"></bl-product-edit>
 		<bl-recipe-edit *ngIf="router.url==='/fd/recipes'"></bl-recipe-edit>
 	</div>

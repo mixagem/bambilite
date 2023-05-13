@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { BambiMenuService } from '../menu/bambi-menu.service';
-import { BambiService } from 'src/app/services/bambi.service';
+import { MenuService } from '../menu/menu.service';
+import { AppService } from 'src/app/services/app.service';
 import { HttpParams } from '@angular/common/http';
 import { IUserFavourite } from 'src/app/interfaces/BambiRoutes';
 
@@ -18,11 +18,11 @@ export class HeaderBreadcumbsService {
 
 	constructor(
 		private _router: Router,
-		private _menuService: BambiMenuService,
-		private _bambiService: BambiService) {
+		private _menuService: MenuService,
+		private _appService: AppService) {
 
 		this.breadcumbs = this.GetHistoryFromCache();
-		this.favourites = this._bambiService.userInfo.favourites
+		this.favourites = this._appService.userInfo.favourites
 		this._router.events.pipe(
 			filter((event) => event instanceof NavigationEnd)
 		).subscribe(x => {
@@ -60,16 +60,16 @@ export class HeaderBreadcumbsService {
 		if (this.breadcumbs.length === 5) { this.breadcumbs = this.breadcumbs.slice(1) }
 
 		// add to breadcumb list
-		for (let i = 0; i < this._menuService.bambiMenu.length; i++) {
-			if (this._menuService.bambiMenu[i].route !== route && this._menuService.bambiMenu[i].subEntries.length === 0) { continue }
-			if (this._menuService.bambiMenu[i].route === route) {
-				this.breadcumbs.push({ name: this._menuService.bambiMenu[i].title, route: this._menuService.bambiMenu[i].route })
+		for (let i = 0; i < this._menuService.appMenu.length; i++) {
+			if (this._menuService.appMenu[i].route !== route && this._menuService.appMenu[i].subEntries.length === 0) { continue }
+			if (this._menuService.appMenu[i].route === route) {
+				this.breadcumbs.push({ name: this._menuService.appMenu[i].title, route: this._menuService.appMenu[i].route })
 				return
 			}
 
-			for (let j = 0; j < this._menuService.bambiMenu[i].subEntries.length; j++) {
-				if (this._menuService.bambiMenu[i].subEntries[j].route !== route) { continue }
-				this.breadcumbs.push({ name: this._menuService.bambiMenu[i].subEntries[j].title, route: this._menuService.bambiMenu[i].subEntries[j].route })
+			for (let j = 0; j < this._menuService.appMenu[i].subEntries.length; j++) {
+				if (this._menuService.appMenu[i].subEntries[j].route !== route) { continue }
+				this.breadcumbs.push({ name: this._menuService.appMenu[i].subEntries[j].title, route: this._menuService.appMenu[i].subEntries[j].route })
 				return
 			}
 		}
@@ -98,30 +98,30 @@ export class HeaderBreadcumbsService {
 
 			this.favourites = arrayPart1.concat(arrayPart2);
 
-			const httpParams = new HttpParams().set('username', this._bambiService.userInfo.username).set('cookie', this._bambiService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
-			this._bambiService.API('favourite', httpParams, { addingFavourite: false })
+			const httpParams = new HttpParams().set('username', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
+			this._appService.API('favourite', httpParams, { addingFavourite: false })
 			return
 		}
 	}
 
 	private _addToFavourites(favouriteObject: IUserFavourite): void {
 		this.favourites.push(favouriteObject)
-		const httpParams = new HttpParams().set('username', this._bambiService.userInfo.username).set('cookie', this._bambiService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
-		this._bambiService.API('favourite', httpParams, { addingFavourite: true })
+		const httpParams = new HttpParams().set('username', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie).set('favourite', JSON.stringify(this.favourites));
+		this._appService.API('favourite', httpParams, { addingFavourite: true })
 	}
 
 	private _generateFavouriteObject(route: string): IUserFavourite {
 		let newFavourite: IUserFavourite = { name: '', route: '', order: 0 }
-		for (let i = 0; i < this._menuService.bambiMenu.length; i++) {
-			if (this._menuService.bambiMenu[i].route !== route && this._menuService.bambiMenu[i].subEntries.length === 0) { continue }
-			if (this._menuService.bambiMenu[i].route === route) {
-				newFavourite = { name: this._menuService.bambiMenu[i].title, route: this._menuService.bambiMenu[i].route, order: this.favourites.length }
+		for (let i = 0; i < this._menuService.appMenu.length; i++) {
+			if (this._menuService.appMenu[i].route !== route && this._menuService.appMenu[i].subEntries.length === 0) { continue }
+			if (this._menuService.appMenu[i].route === route) {
+				newFavourite = { name: this._menuService.appMenu[i].title, route: this._menuService.appMenu[i].route, order: this.favourites.length }
 				return newFavourite
 			}
 
-			for (let j = 0; j < this._menuService.bambiMenu[i].subEntries.length; j++) {
-				if (this._menuService.bambiMenu[i].subEntries[j].route !== route) { continue }
-				newFavourite = { name: this._menuService.bambiMenu[i].subEntries[j].title, route: this._menuService.bambiMenu[i].subEntries[j].route, order: this.favourites.length }
+			for (let j = 0; j < this._menuService.appMenu[i].subEntries.length; j++) {
+				if (this._menuService.appMenu[i].subEntries[j].route !== route) { continue }
+				newFavourite = { name: this._menuService.appMenu[i].subEntries[j].title, route: this._menuService.appMenu[i].subEntries[j].route, order: this.favourites.length }
 				return newFavourite
 			}
 		}

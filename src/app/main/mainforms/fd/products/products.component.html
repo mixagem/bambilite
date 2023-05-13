@@ -1,11 +1,10 @@
 <div class="progress-bar-wrapper"><mat-progress-bar mode="indeterminate" color=warn
 		*ngIf="!loadingComplete || productsService.executingQuery"></mat-progress-bar></div>
 
-
 <div class="mainform-header" *ngIf="loadingComplete">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
-		<h1>{{'FOOD.PRODUCTS.TITLE' | translation}}</h1>
+		<h1>{{'FD.PRODUCTS.TITLE' | translation}}</h1>
 	</div>
 
 	<div class="header-actions">
@@ -17,7 +16,7 @@
 </div>
 <div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
-	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + appService.appTheme">
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
@@ -30,16 +29,16 @@
 		</ng-container>
 
 		<ng-container matColumnDef="title">
-			<th mat-header-cell *matHeaderCellDef> {{'FOOD.PRODUCTS.LISTHEADER.TITLE' | translation}} </th>
+			<th mat-header-cell *matHeaderCellDef> {{'FD.PRODUCTS.LIST.TITLE' | translation}} </th>
 		</ng-container>
 
 		<ng-container matColumnDef="tags">
-			<th mat-header-cell *matHeaderCellDef> {{'FOOD.PRODUCTS.LISTHEADER.TAGS' | translation}} </th>
+			<th mat-header-cell *matHeaderCellDef> {{'FD.PRODUCTS.LIST.TAGS' | translation}} </th>
 		</ng-container>
 	</table>
 
 	<ng-scrollbar>
-		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + bambiService.appTheme">
+		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + appService.appTheme">
 
 			<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
 
@@ -66,7 +65,7 @@
 		</table>
 	</ng-scrollbar>
 
-	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!this.productsService.executingQuery"></mat-paginator>
+	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!productsService.executingQuery"></mat-paginator>
 </div>
 
 

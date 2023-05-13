@@ -4,7 +4,7 @@
 
 		<div class="dialog-header-title">
 			<mat-icon>add_a_photo</mat-icon>
-			<span>{{'IMAGEUPLOAD.DIALOGTITLE' | translation}}</span>
+			<span>{{'DIALOGS.IMAGE-UPLOAD.TITLE' | translation}}</span>
 		</div>
 		<div class="dialog-header-actions">
 
@@ -34,7 +34,7 @@
 				<p style="text-align:center">Nova imagem</p>
 				<div class="img-picker-pic-wrapper"
 					style="width: 156px;height: 156px;overflow: clip;display: flex;border-radius: 25%;border-style: solid;border-width: 6px;margin: auto;">
-					<img [src]="bambiService.tempB64Img"></div>
+					<img [src]="appService.tempB64Img"></div>
 			</div>
 		</div>
 
@@ -50,6 +50,6 @@
 
 	</div>
 
-	<input #fileInput hidden="true" type="file" onclick="this.value=null" (change)="imageSelected($event)"
+	<input #fileInput hidden="true" type="file" onclick="value=null" (change)="imageSelected($event)"
 		accept=".jpg" />
 </div>

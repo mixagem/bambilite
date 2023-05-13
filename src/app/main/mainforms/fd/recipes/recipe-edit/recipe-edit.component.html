@@ -5,8 +5,8 @@
 <div class="mainform-header">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
-		<h1>{{'FOOD.RECIPES.TITLE' | translation}} -
-			{{bambiService.GetOperationLabel(recordDetailsDraft.title,recordDetailsDraft.stamp) | translation}}
+		<h1>{{'FD.RECIPES.TITLE' | translation}} -
+			{{appService.GetOperationLabel(recordDetailsDraft.title,recordDetailsDraft.stamp) | translation}}
 			{{!!recordDetailsDraft.title ? recordDetailsDraft.title:''}}</h1>
 	</div>
 
@@ -17,7 +17,7 @@
 			<button mat-mini-fab color="warn" (click)="discardPrompt('open')"><mat-icon>close</mat-icon></button>
 		</span>
 		<span *ngIf="isDiscarding">
-			<span class="animate__animated animate__fadeInRight discarding-label">{{'DISCARDCHANGES.TEXT' |
+			<span class="animate__animated animate__fadeInRight discarding-label">{{'GENERIC.DISCARD-CHANGES' |
 				translation}}</span>
 			<button mat-mini-fab color="primary" class="animate__animated animate__headShake"
 				(click)="closeEditMode()"><mat-icon>check</mat-icon></button>
@@ -43,7 +43,7 @@
 				</div>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.UNIT' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.UNIT' | translation}}</mat-label>
 					<mat-select class="bambi-fx-15 bambi-fx-30-inline" formControlName="unit">
 						<mat-option *ngFor="let option of defaultOptions" [value]="option.value">
 							{{option.title}}
@@ -53,20 +53,20 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.UNITVALUE' |
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.UNITVALUE' |
 						translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="unitvalue">
 					<span matSuffix>{{recordForm.get('unit')!.value}}</span>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.KCAL' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.KCAL' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
 					<span matSuffix>Cal</span>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.KCAL' | translation}} / 100
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.KCAL' | translation}} / 100
 						{{recordForm.get('unit')!.value === 'L' ? 'ml' : recordForm.get('unit')!.value === 'kg' ? 'g'
 						: recordForm.get('unit')!.value}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcalby100">
@@ -74,13 +74,13 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.PRICE' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.PRICE' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
 					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.PRICE' | translation}} /
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.PRICE' | translation}} /
 						{{recordForm.get('unit')!.value === 'ml' ? 'L' : recordForm.get('unit')!.value === 'g' ? 'kg'
 						: recordForm.get('unit')!.value}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="pricebyratio">
@@ -88,11 +88,11 @@
 				</mat-form-field>
 
 				<div class="checkbox-wrapper"><mat-checkbox color="accent"
-						formControlName="public">{{'FOOD.RECIPES.EDITING.PUBLIC' |
+						formControlName="public">{{'FD.RECIPES.EDIT.PUBLIC' |
 						translation}}</mat-checkbox></div>
 
 				<div class="checkbox-wrapper"><mat-checkbox color="accent"
-						formControlName="inactive">{{'FOOD.RECIPES.EDITING.INACTIVE' |
+						formControlName="inactive">{{'FD.RECIPES.EDIT.INACTIVE' |
 						translation}}</mat-checkbox>
 				</div>
 
@@ -102,13 +102,13 @@
 			<div class="record-edit-right">
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.TITLE' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.TITLE' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="title">
 					<mat-icon matSuffix>title</mat-icon>
 				</mat-form-field>
 
 				<mat-form-field class="record-chip-list" appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FOOD.RECIPES.EDITING.TAGS' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.TAGS' | translation}}</mat-label>
 					<mat-chip-grid #chipGrid formControlName="chipgrid">
 						<mat-chip-row *ngFor="let tag of recordDetailsDraft.tags" (removed)="removeTag(tag)"
 							[editable]="true" (edited)="editTag(tag, $event)">
@@ -117,7 +117,7 @@
 								<mat-icon>cancel</mat-icon>
 							</button>
 						</mat-chip-row>
-						<input placeholder="{{'FOOD.RECIPES.EDITING.NEWTAG' | translation}}"
+						<input placeholder="{{'FD.RECIPES.EDIT.NEWTAG' | translation}}"
 							[matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
 							[matChipInputAddOnBlur]="true" (matChipInputTokenEnd)="addTag($event)" />
 					</mat-chip-grid>

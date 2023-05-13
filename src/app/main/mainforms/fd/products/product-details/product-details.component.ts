@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ProductsService } from '../products.service';
 import { Subject } from 'rxjs';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { HttpParams } from '@angular/common/http';
 import { RecordOperation } from 'src/app/interfaces/Generic';
 import { FdService, ProductChannelResult } from '../../fd.service';
@@ -23,7 +23,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 	constructor(
 		public productsService: ProductsService,
 		private _dialogRef: MatDialogRef<any>,
-		private _bambiService: BambiService,
+		private _appService: AppService,
 		public fdService: FdService) { }
 
 	ngOnInit(): void {
@@ -39,8 +39,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 	// fire details modal
 	showRecordDetails(result: ProductChannelResult): void {
-		if (result.sucess) { this.productsService.recordDetails = result.record!; }
 		this.loadingComplete = true;
+		result.sucess ? this.productsService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
 	}
 
 	// details modal actions
@@ -51,7 +51,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 					this.productsService.recordDetails.stamp = ''
 					this.productsService.recordDetails.public = false
 					this.productsService.recordDetails.inactive = false
-				 }
+				}
 				this.fdService.drawerOpen = true;
 				this._dialogRef.close();
 				break;
@@ -66,8 +66,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 		this.productsService.API('delete',
 			new HttpParams()
 				.set('operation', 'delete')
-				.set('owner', this._bambiService.userInfo.username)
-				.set('cookie', this._bambiService.userInfo.cookie)
+				.set('owner', this._appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie)
 				.set('stamps', this.productsService.recordDetails.stamp))
 	}
 

@@ -4,10 +4,10 @@
 
 		<div class="dialog-header-title">
 			<mat-icon *ngIf="!deletingRecord">restaurant_menu</mat-icon>
-			<span *ngIf="!deletingRecord">{{'FOOD.RECIPEBOOK.DETAILS.DIALOGTITLE' | translation}}</span>
+			<span *ngIf="!deletingRecord">{{'FD.RECIPES.DETAILS.DIALOGTITLE' | translation}}</span>
 
 			<mat-icon *ngIf="deletingRecord">delete</mat-icon>
-			<span *ngIf="deletingRecord">{{'FOOD.RECIPEBOOK.DETAILS.DELETETITLE' | translation}}</span>
+			<span *ngIf="deletingRecord">{{'FD.RECIPES.DETAILS.DELETETITLE' | translation}}</span>
 		</div>
 
 		<div class="dialog-header-actions" *ngIf="!deletingRecord">
@@ -80,13 +80,13 @@
 
 
 					<div *ngIf="deletingRecord" class="delete-confirmation animate__animated animate__fadeIn">
-						<p>{{'FOOD.RECIPEBOOK.DETAILS.TEXT-1' | translation}}<br>{{'FOOD.RECIPEBOOK.DETAILS.TEXT-2' |
+						<p>{{'FD.RECIPES.DETAILS.TEXT-1' | translation}}<br>{{'FD.RECIPES.DETAILS.TEXT-2' |
 							translation}}</p>
 						<div>
 							<button mat-stroked-button color="warn"
-								(click)="deletingRecord = false">{{'APP.GENERIC.CANCEL' | translation}}</button>
+								(click)="deletingRecord = false">{{'GENERIC.CANCEL' | translation}}</button>
 							<button mat-dialog-close mat-flat-button color="warn"
-								(click)="deleteRecord()">{{'FOOD.RECIPEBOOK.DETAILS.DELETEBUTTON' | translation}}</button>
+								(click)="deleteRecord()">{{'FD.RECIPES.DETAILS.DELETEBUTTON' | translation}}</button>
 						</div>
 					</div>
 

@@ -5,7 +5,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { ImageUploadComponent } from 'src/app/components/image-upload/image-upload.component';
-import { BambiService } from 'src/app/services/bambi.service';
+import { AppService } from 'src/app/services/app.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
@@ -58,7 +58,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 	constructor(
 		public productsService: ProductsService,
 		public router: Router,
-		public bambiService: BambiService,
+		public appService: AppService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
 		public fdService: FdService,
@@ -202,8 +202,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		const httpParams =
 			new HttpParams()
 				.set('operation', operation)
-				.set('cookie', this.bambiService.userInfo.cookie)
-				.set('owner', this.bambiService.userInfo.username)
+				.set('cookie', this.appService.userInfo.cookie)
+				.set('owner', this.appService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
 		this.productsService.API(operation, httpParams)
@@ -215,18 +215,16 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 		// disparar snackbars aqui?
 		if (result.sucess) {
 			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'APPSNACKS.PRODUCTCREATED' : 'APPSNACKS.PRODUCTUPDATED', emoji: '🥝' } });
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'SNACKS.NEW-PRODUCT' : 'SNACKS.UPDATED-PRODUCT', emoji: '🥝' } });
 		}
 		else {
 			switch (result.details) {
-				case 'product-not-found':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.PRODUCT-NOTFOUND', emoji: '🚫' } });
-					return;
 				case 'user-not-owner':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.USER-NOTOWNER', emoji: '🚫' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.USER-NOT-OWNER', emoji: '🚫' } });
 					return;
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.bambiService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'APPSNACKS.UNREACHABLESERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
 					return;
 			}
 		}
@@ -246,8 +244,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 			this.productsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.bambiService.userInfo.username)
-					.set('cookie', this.bambiService.userInfo.cookie));
+					.set('owner', this.appService.userInfo.username)
+					.set('cookie', this.appService.userInfo.cookie));
 		}
 	}
 
@@ -261,7 +259,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
 	// imagepicker
 	newPicUpload(): void {
-		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.bambiService.appTheme + '-theme'] });
+		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
 	}
 
 	// tags

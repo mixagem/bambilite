@@ -1,23 +1,23 @@
 <div class="progress-bar-wrapper"><mat-progress-bar mode="indeterminate" color=warn
-		*ngIf="!loadingComplete || this.recipeService.executingQuery"></mat-progress-bar></div>
+		*ngIf="!loadingComplete || recipeService.executingQuery"></mat-progress-bar></div>
 
 
 <div class="mainform-header" *ngIf="loadingComplete">
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
-		<h1>{{'FOOD.RECIPES.TITLE' | translation}}</h1>
+		<h1>{{'FD.RECIPES.TITLE' | translation}}</h1>
 	</div>
 
 	<div class="header-actions">
 		<button mat-mini-fab color="primary" (click)="addNewRecord()"><mat-icon>add</mat-icon></button>
 		<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()"
-			*ngIf="!!this.selectedRecods.length" color="warn"><mat-icon>delete</mat-icon></button>
+			*ngIf="!!selectedRecords.length" color="warn"><mat-icon>delete</mat-icon></button>
 	</div>
 </div>
 
 <div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
-	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + bambiService.appTheme">
+	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + appService.appTheme">
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
@@ -30,16 +30,16 @@
 		</ng-container>
 
 		<ng-container matColumnDef="title">
-			<th mat-header-cell *matHeaderCellDef> {{'FOOD.RECIPES.LISTHEADER.TITLE' | translation}} </th>
+			<th mat-header-cell *matHeaderCellDef> {{'FD.RECIPES.LIST.TITLE' | translation}} </th>
 		</ng-container>
 
 		<ng-container matColumnDef="tags">
-			<th mat-header-cell *matHeaderCellDef> {{'FOOD.RECIPES.LISTHEADER.TAGS' | translation}} </th>
+			<th mat-header-cell *matHeaderCellDef> {{'FD.RECIPES.LIST.TAGS' | translation}} </th>
 		</ng-container>
 	</table>
 
 	<ng-scrollbar>
-		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + bambiService.appTheme">
+		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + appService.appTheme">
 
 			<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
 
@@ -66,7 +66,7 @@
 		</table>
 	</ng-scrollbar>
 
-	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!this.recipeService.executingQuery"></mat-paginator>
+	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!recipeService.executingQuery"></mat-paginator>
 </div>
 
 
