@@ -114,7 +114,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 			if (!_ || isNaN(Number(_)) || _ == 0) { return }
 			this.recordForm.get('kcal')!.setValue(this._fdService.GetKcal(_, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value), { emitEvent: false })
 		})
-
 	}
 
 	ngOnDestroy(): void {

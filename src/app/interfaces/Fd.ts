@@ -56,6 +56,7 @@ export interface IMaterialsRecipe {
 	unitvalue: number;
 	price: number;
 	owner: string;
+	qtd:number;
 }
 
 

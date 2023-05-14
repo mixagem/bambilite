@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IListProduct, IDetailsProduct, IListRecipe, IDetailsRecipe } from 'src/app/interfaces/Fd';
+import { IMaterialsRecordOption } from 'src/app/interfaces/Sp';
 
 export type ProductChannelResult = { sucess: boolean, recordList?: IListProduct[], record?: IDetailsProduct, details?: string };
 export type RecipeChannelResult = { sucess: boolean, recordList?: IListRecipe[], record?: IDetailsRecipe, details?: string };
+export type MaterialDetailsChannelResult = { sucess: boolean, recordList?: IMaterialsRecordOption[], details?: string };
 
 @Injectable({ providedIn: 'root' })
 
@@ -24,6 +26,8 @@ export class FdService {
 	recipeUpdateChannel: Subject<RecipeChannelResult>;
 	recipeDeleteChannel: Subject<RecipeChannelResult>;
 
+	materialDetailsChannel: Subject<MaterialDetailsChannelResult>;
+
 	constructor() {
 		this.productListChannel = new Subject<ProductChannelResult>;
 		this.productDetailsChannel = new Subject<ProductChannelResult>;
@@ -34,6 +38,8 @@ export class FdService {
 		this.recipeDetailsChannel = new Subject<RecipeChannelResult>;
 		this.recipeUpdateChannel = new Subject<RecipeChannelResult>;
 		this.recipeDeleteChannel = new Subject<RecipeChannelResult>;
+
+		this.materialDetailsChannel = new Subject<MaterialDetailsChannelResult>;
 	};
 
 	ProductListChannelFire(result: boolean, errorCode: string = '', productList?: IListProduct[],): void {
@@ -66,6 +72,10 @@ export class FdService {
 
 	RecipeDeleteChannelFire(result: boolean, code: string): void {
 		this.recipeDeleteChannel.next({ sucess: result, details: code });
+	};
+
+	MaterialDetailsChannelFire(result: boolean, errorCode: string = '', recordList?: IMaterialsRecordOption[]): void {
+		this.materialDetailsChannel.next({ sucess: result, recordList: recordList, details: errorCode });
 	};
 
 	GetPriceByRatio(price: number, unitvalue: number, unit: string): number {

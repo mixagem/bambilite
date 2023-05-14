@@ -4,8 +4,9 @@ import { catchError, retry, throwError } from 'rxjs';
 import { IDetailsRecipe, IListRecipe } from 'src/app/interfaces/Fd';
 import { AppService } from 'src/app/services/app.service';
 import { FdService } from '../fd.service';
+import { IMaterialsRecordOption } from 'src/app/interfaces/Sp';
 
-type RecipeObject = { sucess: boolean; recordList?: IListRecipe[]; recordDetails?: IDetailsRecipe; details?: string }
+type RecipeObject = { sucess: boolean; recordList?: IListRecipe[]; recordDetails?: IDetailsRecipe; details?: string ; matrecordList? : IMaterialsRecordOption[]}
 
 @Injectable({ providedIn: 'root' })
 
@@ -54,9 +55,11 @@ export class RecipesService {
 					case 'new':
 						recordObject.sucess ? this._fdService.RecipeUpdateChannelFire(true) : this._fdService.RecipeUpdateChannelFire(false, recordObject.details)
 						break;
-
 					case 'delete':
 						this._fdService.RecipeDeleteChannelFire(recordObject.sucess, recordObject.details!);
+						break;
+					case 'matrecordlist':
+						recordObject.sucess ? this._fdService.MaterialDetailsChannelFire(true, '', recordObject.matrecordList!) : this._fdService.MaterialDetailsChannelFire(false, recordObject.details)
 						break;
 				}
 				this.executingQuery = false;
@@ -81,7 +84,9 @@ export class RecipesService {
 					case 'delete':
 						this._fdService.RecipeDeleteChannelFire(false, 'offline');
 						return;
-
+					case 'matrecordlist':
+						this._fdService.MaterialDetailsChannelFire(false, 'offline');
+						return;
 
 				}
 			}

@@ -19,11 +19,17 @@ export interface IDetailsSupplement extends IListSupplement {
 }
 
 export interface IMaterialsSupplement {
-	recipestamp:string,
+	recipestamp: string,
 	title: string,
 	kcal: number;
 	unit: string;
 	unitvalue: number;
 	price: number;
 	owner: string;
+}
+
+export interface IMaterialsRecordOption {
+	stamp: string;
+	title: string;
+	image: string;
 }

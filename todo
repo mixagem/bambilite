@@ -1,5 +1,8 @@
 #phase 2
 
+0. no records: desenhar kind of 404 friendly, com opção para adicioanr novo registo
+(verificar com o backend se ele nao dispara erro quando não encontra nenhum [pode nao encontrar, visto se nao existir])
+
 1. receitas -> lista de produtos/suplementos que incluem a receita
 	\-> nova entidade invisivel -> recipelines
 		\-> criar interface generica - IRecipeLine (composta pelas propriedads comuns aos suplementos e produtos [é quase tudo mas whatever, futureproofing])

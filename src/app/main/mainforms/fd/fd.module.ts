@@ -13,6 +13,7 @@ import { RecipeDetailsComponent } from './recipes/recipe-details/recipe-details.
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { SharedModule } from 'src/app/modules/shared.module';
+import { RecipeMaterialDetailsComponent } from './recipes/recipe-material-details/recipe-material-details.component';
 
 @NgModule({
 	declarations: [
@@ -24,6 +25,7 @@ import { SharedModule } from 'src/app/modules/shared.module';
 		ProductEditComponent,
 		RecipeDetailsComponent,
 		RecipeEditComponent,
+  RecipeMaterialDetailsComponent,
 	],
 	imports: [
 		CommonModule,

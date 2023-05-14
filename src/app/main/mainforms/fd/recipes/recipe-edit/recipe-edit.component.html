@@ -1,4 +1,4 @@
- <div class="progress-bar-wrapper">
+<div class="progress-bar-wrapper">
 	<mat-progress-bar mode="indeterminate" color=warn *ngIf="!loadingComplete"></mat-progress-bar>
 </div>
 
@@ -12,7 +12,7 @@
 
 	<div class="header-actions">
 		<span *ngIf="!isDiscarding">
-			<button mat-mini-fab color="primary" [disabled]="!recordForm.valid"
+			<button mat-mini-fab color="primary" [disabled]="!recordReadyToSave()"
 				(click)="saveRecord()"><mat-icon>save</mat-icon></button>
 			<button mat-mini-fab color="warn" (click)="discardPrompt('open')"><mat-icon>close</mat-icon></button>
 		</span>
@@ -117,15 +117,50 @@
 								<mat-icon>cancel</mat-icon>
 							</button>
 						</mat-chip-row>
-						<input placeholder="{{'FD.RECIPES.EDIT.NEWTAG' | translation}}"
-							[matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-							[matChipInputAddOnBlur]="true" (matChipInputTokenEnd)="addTag($event)" />
+						<input placeholder="{{'FD.RECIPES.EDIT.NEWTAG' | translation}}" [matChipInputFor]="chipGrid"
+							[matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+							(matChipInputTokenEnd)="addTag($event)" />
 					</mat-chip-grid>
 				</mat-form-field>
 
 				<div class="recipe-wrapper">
 
+					<div *ngFor="let mat of recordDetailsDraft.recipemats" style="display: flex;padding:5px 0px;">
 
+						<div style="padding:0px 20px;color:orangered">{{mat.title}}</div>
+						<div style="padding:0px 20px;color:orangered">{{mat.qtd}}</div>
+						<div style="padding:0px 20px;color:orangered">{{mat.kcal}}</div>
+						<div style="padding:0px 20px;color:orangered">{{mat.price}}</div>
+
+						<!-- <mat-checkbox color=warn formControlName="qtdbyweight"></mat-checkbox>
+
+						<mat-form-field appearance="outline" color="accent" style="width: auto;">
+							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="title">
+						</mat-form-field>
+
+						<mat-form-field appearance="outline" color="accent" style="width: auto;">
+							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="qtd">
+						</mat-form-field>
+
+						<mat-form-field appearance="outline" color="accent" style="width: auto;">
+							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
+						</mat-form-field>
+
+						<mat-form-field appearance="outline" color="accent" style="width: auto;">
+							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
+						</mat-form-field>
+
+						<div *ngIf="!materialsForm[mat.stamp].get('qtdbyweight')!.value" >aqui vêm em read only unitvalue * qtd [unit] </div>
+
+						<div *ngIf="materialsForm[mat.stamp].get('qtdbyweight')!.value" >aqui vêm em read only qtd / unitvalue  </div> -->
+
+						<!-- <div (click)="navigateToRecord(mat.origin,mat.originstamp)"><mat-icon>link</mat-icon></div> -->
+						<button mat-mini-fab color="warn" [disabled]="discardPromptControl" (click)="deleteRecipeMaterial(mat.stamp)"><mat-icon>delete</mat-icon></button>
+
+					</div>
+
+					<button mat-mini-fab color="accent" [disabled]="discardPromptControl" (click)="addRecipeMaterial('products')"><mat-icon>add</mat-icon></button>
+					<button mat-mini-fab color="accent" [disabled]="discardPromptControl" (click)="addRecipeMaterial('supplements')"><mat-icon>add</mat-icon></button>
 
 
 

@@ -76,7 +76,9 @@ switch ($operation) {
 
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			if ($SQL_RESULT_ROW["tags"] !== ""){
+				$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			};
 			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 		LeggeraSucess($record_object, $SQL_CON);
@@ -107,7 +109,9 @@ switch ($operation) {
 
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			if ($SQL_RESULT_ROW["tags"] !== ""){
+				$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			};
 			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 
@@ -132,7 +136,9 @@ switch ($operation) {
 
 		$record_object["recordDetails"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			if ($SQL_RESULT_ROW["tags"] !== ""){
+				$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			};
 			$record_object["recordDetails"] = $SQL_RESULT_ROW;
 			$record_object["recordDetails"]["inactive"] = boolval($record_object["recordDetails"]["inactive"]);
 			$record_object["recordDetails"]["public"] = boolval($record_object["recordDetails"]["public"]);
@@ -179,7 +185,9 @@ switch ($operation) {
 		}
 
 		$record = json_decode($_POST["record"], true);
-		$record["tags"] = implode(",", $record["tags"]);
+		if ($record["tags"] !== "") {
+			$record["tags"] = implode(",", $record["tags"]);
+		};
 
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;

@@ -1,0 +1,139 @@
+<div class="master-dialog-wrapper details-wrapper bambi-fx-50">
+
+	<div class="dialog-header-wrapper" [ngClass]="deletingRecord? 'warn-dialog' : ''">
+
+		<div class="dialog-header-title">
+			<mat-icon *ngIf="!deletingRecord">restaurant_menu</mat-icon>
+			<span *ngIf="!deletingRecord">{{'FD.RECIPES.MATERIALS.DETAILS.DIALOGTITLE' | translation}}</span>
+
+			<mat-icon *ngIf="deletingRecord">delete</mat-icon>
+			<span *ngIf="deletingRecord">{{'FD.RECIPES.MATERIALS.DETAILS.DELETETITLE' | translation}}</span>
+		</div>
+
+		<div class="dialog-header-actions" *ngIf="!deletingRecord">
+			<!--
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || recipesService('recordDetails').public"
+				(click)="recordOperation('delete')">
+				<mat-icon>delete</mat-icon>
+			</button> -->
+			<!--
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete" (click)="recordOperation('clone')">
+				<mat-icon>file_copy</mat-icon>
+			</button> -->
+			<!--
+			<button mat-mini-fab color="primary" [disabled]="!loadingComplete || recipesService('recordDetails').public"
+				(click)="recordOperation('update')">
+				<mat-icon>edit</mat-icon>
+			</button> -->
+
+			<button mat-mini-fab color="warn" mat-dialog-close>
+				<mat-icon>close</mat-icon>
+			</button>
+
+		</div>
+		<div class="dialog-header-actions" *ngIf="deletingRecord">
+		</div>
+	</div>
+
+	<div class="progress-bar-wrapper">
+		<mat-progress-bar mode="indeterminate" color=warn
+			*ngIf="!loadingComplete && !deletingRecord"></mat-progress-bar>
+	</div>
+
+	<!-- <div class="dialog-details-wrapper" *ngIf="loadingComplete && !!recipesService('recordDetails').stamp"> -->
+	<div class="dialog-details-wrapper" *ngIf="loadingComplete">
+		<ng-scrollbar width="100%" height="100%">
+
+			<div class="scrollbar-details-wrapper" [formGroup]="recordForm">
+
+				<div style="width: 100%;display: flex;justify-content: space-between;" class="autocomplete-wrapper">
+					<mat-form-field class="example-full-width" appearance="fill">
+						<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.MATERIALS.DETAILS.EDIT.TITLE' | translation}}</mat-label>
+						<input type="text" placeholder="Pick one" aria-label="Number" matInput formControlName="title"
+							[matAutocomplete]="auto">
+						<mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+							<mat-option *ngFor="let option of filteredOptions | async" [value]="option.stamp">
+								<img [src]="option.image" style="max-height: 50px;max-width: 50px;">{{option.title}}
+							</mat-option>
+						</mat-autocomplete>
+					</mat-form-field>
+					<mat-checkbox color=warn formControlName="qtdbyweight"></mat-checkbox>
+				</div>
+
+
+
+
+				<mat-form-field appearance="outline" color="accent" style="width: 25%;">
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.MATERIALS.DETAILS.EDIT.QTD' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="qtd">
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent" style="width: 25%;">
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.MATERIALS.DETAILS.EDIT.KCAL' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
+				</mat-form-field>
+
+				<mat-form-field appearance="outline" color="accent" style="width: 25%;">
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.MATERIALS.DETAILS.EDIT.PRICE' | translation}}</mat-label>
+					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
+				</mat-form-field>
+
+				<div style="width: 25%;" *ngIf="!recordForm.get('qtdbyweight')!.value" >aqui vêm em read only unitvalue * qtd [unit] </div>
+
+				<div style="width: 25%;" *ngIf="recordForm.get('qtdbyweight')!.value" >aqui vêm em read only qtd / unitvalue  </div>
+
+				<!--
+				<div class="record-info-left">
+					<div class="record-mini-info">
+						<img src="{{recipesService('recordDetails').image}}">
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">bolt</mat-icon><span>{{recipesService('recordDetails').kcal}}
+								kcal</span></div>
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">scale</mat-icon><span>{{recipesService('recordDetails').unitvalue| number:'1.0-3' : getMaterialLocale()!}}
+								{{recipesService('recordDetails').unit}}</span></div>
+						<div><mat-icon color="primary"
+								fontSet="material-icons-outlined">request_quote</mat-icon><span>{{recipesService('recordDetails').price| number:'1.2-3' : getMaterialLocale()!}}
+								€</span></div>
+
+					</div>
+
+				</div>
+
+
+				<div class="record-info-right">
+					<div class="record-title">
+						<h1>{{recipesService('recordDetails').title}}</h1>
+					</div>
+
+					<p class="record-chips">
+						<mat-chip-listbox>
+							<mat-chip-option disabled
+								*ngFor="let tag of recipesService('recordDetails').tags">{{tag}}</mat-chip-option>
+						</mat-chip-listbox>
+					</p>
+
+					<div class="recipes-list animate__animated animate__fadeIn" *ngIf="!deletingRecord">
+						<bl-record-details-mats-table [tableContent]="recipesService('recordDetails').recipemats"></bl-record-details-mats-table> </div>
+
+
+					<div *ngIf="deletingRecord" class="delete-confirmation animate__animated animate__fadeIn">
+						<p>{{'FD.RECIPES.DETAILS.TEXT-1' | translation}}<br>{{'FD.RECIPES.DETAILS.TEXT-2' |
+							translation}}</p>
+						<div>
+							<button mat-stroked-button color="warn"
+								(click)="deletingRecord = false">{{'GENERIC.CANCEL' | translation}}</button>
+							<button mat-dialog-close mat-flat-button color="warn"
+								(click)="deleteRecord()">{{'FD.RECIPES.DETAILS.DELETEBUTTON' | translation}}</button>
+						</div>
+					</div>
+
+				</div>
+-->
+			</div>
+
+			<div class="dialog-footer-actions-wrapper"></div>
+		</ng-scrollbar>
+	</div>
+
+</div>

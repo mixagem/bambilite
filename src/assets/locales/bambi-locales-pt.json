@@ -81,8 +81,8 @@
 	"FD.RECIPES.DETAILS.DIALOGTITLE": "Informação detalhada",
 	"FD.RECIPES.DETAILS.DELETETITLE": "Apagar receita",
 	"FD.RECIPES.DETAILS.DELETEBUTTON": "Apagar receita",
-	"FD.RECIPES.DETAILS.DETAILS.TEXT-1": "Tens a certeza que queres apagar a receita?",
-	"FD.RECIPES.DETAILS.DETAILS.TEXT-2": "Esta acção é irreversível.",
+	"FD.RECIPES.DETAILS.TEXT-1": "Tens a certeza que queres apagar a receita?",
+	"FD.RECIPES.DETAILS.TEXT-2": "Esta acção é irreversível.",
 
 	"SP.SUPPLEMENTS.TITLE": "Suplementos",
 	"SP.SUPPLEMENTS.LIST.TITLE": "Título",
