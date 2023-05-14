@@ -65,7 +65,7 @@ if (mysqli_affected_rows($SQL_CON) !== 1) {
 switch ($operation) {
 
 	case 'getlist':
-		
+
 		$SQL_QUERY = "SELECT stamp,title,image,tags FROM recipes WHERE owner = '" . $owner . "' OR public = 1 ORDER BY timestamp desc";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
@@ -76,7 +76,7 @@ switch ($operation) {
 
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
+			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
 			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 
@@ -109,7 +109,7 @@ switch ($operation) {
 
 		$record_object["recordList"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
+			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
 			array_push($record_object["recordList"], $SQL_RESULT_ROW);
 		}
 
@@ -135,10 +135,19 @@ switch ($operation) {
 
 		$record_object["recordDetails"] = [];
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
-			$SQL_RESULT_ROW["tags"] = json_decode($SQL_RESULT_ROW["tags"]);
+			$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
 			$record_object["recordDetails"] = $SQL_RESULT_ROW;
 			$record_object["recordDetails"]["inactive"] = boolval($record_object["recordDetails"]["inactive"]);
 			$record_object["recordDetails"]["public"] = boolval($record_object["recordDetails"]["public"]);
+		};
+
+		$SQL_QUERY = "SELECT * FROM recipemats WHERE recipestamp = '" . $record_object["recordDetails"]["stamp"] . "'";
+		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
+
+		$record_object["recordDetails"]["recipemats"] = [];
+
+		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
+			array_push($record_object["recordDetails"]["recipemats"], $SQL_RESULT_ROW);
 		}
 
 		LeggeraSucess($record_object, $SQL_CON);
@@ -152,6 +161,7 @@ switch ($operation) {
 		}
 
 		$record = json_decode($_POST["record"], true);
+		$record["tags"] = implode(",", $record["tags"]);
 
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
@@ -174,7 +184,7 @@ switch ($operation) {
 			return;
 		}
 
-		$SQL_QUERY = "UPDATE recipes SET title = '" . sanitizeInput($record['title']) . "', kcal = " . sanitizeInput($record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . sanitizeInput($record['unitvalue']) . ", price = " . sanitizeInput($record['price']) . ", tags = '" . sanitizeInput(json_encode($record['tags'])) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
+		$SQL_QUERY = "UPDATE recipes SET title = '" . sanitizeInput($record['title']) . "', kcal = " . sanitizeInput($record['kcal']) . ", image = '" . $record['image'] . "', unit = '" . $record['unit'] . "', unitvalue = " . sanitizeInput($record['unitvalue']) . ", price = " . sanitizeInput($record['price']) . ", tags = '" . sanitizeInput($record['tags']) . "', timestamp = " . $record['timestamp'] . " WHERE stamp = '" . $record['stamp'] . "'";
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 		if (mysqli_affected_rows($SQL_CON) !== 1) {
@@ -193,14 +203,14 @@ switch ($operation) {
 		}
 
 		$record = json_decode($_POST["record"], true);
+		$stampgen = LeggeraStamp();
+		$record["tags"] = implode(",", $record["tags"]);
 
 		if ($record['inactive'] == '') {
 			$record['inactive'] = 0;
 		}
 
-		$stampgen = LeggeraStamp();
-
-		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . sanitizeInput($record['title']) . "'," . sanitizeInput($record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . sanitizeInput($record['unitvalue']) . "," . sanitizeInput($record['price']) . ",'" . sanitizeInput(json_encode($record['tags'])) . "','" . $owner . "', " . $record['timestamp'] . " )";
+		$SQL_QUERY = "INSERT INTO recipes (stamp,title,kcal,image,unit,unitvalue,price,tags,owner,timestamp) VALUES ('" . $stampgen . "','" . sanitizeInput($record['title']) . "'," . sanitizeInput($record['kcal']) . ",'" . $record['image'] . "','" . $record['unit'] . "'," . sanitizeInput($record['unitvalue']) . "," . sanitizeInput($record['price']) . ",'" . sanitizeInput($record['tags']) . "','" . $owner . "', " . $record['timestamp'] . " )";
 
 		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 

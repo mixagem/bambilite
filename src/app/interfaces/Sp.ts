@@ -15,4 +15,15 @@ export interface IDetailsSupplement extends IListSupplement {
 	public: boolean;
 	inactive: boolean;
 	timestamp: number;
+	recipelist: IMaterialsSupplement[];
+}
+
+export interface IMaterialsSupplement {
+	recipestamp:string,
+	title: string,
+	kcal: number;
+	unit: string;
+	unitvalue: number;
+	price: number;
+	owner: string;
 }

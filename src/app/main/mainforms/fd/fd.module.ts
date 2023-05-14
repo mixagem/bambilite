@@ -12,6 +12,7 @@ import { ProductEditComponent } from './products/product-edit/product-edit.compo
 import { RecipeDetailsComponent } from './recipes/recipe-details/recipe-details.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { SharedModule } from 'src/app/modules/shared.module';
 
 @NgModule({
 	declarations: [
@@ -22,14 +23,15 @@ import { RecipesComponent } from './recipes/recipes.component';
 		ProductDetailsComponent,
 		ProductEditComponent,
 		RecipeDetailsComponent,
-		RecipeEditComponent
+		RecipeEditComponent,
 	],
 	imports: [
 		CommonModule,
 		PipesModule,
 		MaterialImportsModule,
 		RouterModule,
-		NgScrollbarModule
+		NgScrollbarModule,
+		SharedModule
 	],
 	exports: [
 	]

@@ -14,7 +14,7 @@ export class ProductsService {
 	executingQuery: boolean = false;
 
 	// current previewd product
-	recordDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now() };
+	recordDetails: IDetailsProduct = { stamp: '', title: '', image: '', tags: [], kcal: 0, unit: 'g', unitvalue: 0, price: 0, owner: '', public: false, inactive: false, timestamp: Date.now(), recipelist:[] };
 
 	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';

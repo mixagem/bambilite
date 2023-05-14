@@ -39,6 +39,8 @@
 	"HEADER.THEMEVICE": "Vice",
 	"HEADER.THEMEPICKER": "Selecionar tema",
 	"HEADER.INPUT.PRODUCTS": "Procurar produtos...",
+	"HEADER.INPUT.RECIPES": "Procurar receitas...",
+	"HEADER.INPUT.SUPPLEMENTS": "Procurar suplementos...",
 
 	"GENERIC.DISCARD-CHANGES": "Tens a certeza que queres descartar as alterações efetuadas?",
 	"GENERIC.CANCEL": "Cancelar",

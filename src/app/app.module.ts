@@ -27,7 +27,7 @@ import { FoodModule } from './main/mainforms/fd/fd.module';
 		LandingPageModule,
 		BodybuildingModule,
 		FoodModule,
-		SuppplementationModule
+		SuppplementationModule,
 	],
 	exports: [],
 	providers: [],

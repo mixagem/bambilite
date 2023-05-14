@@ -90,7 +90,7 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 		if (result.sucess) {
 
 			// snackbar fire
-			this.selectedRecords.length > 1  ?
+			this.selectedRecords.length > 1 ?
 				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENTS', emoji: '🚮' } }) :
 				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENT', emoji: '🚮' } })
 
@@ -124,7 +124,7 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 	// product details dialog
 	showDetails(productstamp: string): void {
 		this._dialog.open(SupplementDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
-		this._supplementsService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
+		this._supplementsService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
 	}
 
 	// introduction mode
@@ -142,7 +142,8 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 			owner: this._appService.userInfo.username,
 			public: false,
 			inactive: false,
-			timestamp: Date.now()
+			timestamp: Date.now(),
+			recipelist: []
 		};
 	}
 

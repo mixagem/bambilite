@@ -9,6 +9,7 @@ import { SuplementationComponent } from './suplementation.component';
 import { SupplementsComponent } from './supplements/supplements.component';
 import { SupplementDetailsComponent } from './supplements/supplement-details/supplement-details.component';
 import { SupplementEditComponent } from './supplements/supplement-edit/supplement-edit.component';
+import { SharedModule } from 'src/app/modules/shared.module';
 
 @NgModule({
 	declarations: [
@@ -16,14 +17,15 @@ import { SupplementEditComponent } from './supplements/supplement-edit/supplemen
 		SuplementationComponent,
 		ConsumptionComponent,
 		SupplementDetailsComponent,
-		SupplementEditComponent
+		SupplementEditComponent,
 	],
 	imports: [
 		CommonModule,
 		PipesModule,
 		MaterialImportsModule,
 		RouterModule,
-		NgScrollbarModule
+		NgScrollbarModule,
+		SharedModule
 	],
 	exports: [
 	]

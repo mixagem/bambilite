@@ -94,4 +94,20 @@ export class HeaderComponent {
 				break;
 		};
 	};
+
+	headerTitle(): string {
+		let titleLocale: string = '';
+		switch (this._router.url) {
+			case '/fd/products':
+				titleLocale = 'HEADER.INPUT.PRODUCTS';
+				break;
+			case '/fd/recipes':
+				titleLocale = 'HEADER.INPUT.RECIPES';
+				break;
+			case '/sp/supplements':
+				titleLocale = 'HEADER.INPUT.SUPPLEMENTS';
+				break;
+		}
+		return titleLocale
+	};
 };

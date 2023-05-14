@@ -76,7 +76,7 @@
 					</p>
 
 					<div class="recipes-list animate__animated animate__fadeIn" *ngIf="!deletingRecord">
-						aqui a lista de receitas que utilizam este produto</div>
+						<bl-record-details-mats-table [tableContent]="supplementsService('recordDetails').recipelist"></bl-record-details-mats-table></div>
 
 
 					<div *ngIf="deletingRecord" class="delete-confirmation animate__animated animate__fadeIn">

@@ -146,7 +146,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
 			owner: this._appService.userInfo.username,
 			public: false,
 			inactive: false,
-			timestamp: Date.now()
+			timestamp: Date.now(),
+			recipemats:[]
 		};
 	}
 

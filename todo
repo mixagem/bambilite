@@ -1,11 +1,5 @@
-#
-phase 1
-1. tratar de exemplos para as 3 entidades
+#phase 2
 
-
-
-----
-phase 2
 1. receitas -> lista de produtos/suplementos que incluem a receita
 	\-> nova entidade invisivel -> recipelines
 		\-> criar interface generica - IRecipeLine (composta pelas propriedads comuns aos suplementos e produtos [é quase tudo mas whatever, futureproofing])
@@ -161,7 +155,6 @@ campos:
 
 # hybrid
 1. product - last consumed
-2. fix locales snackbars GetLocales/GetMenus (hardcoded atm)
 
 # whiteboard
 1. shared products brainstorm ✅
@@ -233,8 +226,3 @@ campos:
 
 
 
-
-
-	--
-
-	getters e setters de modo a tornar serviços privados

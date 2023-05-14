@@ -9,6 +9,7 @@ import { ExercisesCategoryComponent } from './exercises/exercises-category/exerc
 import { ExercisesComponent } from './exercises/exercises.component';
 import { ProgressComponent } from './progress/progress.component';
 import { WorkoutsComponent } from './workouts/workouts.component';
+import { SharedModule } from 'src/app/modules/shared.module';
 
 @NgModule({
 	declarations: [
@@ -23,7 +24,8 @@ import { WorkoutsComponent } from './workouts/workouts.component';
 		PipesModule,
 		MaterialImportsModule,
 		RouterModule,
-		NgScrollbarModule
+		NgScrollbarModule,
+		SharedModule
 	],
 	exports: [
 	]

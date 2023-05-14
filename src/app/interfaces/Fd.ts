@@ -15,7 +15,23 @@ export interface IDetailsProduct extends IListProduct {
 	public: boolean;
 	inactive: boolean;
 	timestamp: number;
+	recipelist: IMaterialsProduct[];
 }
+
+export interface IMaterialsProduct {
+	recipestamp:string,
+	title: string,
+	kcal: number;
+	unit: string;
+	unitvalue: number;
+	price: number;
+	owner: string;
+}
+
+
+
+//
+
 
 export interface IDetailsRecipe extends IListRecipe {
 	kcal: number;
@@ -26,6 +42,20 @@ export interface IDetailsRecipe extends IListRecipe {
 	public: boolean;
 	inactive: boolean;
 	timestamp: number;
+	recipemats: IMaterialsRecipe[];
+}
+
+export interface IMaterialsRecipe {
+	stamp:string,
+	origin:string,
+	originstamp:string,
+	recipestamp:string,
+	title: string,
+	kcal: number;
+	unit: string;
+	unitvalue: number;
+	price: number;
+	owner: string;
 }
 
 
@@ -35,3 +65,4 @@ export interface IListRecipe {
 	image: string;
 	tags: string[];
 }
+
