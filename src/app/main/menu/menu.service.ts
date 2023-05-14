@@ -2,11 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
+import { MenuEntry, MenuObject } from 'src/app/interfaces/Generic';
 import { AppService } from 'src/app/services/app.service';
 
-type MenuSubEntry = { title: string, id: string, route: string };
-type MenuEntry = { title: string, id: string, icon: string, route: string, subEntries: MenuSubEntry[] };
-type MenuObject = { sucess: boolean, menus?: MenuEntry[], details?: string };
 
 @Injectable({ providedIn: 'root' })
 

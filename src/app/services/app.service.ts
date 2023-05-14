@@ -7,8 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { LandingPageSnackComponent } from '../components/snackbars/landing-page-snack/landing-page-snack.component';
 import { Router } from '@angular/router';
 import { AppSnackComponent } from '../components/snackbars/app-snack/app-snack.component';
-import { Locales, AppTheme, AppLanguage } from '../interfaces/Generic';
-
+import { Locales, AppTheme, AppLanguage, RecordMeasuringType, AppMaterialLocales } from '../interfaces/Generic';
 
 type LoginObject = { validLogin: boolean; userSettings?: IUserSettings; details?: string };
 
@@ -59,6 +58,7 @@ export class AppService {
 		};
 	};
 
+
 	LastLanguageUsed(): AppLanguage {
 		const lastLanguageUsed = localStorage.getItem('bambi_language') as AppLanguage | null;
 		return lastLanguageUsed ? lastLanguageUsed : 'pt';
@@ -81,6 +81,22 @@ export class AppService {
 			}
 		});
 	};
+
+	GetMaterialLocale(): string {
+		let locale: AppMaterialLocales = 'pt-PT';
+
+		switch (this.appLang) {
+			case 'es':
+				locale = 'es-ES';
+				break;
+			case 'uk':
+				locale = 'en-GB';
+				break;
+			case 'pt': default:
+				locale = 'pt-PT';
+		}
+		return locale
+	}
 
 	API(endpoint: string, httpParameters: HttpParams | null = null, extraParameters?: { [key: string]: string | number | boolean }): void {
 
@@ -225,6 +241,16 @@ export class AppService {
 	GetOperationLabel(title: string, stamp: string): string {
 		return !!title ? !!stamp ? 'GENERIC.EDITRECORD' : 'GENERIC.CLONERECORD' : 'GENERIC.NEWRECORD';
 	};
+
+
+	GetDefaultMeasuringTypeOptions(): RecordMeasuringType[] {
+		return [
+			{ title: "Grama (g)", value: "g" },
+			{ title: "Kilograma (kg)", value: "kg" },
+			{ title: "Mililitro (ml)", value: "ml" },
+			{ title: "Litro (L)", value: "L" }
+		]
+	}
 
 	private handleError(error: HttpErrorResponse): Observable<never> {
 		if (error.status === 0) {

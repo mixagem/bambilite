@@ -19,71 +19,78 @@ export class HeaderComponent {
 	simpleQueryAllowedMainforms: string[] = ['/fd/recipes', '/fd/products', '/sp/supplements'];
 
 	constructor(
-		public headerService: HeaderService,
-		public router: Router,
-		public appService: AppService,
+		private _headerService: HeaderService,
+		private _router: Router,
+		private _appService: AppService,
 		private _productsService: ProductsService,
 		private _recipesService: RecipesService,
 		private _supplementsService: SupplementsService) { };
 
-	themeSwap(theme: AppTheme): void {
-		if (this.appService.appTheme === theme) { return };
+	headerService(property: string): any { return this._headerService[`${property}` as keyof typeof this._headerService] };
 
-		this.appService.appTheme = theme;
-		this.appService.userInfo.theme = theme;
+	router(property: string): any { return this._router[`${property}` as keyof typeof this._router] };
+
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
+
+	disconnect() { this._appService.Disconnect(true); }
+
+	themeSwap(theme: AppTheme): void {
+		if (this._appService.appTheme === theme) { return };
+		this._appService.appTheme = theme;
+		this._appService.userInfo.theme = theme;
 		localStorage.setItem('bambi_theme', theme);
 
 		const httpParams = new HttpParams()
 			.set('theme', theme)
-			.set('username', this.appService.userInfo.username)
-			.set('cookie', this.appService.userInfo.cookie);
+			.set('username', this._appService.userInfo.username)
+			.set('cookie', this._appService.userInfo.cookie);
 
-		this.appService.API('theme', httpParams);
+		this._appService.API('theme', httpParams);
 	};
 
 	languageSwap(language: AppLanguage): void {
-		if (this.appService.appLang === language) { return };
+		if (this._appService.appLang === language) { return };
 
-		this.appService.appLang = language;
-		this.appService.userInfo.language = language;
-		this.appService.GetLocales(language);
+		this._appService.appLang = language;
+		this._appService.userInfo.language = language;
+		this._appService.GetLocales(language);
 		localStorage.setItem('bambi_language', language);
 
 		const httpParams = new HttpParams()
 			.set('language', language)
-			.set('username', this.appService.userInfo.username)
-			.set('cookie', this.appService.userInfo.cookie);
+			.set('username', this._appService.userInfo.username)
+			.set('cookie', this._appService.userInfo.cookie);
 
-		this.appService.API('language', httpParams);
+		this._appService.API('language', httpParams);
 	};
 
 	inputSearch(): void {
-		switch (this.router.url) {
+		switch (this._router.url) {
 			case '/fd/products':
 				this._productsService.API('getqueriedlist',
 					new HttpParams()
 						.set('operation', 'getqueriedlist')
-						.set('owner', this.appService.userInfo.username)
-						.set('cookie', this.appService.userInfo.cookie)
-						.set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('query', this._headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 
 			case '/fd/recipes':
 				this._recipesService.API('getqueriedlist',
 					new HttpParams()
 						.set('operation', 'getqueriedlist')
-						.set('owner', this.appService.userInfo.username)
-						.set('cookie', this.appService.userInfo.cookie)
-						.set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('query', this._headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 
 			case '/sp/supplements':
 				this._supplementsService.API('getqueriedlist',
 					new HttpParams()
 						.set('operation', 'getqueriedlist')
-						.set('owner', this.appService.userInfo.username)
-						.set('cookie', this.appService.userInfo.cookie)
-						.set('query', this.headerService.inputsForm.get('simpleQueryFormControl')!.value));
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('query', this._headerService.inputsForm.get('simpleQueryFormControl')!.value));
 				break;
 		};
 	};

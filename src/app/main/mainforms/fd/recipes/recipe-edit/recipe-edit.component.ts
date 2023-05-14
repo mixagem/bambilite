@@ -14,11 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HeaderService } from 'src/app/main/header/header.service';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-type AutocompleteOption = {
-	title: string,
-	value: string
-}
+import { RecordMeasuringType } from 'src/app/interfaces/Generic';
 
 @Component({
 	selector: 'bl-recipe-edit',
@@ -36,92 +32,69 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	// progress bar control
 	loadingComplete: boolean = true;
 
-	// discard control
-	isDiscarding: boolean = false;
-
 	// operation type (new / update) control
 	isNewRecord: boolean = false;
 
-	defaultOptions: AutocompleteOption[] = [
-		{ title: "Grama (g)", value: "g" },
-		{ title: "Kilograma (kg)", value: "kg" },
-		{ title: "Mililitro (ml)", value: "ml" },
-		{ title: "Litro (L)", value: "L" }
-	]
+	// discard control
+	isDiscarding: boolean = false;
 
-	filteredOptions: Observable<AutocompleteOption[]> = new Observable<AutocompleteOption[]>;
+	defaultOptions: RecordMeasuringType[] = [];
+	filteredOptions: Observable<RecordMeasuringType[]> = new Observable<RecordMeasuringType[]>;
 
 	// mat-chips input separator
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
 	constructor(
-		public appService: AppService,
+		private _appService: AppService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
-		public router: Router,
-		public recipesService: RecipesService,
-		public fdService: FdService,
+		private _router: Router,
+		private _recipesService: RecipesService,
+		private _fdService: FdService,
 		private _headerService: HeaderService) {
 
-		// closing drawer on changing to a diffrent fd child
-		router.events.forEach((event) => {
-			if (event instanceof NavigationStart) {
-				this.closeEditMode();
-			}
-		});
-
-		this.recordDetailsDraft = this.recipesService.recordDetails
-
-		// recipesService clone
-		this.recipesService.tempB64Img = this.recordDetailsDraft.image;
-
-		// form control gen
-		this.generateFormControls();
+		this.recordDetailsDraft = this._recipesService.recordDetails
 	}
 
 	ngOnInit(): void {
-		this.formControlsUpdate();
+
+		// subs
+		this._fdService.recipeUpdateChannel = new Subject<RecipeChannelResult>;
+		this._fdService.recipeUpdateChannel.subscribe(result => { this.saveFinished(result); });
+
+		// closing drawer on changing to a diffrent fd child
+		this._router.events.forEach((event) => { if (event instanceof NavigationStart) { this.closeEditMode(); } });
+
+		// _recipesService clone
+		this._recipesService.tempB64Img = this.recordDetailsDraft.image;
+
+		// autocompelte options
+		this.defaultOptions = this._appService.GetDefaultMeasuringTypeOptions()
+
+		// form control gen
+		this._generateFormControls();
+
+		this._formControlsUpdate();
 
 		// disabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
-
-		// subs
-		this.fdService.recipeUpdateChannel = new Subject<RecipeChannelResult>;
-		this.fdService.recipeUpdateChannel.subscribe(result => { this.saveFinished(result); });
 
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.fdService.productUpdateChannel.complete();
+		this._fdService.productUpdateChannel.complete();
 		// wise to clean any images that are not used
-		this.recipesService.tempB64Img = '';
+		this._recipesService.tempB64Img = '';
 		// re-enabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.enable({ emitEvent: false });
 	}
 
-	// triggered by the response from the update product call
-	saveFinished(result: RecipeChannelResult): void {
+	router(property: string): any { return this._router[`${property}` as keyof typeof this._router] };
 
-		this.loadingComplete = true;
-		// disparar snackbars aqui?
-		if (result.sucess) {
-			this.closeEditMode(true);
-			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'SNACKS.NEW-RECIPE' : 'SNACKS.UPDATED-RECIPE', emoji: '🥝' } });
-		}
-		else {
-			switch (result.details) {
-				case 'user-not-owner':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.USER-NOT-OWNER', emoji: '🚫' } });
-					return;
-				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
-					console.error('bambilite connection error: ' + result.details);
-					return;
-			}
-		}
+	recipesService(property: string): any { return this._recipesService[`${property}` as keyof typeof this._recipesService] };
 
-	}
+	getOperationLabel(title: string, stamp: string): string { return this._appService.GetOperationLabel(title, stamp); }
 
 	discardPrompt(operation: 'open' | 'close'): void {
 
@@ -142,7 +115,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		this.isNewRecord = !this.recordDetailsDraft.stamp
 
 		this.recordDetailsDraft.timestamp = Date.now();
-		this.recordDetailsDraft.image = this.recipesService.tempB64Img;
+		this.recordDetailsDraft.image = this._recipesService.tempB64Img;
 		this.recordDetailsDraft.kcal = this.recordForm.get('kcal')!.value
 		this.recordDetailsDraft.title = this.recordForm.get('title')!.value
 		this.recordDetailsDraft.unit = this.recordForm.get('unit')!.value
@@ -155,36 +128,57 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		const httpParams =
 			new HttpParams()
 				.set('operation', operation)
-				.set('cookie', this.appService.userInfo.cookie)
-				.set('owner', this.appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie)
+				.set('owner', this._appService.userInfo.username)
 				.set('record', JSON.stringify(this.recordDetailsDraft))
 
-		this.recipesService.API(operation, httpParams)
+		this._recipesService.API(operation, httpParams)
 	}
 
+	// triggered by the response from the update product call
+	saveFinished(result: RecipeChannelResult): void {
+
+		this.loadingComplete = true;
+		// disparar snackbars aqui?
+		if (result.sucess) {
+			this.closeEditMode(true);
+			this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: this.isNewRecord ? 'SNACKS.NEW-RECIPE' : 'SNACKS.UPDATED-RECIPE', emoji: '🥝' } });
+		}
+		else {
+			switch (result.details) {
+				case 'user-not-owner':
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.USER-NOT-OWNER', emoji: '🚫' } });
+					return;
+				case 'offline': default:
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
+					return;
+			}
+		}
+
+	}
 
 	// triggered when update record api call is over, and also when discarding changes
 	closeEditMode(updatedRecord: boolean = false): void {
 		// drawer closing animation
-		this.fdService.drawerFadeout = true;
+		this._fdService.drawerFadeout = true;
 		setTimeout(() => {
-			this.fdService.drawerOpen = false;
-			this.fdService.drawerFadeout = false;
+			this._fdService.drawerOpen = false;
+			this._fdService.drawerFadeout = false;
 		}, 1000);
 
 		if (updatedRecord) {
-			this.recipesService.API('getlist',
+			this._recipesService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.appService.userInfo.username)
-					.set('cookie', this.appService.userInfo.cookie));
+					.set('owner', this._appService.userInfo.username)
+					.set('cookie', this._appService.userInfo.cookie));
 		}
 	}
 
-
 	// imagepicker
 	newPicUpload(): void {
-		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
+		this._dialog.open(ImageUploadComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
 	}
 
 	// tags
@@ -211,8 +205,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		if (index >= 0) { this.recordDetailsDraft.tags[index] = value; }
 	}
 
-
-	generateFormControls(): void {
+	private _generateFormControls(): void {
 		Object.keys(this.recordDetailsDraft).forEach(key => {
 			switch (key) {
 				case 'stamp':
@@ -237,21 +230,18 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		let pbr = this.fdService.GetPriceByRatio(this.recordForm.get('price')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
-		let kb1 = this.fdService.GetKcalBy100(this.recordForm.get('kcal')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
+		const pbr = this._fdService.GetPriceByRatio(this.recordForm.get('price')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
+		const kb1 = this._fdService.GetKcalBy100(this.recordForm.get('kcal')!.value, this.recordForm.get('unitvalue')!.value, this.recordForm.get('unit')!.value);
 
 		this.recordForm.addControl('pricebyratio', new FormControl(isNaN(pbr) ? 0 : pbr, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
 		this.recordForm.addControl('kcalby100', new FormControl(isNaN(kb1) ? 0 : kb1, [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]))
 		this.recordForm.addControl('chipgrid', new FormControl())
-
 	}
 
-	// disabling checkboxes for shared records
-	formControlsUpdate(): void {
+	private _formControlsUpdate(): void {
 		if (this.recordDetailsDraft.public) {
 			this.recordForm.get('public')!.disable()
 			this.recordForm.get('inactive')!.disable()
 		}
 	}
-
 }

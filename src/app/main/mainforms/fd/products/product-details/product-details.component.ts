@@ -21,26 +21,30 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 	deletingRecord: boolean = false;
 
 	constructor(
-		public productsService: ProductsService,
+		private _productsService: ProductsService,
+		private _fdService: FdService,
 		private _dialogRef: MatDialogRef<any>,
-		private _appService: AppService,
-		public fdService: FdService) { }
+		private _appService: AppService) { }
 
 	ngOnInit(): void {
 		// subs
-		this.fdService.productDetailsChannel = new Subject<ProductChannelResult>;
-		this.fdService.productDetailsChannel.subscribe(result => { this.showRecordDetails(result); });
+		this._fdService.productDetailsChannel = new Subject<ProductChannelResult>;
+		this._fdService.productDetailsChannel.subscribe(result => { this.showRecordDetails(result); });
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.fdService.productDetailsChannel.complete();
+		this._fdService.productDetailsChannel.complete();
 	}
+
+	productsService(property: string): any { return this._productsService[`${property}` as keyof typeof this._productsService] };
+
+	getMaterialLocale(): string { return this._appService.GetMaterialLocale() }
 
 	// fire details modal
 	showRecordDetails(result: ProductChannelResult): void {
 		this.loadingComplete = true;
-		result.sucess ? this.productsService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
+		result.sucess ? this._productsService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
 	}
 
 	// details modal actions
@@ -48,11 +52,11 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 		switch (operation) {
 			case 'update': case 'clone':
 				if (operation === 'clone') {
-					this.productsService.recordDetails.stamp = ''
-					this.productsService.recordDetails.public = false
-					this.productsService.recordDetails.inactive = false
+					this._productsService.recordDetails.stamp = ''
+					this._productsService.recordDetails.public = false
+					this._productsService.recordDetails.inactive = false
 				}
-				this.fdService.drawerOpen = true;
+				this._fdService.drawerOpen = true;
 				this._dialogRef.close();
 				break;
 			case 'delete':
@@ -63,13 +67,12 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
 	// delete confirmed
 	deleteRecord(): void {
-		this.productsService.API('delete',
+		this._productsService.API('delete',
 			new HttpParams()
 				.set('operation', 'delete')
 				.set('owner', this._appService.userInfo.username)
 				.set('cookie', this._appService.userInfo.cookie)
-				.set('stamps', this.productsService.recordDetails.stamp))
+				.set('stamps', this._productsService.recordDetails.stamp))
 	}
 
 }
-

@@ -6,7 +6,7 @@
 	<div class="header-title">
 		<mat-icon>restaurant_menu</mat-icon>
 		<h1>{{'FD.RECIPES.TITLE' | translation}} -
-			{{appService.GetOperationLabel(recordDetailsDraft.title,recordDetailsDraft.stamp) | translation}}
+			{{getOperationLabel(recordDetailsDraft.title,recordDetailsDraft.stamp) | translation}}
 			{{!!recordDetailsDraft.title ? recordDetailsDraft.title:''}}</h1>
 	</div>
 
@@ -35,7 +35,7 @@
 
 				<div class="img-picker-wrapper">
 					<div class="img-picker-pic-wrapper">
-						<img [src]="recipesService.tempB64Img">
+						<img [src]="recipesService('tempB64Img')">
 					</div>
 					<div class="img-picker-pic-wrapper picker-controller bambi-fx-15-inline" (click)="newPicUpload()">
 						<mat-icon>add_a_photo</mat-icon>

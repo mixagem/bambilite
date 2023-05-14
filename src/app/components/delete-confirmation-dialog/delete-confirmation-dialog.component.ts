@@ -15,24 +15,39 @@ import { AppService } from 'src/app/services/app.service';
 export class DeleteConfirmationDialogComponent {
 
 	constructor(
-		public appService: AppService,
+		private _appService: AppService,
 		private _productsService: ProductsService,
 		private _recipesService: RecipesService,
 		private _supplementsService: SupplementsService,
 		private _router: Router) {
-	}
+	};
 
 	confirmDelete(): void {
 		switch (this._router.url) {
 			case '/fd/products':
-				this._productsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
+				this._productsService.API('delete',
+					new HttpParams()
+						.set('operation', 'delete')
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('stamps', this._appService.deleteSelection.toString()))
 				break;
 			case '/fd/recipes':
-				this._recipesService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
+				this._recipesService.API('delete',
+					new HttpParams()
+						.set('operation', 'delete')
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('stamps', this._appService.deleteSelection.toString()))
 				break;
 			case '/sp/supplements':
-				this._supplementsService.API('delete', new HttpParams().set('operation', 'delete').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie).set('stamps', this.appService.deleteSelection.toString()))
+				this._supplementsService.API('delete',
+					new HttpParams()
+						.set('operation', 'delete')
+						.set('owner', this._appService.userInfo.username)
+						.set('cookie', this._appService.userInfo.cookie)
+						.set('stamps', this._appService.deleteSelection.toString()))
 				break;
 		}
-	}
+	};
 }

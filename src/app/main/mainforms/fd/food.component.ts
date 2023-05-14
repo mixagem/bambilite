@@ -11,9 +11,10 @@ import { Router } from '@angular/router';
 export class FoodComponent {
 
 	constructor(
-		public router: Router,
+		private _router: Router,
 		private _fdService: FdService) { };
 
+	router(property: string): any { return this._router[`${property}` as keyof typeof this._router] };
 	fdService(property: string): any { return this._fdService[`${property}` as keyof typeof this._fdService] };
 
 };

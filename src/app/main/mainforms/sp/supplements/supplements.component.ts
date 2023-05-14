@@ -32,28 +32,32 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 	selectedRecords: string[] = [];
 
 	constructor(
-		public appService: AppService,
-		public supplementsService: SupplementsService,
-		public spService: SpService,
+		private _appService: AppService,
+		private _supplementsService: SupplementsService,
+		private _spService: SpService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar) { }
 
 	ngOnInit(): void {
 		// subs
-		this.spService.supplementListChannel = new Subject<SupplementChannelResult>;
-		this.spService.supplementDeleteChannel = new Subject<SupplementChannelResult>;
+		this._spService.supplementListChannel = new Subject<SupplementChannelResult>;
+		this._spService.supplementDeleteChannel = new Subject<SupplementChannelResult>;
 
-		this.spService.supplementListChannel.subscribe(result => { this.showRecordList(result); });
-		this.spService.supplementDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
+		this._spService.supplementListChannel.subscribe(result => { this.showRecordList(result); });
+		this._spService.supplementDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
 
-		this.supplementsService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
+		this._supplementsService.API('getlist', new HttpParams().set('operation', 'getlist').set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.spService.supplementListChannel.complete();
-		this.spService.supplementDeleteChannel.complete();
+		this._spService.supplementListChannel.complete();
+		this._spService.supplementDeleteChannel.complete();
 	}
+
+	supplementsService(property: string): any { return this._supplementsService[`${property}` as keyof typeof this._supplementsService] };
+
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
 
 	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
@@ -71,7 +75,7 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details)
 					break;
 			}
@@ -87,30 +91,30 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 
 			// snackbar fire
 			this.selectedRecords.length > 1  ?
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENTS', emoji: '🚮' } }) :
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENT', emoji: '🚮' } })
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENTS', emoji: '🚮' } }) :
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-SUPPLEMENT', emoji: '🚮' } })
 
 			// reseting selection array
-			this.appService.deleteSelection = [];
+			this._appService.deleteSelection = [];
 			this.selectedRecords = [];
 
 			// fetch updated listing
-			this.supplementsService.API('getlist',
+			this._supplementsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.appService.userInfo.username)
-					.set('cookie', this.appService.userInfo.cookie));
+					.set('owner', this._appService.userInfo.username)
+					.set('cookie', this._appService.userInfo.cookie));
 		}
 
 		// error deleting records
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'user-owns-none':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-SUPPLEMENT', emoji: '🚯' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-SUPPLEMENT', emoji: '🚯' } });
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details);
 					break;
 			}
@@ -119,14 +123,14 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 
 	// product details dialog
 	showDetails(productstamp: string): void {
-		this._dialog.open(SupplementDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
-		this.supplementsService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
+		this._dialog.open(SupplementDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
+		this._supplementsService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
 	}
 
 	// introduction mode
 	addNewRecord(): void {
-		this.spService.drawerOpen = true;
-		this.supplementsService.recordDetails = {
+		this._spService.drawerOpen = true;
+		this._supplementsService.recordDetails = {
 			stamp: '',
 			title: '',
 			image: '',
@@ -135,7 +139,7 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 			unit: 'g',
 			unitvalue: 0,
 			price: 0,
-			owner: this.appService.userInfo.username,
+			owner: this._appService.userInfo.username,
 			public: false,
 			inactive: false,
 			timestamp: Date.now()
@@ -160,8 +164,8 @@ export class SupplementsComponent implements OnInit, OnDestroy {
 
 	// delete selected records
 	deleteSelected(): void {
-		this.appService.deleteSelection = this.selectedRecords;
-		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.appService.appTheme + '-theme'] });
+		this._appService.deleteSelection = this.selectedRecords;
+		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this._appService.appTheme + '-theme'] });
 	}
 
 

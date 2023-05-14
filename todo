@@ -1,8 +1,6 @@
 #
 phase 1
-1. refract total(falta recipes, suplementos, e edit/details do prodcuct)
-2. restaurar preenchimento automatico no supplementos
-3. tratar de exemplos para as 3 entidades
+1. tratar de exemplos para as 3 entidades
 
 
 
@@ -180,8 +178,8 @@ campos:
 	3.1 - adicionar mais campos para procura exata
 
 				SELECT * FROM PRODUCTS WHERE
-					COL1 = X OR COL2 = X OR COL3 = X OR COL[unitvalue]COL[unit] = X
-														^^ suportar pesquisa de medidas definidas (p.e. 100g)
+					COL1 = X OR COL2 = X OR COL3 = X OR COL[unitvalue] = X
+
 
 	3.2. - turbinar procura simples
 	\-> fazemos slice ao input (transformar em array)

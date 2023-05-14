@@ -13,24 +13,24 @@ import { SuppplementationModule } from './main/mainforms/sp/sp.module';
 import { FoodModule } from './main/mainforms/fd/fd.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-	MaterialImportsModule,
-	MainModule,
-    HttpClientModule,
-	PipesModule,
-	LandingPageModule,
-	BodybuildingModule,
-	FoodModule,
-	SuppplementationModule
-  ],
-  exports:[],
-  providers: [],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent,
+	],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		BrowserAnimationsModule,
+		MaterialImportsModule,
+		MainModule,
+		HttpClientModule,
+		PipesModule,
+		LandingPageModule,
+		BodybuildingModule,
+		FoodModule,
+		SuppplementationModule
+	],
+	exports: [],
+	providers: [],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }

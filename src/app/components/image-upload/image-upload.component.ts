@@ -20,7 +20,7 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 		private _productsService: ProductsService,
 		private _recipesService: RecipesService,
 		private _supplementsService: SupplementsService,
-		public appService: AppService,
+		private _appService: AppService,
 		private _channelsService: SubjectChannelsService,
 		private _router: Router) {
 	}
@@ -28,12 +28,16 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		switch (this._router.url) {
 			case '/fd/products':
-				this.appService.tempB64Img = this._productsService.tempB64Img
+				this._appService.tempB64Img = this._productsService.tempB64Img
 				break;
 			case '/fd/recipes':
-				this.appService.tempB64Img = this._recipesService.tempB64Img
+				this._appService.tempB64Img = this._recipesService.tempB64Img
+				break;
+			case '/sp/supplements':
+				this._appService.tempB64Img = this._supplementsService.tempB64Img
 				break;
 		}
+
 		this._channelsService.imageUploadChannel.subscribe(result => { this.uploadFinished(result); });
 	}
 
@@ -41,33 +45,7 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 		this._channelsService.imageUploadChannel = new Subject<ImageChannelResult>;
 	}
 
-
-	imageSelected(fileInputEvent: any): void {
-		this.loadingComplete = false;
-		const file = fileInputEvent.target!.files[0];
-		this.appService.ImageUpload(file);
-	}
-
-	uploadFinished(result: ImageChannelResult): void {
-		this.loadingComplete = true;
-		if (result.sucess) { this.appService.tempB64Img = result.b64! }
-	}
-
-	resetImage(): void { this.appService.tempB64Img = ''; }
-
-	saveChanges(): void {
-		switch (this._router.url) {
-			case '/fd/products':
-				this._productsService.tempB64Img = this.appService.tempB64Img
-				break;
-			case '/fd/recipes':
-				this._recipesService.tempB64Img = this.appService.tempB64Img
-				break;
-			case '/sp/supplements':
-				this._supplementsService.tempB64Img = this.appService.tempB64Img
-				break;
-		}
-	}
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
 
 	getImageSrc(): string {
 		let imageSource = ''
@@ -86,4 +64,32 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 		}
 		return imageSource
 	}
+
+	imageSelected(fileInputEvent: any): void {
+		this.loadingComplete = false;
+		const file = fileInputEvent.target!.files[0];
+		this._appService.ImageUpload(file);
+	}
+
+	uploadFinished(result: ImageChannelResult): void {
+		this.loadingComplete = true;
+		if (result.sucess) { this._appService.tempB64Img = result.b64! }
+	}
+
+	resetImage(): void { this._appService.tempB64Img = '' };
+
+	saveChanges(): void {
+		switch (this._router.url) {
+			case '/fd/products':
+				this._productsService.tempB64Img = this._appService.tempB64Img
+				break;
+			case '/fd/recipes':
+				this._recipesService.tempB64Img = this._appService.tempB64Img
+				break;
+			case '/sp/supplements':
+				this._supplementsService.tempB64Img = this._appService.tempB64Img
+				break;
+		}
+	}
+
 }

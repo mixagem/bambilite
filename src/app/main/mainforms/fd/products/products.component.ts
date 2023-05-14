@@ -32,32 +32,35 @@ export class ProductsComponent implements OnInit, OnDestroy {
 	selectedRecords: string[] = [];
 
 	constructor(
-		public appService: AppService,
-		public productsService: ProductsService,
-		public fdService: FdService,
+		private _appService: AppService,
+		private _productsService: ProductsService,
+		private _fdService: FdService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar) { };
 
 	ngOnInit(): void {
 
-		this.fdService.productListChannel = new Subject<ProductChannelResult>;
-		this.fdService.productDeleteChannel = new Subject<ProductChannelResult>;
+		this._fdService.productListChannel = new Subject<ProductChannelResult>;
+		this._fdService.productDeleteChannel = new Subject<ProductChannelResult>;
 
-		this.fdService.productListChannel.subscribe(result => { this.showRecordList(result) });
-		this.fdService.productDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result) });
+		this._fdService.productListChannel.subscribe(result => { this.showRecordList(result) });
+		this._fdService.productDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result) });
 
-		this.productsService.API('getlist',
+		this._productsService.API('getlist',
 			new HttpParams()
 				.set('operation', 'getlist')
-				.set('owner', this.appService.userInfo.username)
-				.set('cookie', this.appService.userInfo.cookie));
+				.set('owner', this._appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie));
 	};
 
 	ngOnDestroy(): void {
-
-		this.fdService.productListChannel.complete();
-		this.fdService.productDeleteChannel.complete();
+		this._fdService.productListChannel.complete();
+		this._fdService.productDeleteChannel.complete();
 	};
+
+	productsService(property: string): any { return this._productsService[`${property}` as keyof typeof this._productsService] };
+
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
 
 	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator };
 
@@ -76,7 +79,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details);
 					break;
 			};
@@ -88,27 +91,27 @@ export class ProductsComponent implements OnInit, OnDestroy {
 		if (result.sucess) {
 
 			this.selectedRecords.length > 1 ?
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCTS', emoji: '🚮' } })
-				: this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCT', emoji: '🚮' } })
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCTS', emoji: '🚮' } })
+				: this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-PRODUCT', emoji: '🚮' } })
 
-			this.appService.deleteSelection = [];
+			this._appService.deleteSelection = [];
 			this.selectedRecords = [];
 
-			this.productsService.API('getlist',
+			this._productsService.API('getlist',
 				new HttpParams()
 					.set('operation', 'getlist')
-					.set('owner', this.appService.userInfo.username)
-					.set('cookie', this.appService.userInfo.cookie));
+					.set('owner', this._appService.userInfo.username)
+					.set('cookie', this._appService.userInfo.cookie));
 		};
 
 		if (!result.sucess) {
 			switch (result.details) {
 				case 'user-owns-none':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-PRODUCT', emoji: '🚯' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-PRODUCT', emoji: '🚯' } });
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details);
 					break;
 			};
@@ -117,14 +120,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
 	// product details dialog
 	showDetails(productstamp: string): void {
-		this._dialog.open(ProductDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
-		this.productsService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
+		this._dialog.open(ProductDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
+		this._productsService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
 	};
 
 	// introduction mode
-	addNewProduct(): void {
-		this.fdService.drawerOpen = true;
-		this.productsService.recordDetails = {
+	addNewRecord(): void {
+		this._fdService.drawerOpen = true;
+		this._productsService.recordDetails = {
 			stamp: '',
 			title: '',
 			image: '',
@@ -133,7 +136,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 			unit: 'g',
 			unitvalue: 0,
 			price: 0,
-			owner: this.appService.userInfo.username,
+			owner: this._appService.userInfo.username,
 			public: false,
 			inactive: false,
 			timestamp: Date.now()
@@ -158,7 +161,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
 	// delete selected records
 	deleteSelected(): void {
-		this.appService.deleteSelection = this.selectedRecords;
-		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.appService.appTheme + '-theme'] });
+		this._appService.deleteSelection = this.selectedRecords;
+		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this._appService.appTheme + '-theme'] });
 	};
 };

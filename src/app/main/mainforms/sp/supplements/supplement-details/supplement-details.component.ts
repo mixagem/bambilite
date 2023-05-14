@@ -21,26 +21,30 @@ export class SupplementDetailsComponent implements OnInit, OnDestroy {
 	deletingRecord: boolean = false;
 
 	constructor(
-		public supplementsService: SupplementsService,
+		private _supplementsService: SupplementsService,
 		private _dialogRef: MatDialogRef<any>,
 		private _appService: AppService,
-		public spService: SpService) { }
+		private _spService: SpService) { }
 
 	ngOnInit(): void {
 		// subs
-		this.spService.supplementDetailsChannel = new Subject<SupplementChannelResult>;
-		this.spService.supplementDetailsChannel.subscribe(result => { this.showRecordDetails(result); });
+		this._spService.supplementDetailsChannel = new Subject<SupplementChannelResult>;
+		this._spService.supplementDetailsChannel.subscribe(result => { this.showRecordDetails(result); });
 	}
 
 	ngOnDestroy(): void {
 		// subs
-		this.spService.supplementDetailsChannel.complete();
+		this._spService.supplementDetailsChannel.complete();
 	}
+
+	supplementsService(property: string): any { return this._supplementsService[`${property}` as keyof typeof this._supplementsService] };
+
+	getMaterialLocale(): string { return this._appService.GetMaterialLocale() }
 
 	// fire details modal
 	showRecordDetails(result: SupplementChannelResult): void {
 		this.loadingComplete = true;
-		result.sucess ? this.supplementsService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
+		result.sucess ? this._supplementsService.recordDetails = result.record! : console.error('bambilite connection error: ' + result.details);
 	}
 
 	// details modal actions
@@ -48,11 +52,11 @@ export class SupplementDetailsComponent implements OnInit, OnDestroy {
 		switch (operation) {
 			case 'update': case 'clone':
 				if (operation === 'clone') {
-					this.supplementsService.recordDetails.stamp = ''
-					this.supplementsService.recordDetails.public = false
-					this.supplementsService.recordDetails.inactive = false
+					this._supplementsService.recordDetails.stamp = ''
+					this._supplementsService.recordDetails.public = false
+					this._supplementsService.recordDetails.inactive = false
 				}
-				this.spService.drawerOpen = true;
+				this._spService.drawerOpen = true;
 				this._dialogRef.close();
 				break;
 			case 'delete':
@@ -63,12 +67,12 @@ export class SupplementDetailsComponent implements OnInit, OnDestroy {
 
 	// delete confirmed
 	deleteRecord(): void {
-		this.supplementsService.API('delete',
+		this._supplementsService.API('delete',
 			new HttpParams()
 				.set('operation', 'delete')
 				.set('owner', this._appService.userInfo.username)
 				.set('cookie', this._appService.userInfo.cookie)
-				.set('stamps', this.supplementsService.recordDetails.stamp))
+				.set('stamps', this._supplementsService.recordDetails.stamp))
 	}
 
 }

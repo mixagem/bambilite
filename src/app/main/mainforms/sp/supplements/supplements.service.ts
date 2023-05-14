@@ -7,7 +7,6 @@ import { SpService } from '../sp.service';
 
 type SupplementObject = { sucess: boolean; recordList?: IListSupplement[]; recordDetails?: IDetailsSupplement; details?: string }
 
-
 @Injectable({ providedIn: 'root' })
 
 export class SupplementsService {
@@ -20,12 +19,10 @@ export class SupplementsService {
 	// middleman beetween imagepicker and components)
 	tempB64Img: string = '';
 
-
 	constructor(
 		private _http: HttpClient,
 		private _appService: AppService,
 		private _spService: SpService) { }
-
 
 
 	// db calls
@@ -106,5 +103,6 @@ export class SupplementsService {
 		}
 		return throwError(() => new Error('Something bad happened; please try again later.'));
 	}
+
 
 }

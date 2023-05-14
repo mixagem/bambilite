@@ -62,7 +62,7 @@ export class SpService {
 
 	}
 
-	GetPriceByQuantity(price: number, unitvalue: number, unit: string): number {
+	GetPrice(price: number, unitvalue: number, unit: string): number {
 
 		let ajustedPriced = 0;
 

@@ -33,8 +33,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
 	selectedRecords: string[] = [];
 
 	constructor(
-		public appService: AppService,
-		public recipeService: RecipesService,
+		private _appService: AppService,
+		private _recipeService: RecipesService,
 		private _fdService: FdService,
 		private _dialog: MatDialog,
 		private _snackBar: MatSnackBar
@@ -48,15 +48,23 @@ export class RecipesComponent implements OnInit, OnDestroy {
 		this._fdService.recipeListChannel.subscribe(result => { this.showRecordList(result); });
 		this._fdService.recipeDeleteChannel.subscribe(result => { this.refreshRecordListFromDelete(result); });
 
-		this.recipeService.API('getlist',new HttpParams().set('operation', 'getlist').set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
+		this._recipeService.API('getlist',
+			new HttpParams()
+				.set('operation', 'getlist')
+				.set('owner', this._appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie));
 	}
-
-	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
 	ngOnDestroy(): void {
-		// subs
+		this._fdService.recipeListChannel.complete();
 		this._fdService.recipeDeleteChannel.complete();
 	}
+
+	recipeService(property: string): any { return this._recipeService[`${property}` as keyof typeof this._recipeService] };
+
+	appService(property: string): any { return this._appService[`${property}` as keyof typeof this._appService] };
+
+	@ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) { this.dataSource.paginator = paginator; }
 
 	// listing (triggered by load subject)
 	showRecordList(result: RecipeChannelResult): void {
@@ -72,7 +80,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 					break;
 
 				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
 					console.error('bambilite connection error: ' + result.details)
 					break;
 			}
@@ -81,10 +89,52 @@ export class RecipesComponent implements OnInit, OnDestroy {
 		this.loadingComplete = true;
 	}
 
+	// listing (triggered by delete subject)
+	refreshRecordListFromDelete(result: RecipeChannelResult): void {
+		// sucessfull deleted records
+		if (result.sucess) {
+			// snackbar fire
+			this.selectedRecords.length > 1 ?
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPES', emoji: '🚮' } }) :
+				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPE', emoji: '🚮' } })
+
+			// reseting selection array
+			this._appService.deleteSelection = [];
+			this.selectedRecords = [];
+
+			// fetch updated listing
+			this._recipeService.API('getlist',
+				new HttpParams()
+					.set('operation', 'getlist')
+					.set('owner', this._appService.userInfo.username)
+					.set('cookie', this._appService.userInfo.cookie));
+		}
+
+		// error deleting records
+		if (!result.sucess) {
+			switch (result.details) {
+				case 'user-owns-none':
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-RECIPE', emoji: '🚯' } });
+					break;
+
+				case 'offline': default:
+					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
+					console.error('bambilite connection error: ' + result.details);
+					break;
+			}
+		}
+	}
+
+	// product details dialog
+	showDetails(productstamp: string): void {
+		this._dialog.open(RecipeDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
+		this._recipeService.API('getdetails', new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this._appService.userInfo.username).set('cookie', this._appService.userInfo.cookie));
+	}
+
 	// introduction mode
 	addNewRecord(): void {
 		this._fdService.drawerOpen = true;
-		this.recipeService.recordDetails = {
+		this._recipeService.recordDetails = {
 			stamp: '',
 			title: '',
 			image: '',
@@ -93,76 +143,33 @@ export class RecipesComponent implements OnInit, OnDestroy {
 			unit: 'g',
 			unitvalue: 0,
 			price: 0,
-			owner: this.appService.userInfo.username,
+			owner: this._appService.userInfo.username,
 			public: false,
 			inactive: false,
 			timestamp: Date.now()
 		};
 	}
 
+	// update selected records
+	selectItem(target: EventTarget, stamp: string): void {
+		const newTarget = target as HTMLInputElement;
+
+		// adding
+		if (newTarget.checked && !this.selectedRecords.includes(stamp)) { this.selectedRecords.push(stamp); }
+
+		// removing
+		if (!newTarget.checked && this.selectedRecords.includes(stamp)) {
+			const productIndex = this.selectedRecords.indexOf(stamp);
+			const slice1 = this.selectedRecords.slice(0, productIndex);
+			const slice2 = this.selectedRecords.slice(productIndex + 1);
+			this.selectedRecords = [...slice1, ...slice2];
+		}
+	}
+
 	// delete selected records
 	deleteSelected(): void {
-		this.appService.deleteSelection = this.selectedRecords;
-		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this.appService.appTheme + '-theme'] });
+		this._appService.deleteSelection = this.selectedRecords;
+		this._dialog.open(DeleteConfirmationDialogComponent, { width: '500px', height: '220px', panelClass: [this._appService.appTheme + '-theme'] });
 	}
-
-	// listing (triggered by delete subject)
-	refreshRecordListFromDelete(result: RecipeChannelResult): void {
-		// sucessfull deleted records
-		if (result.sucess) {
-			// snackbar fire
-			this.selectedRecords.length > 1 ?
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPES', emoji: '🚮' } }) :
-				this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.DELETED-RECIPE', emoji: '🚮' } })
-
-			// reseting selection array
-			this.appService.deleteSelection = [];
-			this.selectedRecords = [];
-
-			// fetch updated listing
-			this.recipeService.API('getlist',
-				new HttpParams()
-					.set('operation', 'getlist')
-					.set('owner', this.appService.userInfo.username)
-					.set('cookie', this.appService.userInfo.cookie));
-		}
-
-		// error deleting records
-		if (!result.sucess) {
-			switch (result.details) {
-				case 'user-owns-none':
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.CANT-DELETE-RECIPE', emoji: '🚯' } });
-					break;
-
-				case 'offline': default:
-					this._snackBar.openFromComponent(AppSnackComponent, { duration: 5000, horizontalPosition: 'end', panelClass: ['app-snackbar', `${this.appService.appTheme}-snack`], data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
-					console.error('bambilite connection error: ' + result.details);
-					break;
-			}
-		}
-	}
-
-		// update selected records
-		selectItem(target: EventTarget, stamp: string): void {
-			const newTarget = target as HTMLInputElement;
-
-			// adding
-			if (newTarget.checked && !this.selectedRecords.includes(stamp)) { this.selectedRecords.push(stamp); }
-
-			// removing
-			if (!newTarget.checked && this.selectedRecords.includes(stamp)) {
-				const productIndex = this.selectedRecords.indexOf(stamp);
-				const slice1 = this.selectedRecords.slice(0, productIndex);
-				const slice2 = this.selectedRecords.slice(productIndex + 1);
-				this.selectedRecords = [...slice1, ...slice2];
-			}
-		}
-
-
-		// product details dialog
-		showDetails(productstamp: string): void {
-			this._dialog.open(RecipeDetailsComponent, { width: '50vw', height: '400px', panelClass: [this.appService.appTheme + '-theme'] });
-			this.recipeService.API('getdetails',  new HttpParams().set('operation', 'getdetails').set('stamp', productstamp).set('owner', this.appService.userInfo.username).set('cookie', this.appService.userInfo.cookie));
-		}
 
 }

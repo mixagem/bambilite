@@ -2,7 +2,7 @@
 	<router-outlet></router-outlet>
 	<div id="drawer-wrapper" *ngIf="fdService('drawerOpen')" class="animate__animated"
 		[ngClass]="fdService('drawerFadeout') ? 'animate__fadeOutRight':'animate__slideInRight'">
-		<bl-product-edit *ngIf="router.url==='/fd/products'"></bl-product-edit>
-		<bl-recipe-edit *ngIf="router.url==='/fd/recipes'"></bl-recipe-edit>
+		<bl-product-edit *ngIf="router('url')==='/fd/products'"></bl-product-edit>
+		<bl-recipe-edit *ngIf="router('url')==='/fd/recipes'"></bl-recipe-edit>
 	</div>
 </div>

@@ -1,5 +1,5 @@
 <div class="progress-bar-wrapper"><mat-progress-bar mode="indeterminate" color=warn
-		*ngIf="!loadingComplete || productsService.executingQuery"></mat-progress-bar></div>
+		*ngIf="!loadingComplete || productsService('executingQuery')"></mat-progress-bar></div>
 
 <div class="mainform-header" *ngIf="loadingComplete">
 	<div class="header-title">
@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="header-actions">
-		<button mat-mini-fab color="primary" (click)="addNewProduct()"><mat-icon>add</mat-icon></button>
+		<button mat-mini-fab color="primary" (click)="addNewRecord()"><mat-icon>add</mat-icon></button>
 		<button class="animate__animated animate__headShake" mat-mini-fab (click)="deleteSelected()"
 			*ngIf="!!selectedRecords.length" color="warn"><mat-icon>delete</mat-icon></button>
 	</div>
@@ -16,7 +16,7 @@
 </div>
 <div class="mainform-content bambi-fx-0" *ngIf="loadingComplete && !!recordList.length">
 
-	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + appService.appTheme">
+	<table mat-table [dataSource]="dataSource" [ngClass]="'mainform-table-' + appService('appTheme')">
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
@@ -38,7 +38,7 @@
 	</table>
 
 	<ng-scrollbar>
-		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + appService.appTheme">
+		<table mat-table [dataSource]="dataSource"  [ngClass]="'mainform-table-' + appService('appTheme')">
 
 			<tr mat-row *matRowDef="let row; columns: displayedColumns;" style="max-height: 75px"></tr>
 
@@ -65,7 +65,7 @@
 		</table>
 	</ng-scrollbar>
 
-	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!productsService.executingQuery"></mat-paginator>
+	<mat-paginator [pageSizeOptions]="[10]" *ngIf="!productsService('executingQuery')"></mat-paginator>
 </div>
 
 
