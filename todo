@@ -1,5 +1,21 @@
 #phase 2
 
+recipes: booleano se faz cálculos automáticos
+			\-> se verdadeiro, faz soma das linhas e mete os campos a readonly (só podendo alterar as unidades, os restantes (calorias e peso) são calculados automaticamente[qtx*soma de cada 1 dos artigos])
+			\-> se for falso, é de edição livre (mas os cálculos automaticos como temos nos produtos e entidades tambem se aplica )
+
+recipes: terminar css
+
+recipemats: qtd by weight -> adicionar booleano em bd -> na ficha de artigo ou na ficha da linha?
+recipemats: adicionar calculos automaticos -> versão lite (conforme descrito abaixo), existindo um campo readonly/snapshot para auxilio (p.e. mostra o peso ou quantidade, de acordo com o que o utilizador Não utilizar)
+			\-> se recipe tiver calculo automatico, atualizar o seu valor ao gravar uma linha de material
+
+recipemats: utilizar contexto para alterar o titulo do dialog
+
+
+
+
+
 0. no records: desenhar kind of 404 friendly, com opção para adicioanr novo registo
 (verificar com o backend se ele nao dispara erro quando não encontra nenhum [pode nao encontrar, visto se nao existir])
 
@@ -64,9 +80,6 @@
 
 
 
-
-2. suplementos + produtos -> lista de receitas nas quais está incluído (modo consulta)
-	\-> interface para representar linhas das receitas? -> IRecipeLite
 
 3. stocks - > movimentos de stocks
 	\-> ao introduzir,

@@ -3,8 +3,8 @@ import { IDetailsRecipe, IMaterialsRecipe } from 'src/app/interfaces/Fd';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { AppService } from 'src/app/services/app.service';
-import { MaterialDetailsChannelResult, FdService, RecipeChannelResult } from '../../fd.service';
-import { Observable, Subject, map, startWith } from 'rxjs';
+import { FdService, RecipeChannelResult } from '../../fd.service';
+import { Subject } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { NavigationStart, Router } from '@angular/router';
 import { RecipesService } from '../recipes.service';
@@ -15,7 +15,6 @@ import { HeaderService } from 'src/app/main/header/header.service';
 import { AppSnackComponent } from 'src/app/components/snackbars/app-snack/app-snack.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RecordMeasuringType } from 'src/app/interfaces/Generic';
-import { IMaterialsRecordOption } from 'src/app/interfaces/Sp';
 import { RecipeMaterialDetailsComponent } from '../recipe-material-details/recipe-material-details.component';
 import { RecipeMaterialDetailsService } from '../recipe-material-details/recipe-material-details.service';
 
@@ -45,12 +44,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	discardPromptControl: boolean = false;
 
-	// recipemats fromgroups
-	// materialsForm: { [key: string]: FormGroup } = {};
-
-	// cachedProductList: ICachedListOption[] = [];
-	// cachedSupplementList: ICachedListOption[] = [];
-
 	// mat-chips input separator
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
@@ -72,8 +65,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		// subs
 		this._fdService.recipeUpdateChannel = new Subject<RecipeChannelResult>;
 		this._fdService.recipeUpdateChannel.subscribe(result => { this.saveFinished(result); });
-		// this._fdService.cachedListChannel = new Subject<RecipeChannelResult>;
-		// this._fdService.cachedListChannel.subscribe(result => { this.receivedCachedLists(result); });
+		this._fdService.recipeMaterialEditChannel = new Subject<IMaterialsRecipe>;
+		this._fdService.recipeMaterialEditChannel.subscribe(result => { this.materialsEditFinished(result); });
 
 		// closing drawer on changing to a diffrent fd child
 		this._router.events.forEach((event) => { if (event instanceof NavigationStart) { this.closeEditMode(); } });
@@ -86,23 +79,19 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 		// form control gen
 		this.generateFormControls(this.recordForm);
-		// this.recordDetailsDraft.recipemats.forEach((mat: IMaterialsRecipe) => {
-		// 	this.materialsForm[mat.stamp] = new FormGroup({});
-		// 	this.generateFormControls(this.materialsForm[mat.stamp], mat);
-		// });
 
 		this.formControlsUpdate(this.recordForm);
 
 		// disabling header search input
 		this._headerService.inputsForm.get('simpleQueryFormControl')!.disable({ emitEvent: false });
 
-		// this.getCachedLists();
 	}
 
 	ngOnDestroy(): void {
 		// subs
 		this._fdService.recipeUpdateChannel.complete();
-		// this._fdService.cachedListChannel.complete();
+		this._fdService.recipeMaterialEditChannel.complete();
+
 		// wise to clean any images that are not used
 		this._recipesService.tempB64Img = '';
 		// re-enabling header search input
@@ -122,17 +111,11 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 				this.discardPromptControl = true;
 				this.recordForm.disable({ emitEvent: false })
 				this.isDiscarding = true;
-				// for (let i = 0; i < Object.keys(this.materialsForm).length; i++) {
-				// 	this.materialsForm[Object.keys(this.materialsForm)[i]].disable({ emitEvent: false })
-				// }
 				break;
 			case 'close':
 				this.discardPromptControl = false;
 				this.recordForm.enable({ emitEvent: false })
 				this.isDiscarding = false;
-				// for (let i = 0; i < Object.keys(this.materialsForm).length; i++) {
-				// 	this.materialsForm[Object.keys(this.materialsForm)[i]].enable({ emitEvent: false })
-				// }
 				break;
 		}
 	}
@@ -140,11 +123,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	recordReadyToSave(): boolean {
 
 		if (!this.recordForm.valid) { return false }
-
-		// for (let i = 0; i < Object.keys(this.materialsForm).length; i++) {
-		// 	if (!this.materialsForm[Object.keys(this.materialsForm)[i]].valid) { return false }
-		// }
-
 		return true
 	}
 
@@ -162,23 +140,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		this.recordDetailsDraft.public = this.recordForm.get('public')!.value
 		this.recordDetailsDraft.inactive = this.recordForm.get('inactive')!.value
 
-		this.recordDetailsDraft.recipemats = [];
-
-		// Object.keys(this.materialsForm).forEach(formstamp => {
-		// 	let recipe: IMaterialsRecipe = { stamp: '', origin: '', originstamp: '', recipestamp: '', title: '', kcal: 0, unit: '', unitvalue: 0, price: 0, owner: '', qtd: 0 }
-		// 	recipe.stamp = this.materialsForm[formstamp].get('stamp')!.value;
-		// 	recipe.origin = this.materialsForm[formstamp].get('origin')!.value;
-		// 	recipe.originstamp = this.materialsForm[formstamp].get('originstamp')!.value;
-		// 	recipe.recipestamp = this.materialsForm[formstamp].get('recipestamp')!.value;
-		// 	recipe.title = this.materialsForm[formstamp].get('title')!.value;
-		// 	recipe.kcal = this.materialsForm[formstamp].get('kcal')!.value;
-		// 	recipe.unit = this.materialsForm[formstamp].get('unit')!.value;
-		// 	recipe.unitvalue = this.materialsForm[formstamp].get('unitvalue')!.value;
-		// 	recipe.price = this.materialsForm[formstamp].get('price')!.value;
-		// 	recipe.owner = this.materialsForm[formstamp].get('owner')!.value;
-
-		// 	this.recordDetailsDraft.recipemats.push(recipe)
-		// });
 
 		const operation = !!this.recordDetailsDraft.stamp ? 'update' : 'new'
 		const httpParams =
@@ -214,6 +175,16 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	}
 
+	materialsEditFinished(result: IMaterialsRecipe) {
+		for (let i = 0; i < this.recordDetailsDraft.recipemats.length; i++) {
+			if (this.recordDetailsDraft.recipemats[i].stamp !== result.stamp) {
+				continue
+			}
+			this.recordDetailsDraft.recipemats[i] = result
+			return
+		}
+		this.recordDetailsDraft.recipemats.push(result)
+	}
 
 	// triggered when update record api call is over, and also when discarding changes
 	closeEditMode(updatedRecord: boolean = false): void {
@@ -262,43 +233,24 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		if (index >= 0) { this.recordDetailsDraft.tags[index] = value; }
 	}
 
+
 	addRecipeMaterial(context: string): void {
-
-		this._materialsService.recordDetails = { stamp: '', origin: context, originstamp: '', recipestamp: this.recordDetailsDraft.stamp, title: '', kcal: 0, unit: '', unitvalue: 0, price: 0, owner: this._appService.userInfo.username, qtd: 1 }
-
-		this._dialog.open(RecipeMaterialDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
-
-		this._recipesService.API('matrecordlist',
-			new HttpParams()
-				.set('operation', 'matrecordlist')
-				.set('context', context)
-				.set('owner', this._appService.userInfo.username)
-				.set('cookie', this._appService.userInfo.cookie));
-		// aqui abrir modal
-
-
-		// const newMaterial: IMaterialsRecipe = {
-		// 	stamp: 'temp-' + Date.now(),
-		// 	origin: '',
-		// 	originstamp: '',
-		// 	recipestamp: this.recordDetailsDraft.stamp,
-		// 	title: '',
-		// 	kcal: 0,
-		// 	unit: '',
-		// 	unitvalue: 0,
-		// 	price: 0,
-		// 	owner: '',
-		// 	qtd: 0
-		// }
-
-		// this.recordDetailsDraft.recipemats.push(newMaterial)
-
-		// this.materialsForm[newMaterial.stamp] = new FormGroup({});
-		// this.generateFormControls(this.materialsForm[newMaterial.stamp], newMaterial);
+		this._materialsService.recordDetails = { stamp: 'temp-' + Date.now(), origin: context, originstamp: '', recipestamp: this.recordDetailsDraft.stamp, title: '', kcal: 0, unit: '', unitvalue: 0, price: 0, owner: this._appService.userInfo.username, qtd: 1, image: '' }
+		this._materialsService.previewImage = '';
+		this._materialsService.context = context
+		this.openRecipeMaterialModal(context)
 	}
 
-	editRecipeMaterial(matstamp: string): void {
+	editRecipeMaterial(stamp: string): void {
 		//abri a mesma modal do edit
+		for (let i = 0; i < this.recordDetailsDraft.recipemats.length; i++) {
+			if (this.recordDetailsDraft.recipemats[i].stamp !== stamp) { continue }
+			this._materialsService.recordDetails = this.recordDetailsDraft.recipemats[i];
+			this._materialsService.previewImage = this.recordDetailsDraft.recipemats[i].image;
+			this._materialsService.context = this.recordDetailsDraft.recipemats[i].origin
+			this.openRecipeMaterialModal(this._materialsService.recordDetails.origin)
+			return;
+		}
 	}
 
 	deleteRecipeMaterial(stamp: string): void {
@@ -312,37 +264,22 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			const arrayPart2 = this.recordDetailsDraft.recipemats.slice(i + 1);
 
 			this.recordDetailsDraft.recipemats = arrayPart1.concat(arrayPart2);
+			return;
 		}
-		// delete this.materialsForm[stamp];
 	}
 
-	generateFormControls(form: FormGroup, mat?: IMaterialsRecipe): void {
+	openRecipeMaterialModal(context: string): void {
+		this._dialog.open(RecipeMaterialDetailsComponent, { width: '50vw', height: '400px', panelClass: [this._appService.appTheme + '-theme'] });
 
-		// if (!!mat) {
+		this._recipesService.API('matrecordlist',
+			new HttpParams()
+				.set('operation', 'matrecordlist')
+				.set('context', context)
+				.set('owner', this._appService.userInfo.username)
+				.set('cookie', this._appService.userInfo.cookie));
+	}
 
-		// 	Object.keys(mat).forEach(key => {
-		// 		switch (key) {
-		// 			case 'title':
-		// 				// required fields
-		// 				form.addControl(key, new FormControl(mat[key], [Validators.required]));
-		// 				break;
-		// 			case 'kcal':
-		// 			case 'price':
-		// 				// number patterns validator
-		// 				form.addControl(key, new FormControl(mat[key], [Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
-		// 				break;
-		// 			case 'qtd':
-		// 				form.addControl(key, new FormControl(mat[key], [Validators.required, Validators.pattern("^[0-9]*([,.]{1}[0-9]{1,3}){0,1}$")]));
-		// 				break;
-		// 			default:
-		// 				form.addControl(key, new FormControl(mat[key as keyof typeof mat]));
-		// 		}
-		// 	});
-
-		// 	form.addControl('qtdbyweight', new FormControl(false))
-
-		// } else {
-
+	generateFormControls(form: FormGroup): void {
 		Object.keys(this.recordDetailsDraft).forEach(key => {
 			switch (key) {
 				case 'stamp':
@@ -368,8 +305,6 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			}
 		});
 
-
-		// }
 		const pbr = this._fdService.GetPriceByRatio(form.get('price')!.value, form.get('unitvalue')!.value, form.get('unit')!.value);
 		const kb1 = this._fdService.GetKcalBy100(form.get('kcal')!.value, form.get('unitvalue')!.value, form.get('unit')!.value);
 
@@ -385,47 +320,4 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	getCachedLists(): void {
-
-		this._recipesService.API('cachedlist',
-			new HttpParams()
-				.set('operation', 'cachedlist')
-				.set('owner', this._appService.userInfo.username)
-				.set('cookie', this._appService.userInfo.cookie));
-
-	}
-
-	// receivedCachedLists(result: CachedListChannelResult): void {
-
-	// 	if (result.sucess) {
-	// 		result.cachedList!.forEach(option => {
-	// 			option.origin === 'products' ? this.cachedProductList.push(option) : this.cachedSupplementList.push(option)
-	// 		});
-	// 	}
-
-	// 	if (!result.sucess) {
-	// 		switch (result.details) {
-	// 			case 'no-records-found':
-	// 				break;
-
-	// 			case 'offline': default:
-	// 				this._snackBar.openFromComponent(AppSnackComponent, { duration: 3000, panelClass: ['app-snackbar', `${this._appService.appTheme}-snack`], horizontalPosition: 'end', data: { label: 'SNACKS.UNREACHABLE-SERVER', emoji: '🚧' } });
-	// 				console.error('bambilite connection error: ' + result.details)
-	// 				break;
-	// 		}
-	// 	}
-
-	// 	console.log(this.cachedProductList)
-	// 	console.log(this.cachedSupplementList)
-
-	// }
-
-	// private _filter(value: string): ICachedListOption[] {
-	// 	const filterValue = value.toLowerCase();
-
-	// 	const products: ICachedListOption[] = this.cachedProductList.filter(option => option.title.toLowerCase().includes(filterValue));
-	// 	const supplements: ICachedListOption[] = this.cachedSupplementList.filter(option => option.title.toLowerCase().includes(filterValue));
-
-	// 	return [...products, ...supplements]
-	// }
 }

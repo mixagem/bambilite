@@ -60,21 +60,20 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.KCAL' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.KCAL' | translation}}{{'GENERIC.PERQUANTITY' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
 					<span matSuffix>Cal</span>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.KCAL' | translation}} / 100
-						{{recordForm.get('unit')!.value === 'L' ? 'ml' : recordForm.get('unit')!.value === 'kg' ? 'g'
+					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.KCAL' | translation}} / 100 {{recordForm.get('unit')!.value === 'L' ? 'ml' : recordForm.get('unit')!.value === 'kg' ? 'g'
 						: recordForm.get('unit')!.value}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcalby100">
 					<span matSuffix>Cal</span>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.PRICE' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'SP.SUPPLEMENTS.EDIT.PRICE' | translation}}{{'GENERIC.PERQUANTITY' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
 					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>

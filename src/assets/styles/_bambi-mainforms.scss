@@ -19,8 +19,8 @@
 		width: 50%;
 		mat-icon {
 			font-size: 30px;
-			width: 30px;
-			height: 30px;
+			min-width: 30px;
+			min-height: 30px;
 		}
 		h1 {
 			margin: 0;
@@ -223,7 +223,8 @@
 		}
 
 		.recipe-wrapper {
-			width: 100%;
+			width: 90%;
+			margin: 0 5%;
 		}
 	}
 

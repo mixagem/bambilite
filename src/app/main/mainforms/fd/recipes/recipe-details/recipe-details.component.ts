@@ -55,6 +55,10 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 					this._recipesService.recordDetails.stamp = ''
 					this._recipesService.recordDetails.public = false
 					this._recipesService.recordDetails.inactive = false
+					this._recipesService.recordDetails.recipemats.forEach(mat => {
+						mat.stamp = '';
+						mat.recipestamp = '';
+					});
 				}
 				this._fdService.drawerOpen = true;
 				this._dialogRef.close();

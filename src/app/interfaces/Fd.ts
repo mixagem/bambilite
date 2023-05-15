@@ -19,7 +19,7 @@ export interface IDetailsProduct extends IListProduct {
 }
 
 export interface IMaterialsProduct {
-	recipestamp:string,
+	recipestamp: string,
 	title: string,
 	kcal: number;
 	unit: string;
@@ -46,17 +46,18 @@ export interface IDetailsRecipe extends IListRecipe {
 }
 
 export interface IMaterialsRecipe {
-	stamp:string,
-	origin:string,
-	originstamp:string,
-	recipestamp:string,
+	stamp: string,
+	origin: string,
+	originstamp: string,
+	recipestamp: string,
 	title: string,
 	kcal: number;
 	unit: string;
 	unitvalue: number;
 	price: number;
 	owner: string;
-	qtd:number;
+	qtd: number;
+	image: string;
 }
 
 

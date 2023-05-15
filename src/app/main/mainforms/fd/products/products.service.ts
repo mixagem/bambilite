@@ -4,8 +4,7 @@ import { catchError, retry, throwError } from 'rxjs';
 import { IDetailsProduct, IListProduct } from 'src/app/interfaces/Fd';
 import { AppService } from 'src/app/services/app.service';
 import { FdService } from '../fd.service';
-
-type ProductObject = { sucess: boolean; recordList?: IListProduct[]; recordDetails?: IDetailsProduct; details?: string };
+import { ProductObject } from 'src/app/interfaces/Generic';
 
 @Injectable({ providedIn: 'root' })
 

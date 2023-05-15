@@ -60,7 +60,8 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.KCAL' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.KCAL' |
+						translation}}{{'GENERIC.PERQUANTITY' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
 					<span matSuffix>Cal</span>
 				</mat-form-field>
@@ -74,7 +75,8 @@
 				</mat-form-field>
 
 				<mat-form-field appearance="outline" color="accent">
-					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.PRICE' | translation}}</mat-label>
+					<mat-label class="bambi-fx-15-inline">{{'FD.RECIPES.EDIT.PRICE' |
+						translation}}{{'GENERIC.PERQUANTITY' | translation}}</mat-label>
 					<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
 					<mat-icon matSuffix>euro</mat-icon>
 				</mat-form-field>
@@ -125,45 +127,44 @@
 
 				<div class="recipe-wrapper">
 
-					<div *ngFor="let mat of recordDetailsDraft.recipemats" style="display: flex;padding:5px 0px;">
+					<div style="font-size: 20px;display: flex;align-items: center;"><mat-icon fontSet="material-icons-outlined" color="primary"
+							style="font-size:24px;width:24px;height:24px;  margin-right: 5px;margin-top: -1px;">category</mat-icon>Materiais:
+					</div>
+					<div class="recipe-material">
+						<div class="img-col"></div>
+						<div class="title-col"></div>
+						<div>qtd</div>
+						<div>kcal</div>
+						<div>price</div>
+						<div class="action-buttons-wrapper"></div>
+					</div>
+					<div class="recipe-material" [ngClass]="discardPromptControl ? ' disabled-mat' : mat.origin + '-material'"
+						*ngFor="let mat of recordDetailsDraft.recipemats" style="display: flex;padding:5px 0px;">
+						<div class="img-col"><img [src]="mat.image"></div>
+						<div class="title-col">{{mat.title}}</div>
+						<div>{{mat.qtd}}</div>
+						<div>{{mat.kcal}}</div>
+						<div>{{mat.price}}</div>
 
-						<div style="padding:0px 20px;color:orangered">{{mat.title}}</div>
-						<div style="padding:0px 20px;color:orangered">{{mat.qtd}}</div>
-						<div style="padding:0px 20px;color:orangered">{{mat.kcal}}</div>
-						<div style="padding:0px 20px;color:orangered">{{mat.price}}</div>
-
-						<!-- <mat-checkbox color=warn formControlName="qtdbyweight"></mat-checkbox>
-
-						<mat-form-field appearance="outline" color="accent" style="width: auto;">
-							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="title">
-						</mat-form-field>
-
-						<mat-form-field appearance="outline" color="accent" style="width: auto;">
-							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="qtd">
-						</mat-form-field>
-
-						<mat-form-field appearance="outline" color="accent" style="width: auto;">
-							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="kcal">
-						</mat-form-field>
-
-						<mat-form-field appearance="outline" color="accent" style="width: auto;">
-							<input class="bambi-fx-15 bambi-fx-30-inline" matInput formControlName="price">
-						</mat-form-field>
-
-						<div *ngIf="!materialsForm[mat.stamp].get('qtdbyweight')!.value" >aqui vêm em read only unitvalue * qtd [unit] </div>
-
-						<div *ngIf="materialsForm[mat.stamp].get('qtdbyweight')!.value" >aqui vêm em read only qtd / unitvalue  </div> -->
-
-						<!-- <div (click)="navigateToRecord(mat.origin,mat.originstamp)"><mat-icon>link</mat-icon></div> -->
-						<button mat-mini-fab color="warn" [disabled]="discardPromptControl" (click)="deleteRecipeMaterial(mat.stamp)"><mat-icon>delete</mat-icon></button>
+						<div class="action-buttons-wrapper"><button class="bambi-fx-30-inline" mat-mini-fab
+								color="accent" [disabled]="discardPromptControl"
+								(click)="editRecipeMaterial(mat.stamp)"><mat-icon>edit</mat-icon></button>
+							<button class="bambi-fx-30-inline" mat-mini-fab color="warn"
+								[disabled]="discardPromptControl"
+								(click)="deleteRecipeMaterial(mat.stamp)"><mat-icon>delete</mat-icon></button>
+						</div>
 
 					</div>
 
-					<button mat-mini-fab color="accent" [disabled]="discardPromptControl" (click)="addRecipeMaterial('products')"><mat-icon>add</mat-icon></button>
-					<button mat-mini-fab color="accent" [disabled]="discardPromptControl" (click)="addRecipeMaterial('supplements')"><mat-icon>add</mat-icon></button>
+					<div class="recipe-material materials-action-buttons-wrapper" [ngClass]="discardPromptControl ? ' disabled-recipes' : ''">
+
+						<button class="bambi-fx-30-inline" mat-mini-fab color="accent" [disabled]="discardPromptControl"
+							(click)="addRecipeMaterial('products')"><mat-icon>add</mat-icon></button>
+						<button class="bambi-fx-30-inline" mat-mini-fab color="accent" [disabled]="discardPromptControl"
+							(click)="addRecipeMaterial('supplements')"><mat-icon>add</mat-icon></button>
 
 
-
+					</div>
 				</div>
 
 			</div>

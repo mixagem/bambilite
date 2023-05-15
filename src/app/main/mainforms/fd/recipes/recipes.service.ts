@@ -59,7 +59,7 @@ export class RecipesService {
 						this._fdService.RecipeDeleteChannelFire(recordObject.sucess, recordObject.details!);
 						break;
 					case 'matrecordlist':
-						recordObject.sucess ? this._fdService.MaterialDetailsChannelFire(true, '', recordObject.matrecordList!) : this._fdService.MaterialDetailsChannelFire(false, recordObject.details)
+						recordObject.sucess ? this._fdService.MaterialProductListChannelFire(true, '', recordObject.matrecordList!) : this._fdService.MaterialProductListChannelFire(false, recordObject.details)
 						break;
 				}
 				this.executingQuery = false;
@@ -85,7 +85,7 @@ export class RecipesService {
 						this._fdService.RecipeDeleteChannelFire(false, 'offline');
 						return;
 					case 'matrecordlist':
-						this._fdService.MaterialDetailsChannelFire(false, 'offline');
+						this._fdService.MaterialProductListChannelFire(false, 'offline');
 						return;
 
 				}

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IListProduct, IDetailsProduct, IListRecipe, IDetailsRecipe } from 'src/app/interfaces/Fd';
-import { IMaterialsRecordOption } from 'src/app/interfaces/Sp';
+import { IListProduct, IDetailsProduct, IListRecipe, IDetailsRecipe, IMaterialsRecipe } from 'src/app/interfaces/Fd';
+import { IDetailsSupplement, IMaterialsRecordOption } from 'src/app/interfaces/Sp';
 
 export type ProductChannelResult = { sucess: boolean, recordList?: IListProduct[], record?: IDetailsProduct, details?: string };
 export type RecipeChannelResult = { sucess: boolean, recordList?: IListRecipe[], record?: IDetailsRecipe, details?: string };
-export type MaterialDetailsChannelResult = { sucess: boolean, recordList?: IMaterialsRecordOption[], details?: string };
+export type MaterialChannelResult = { sucess: boolean, record?: IDetailsProduct | IDetailsSupplement, matrecordList?: IMaterialsRecordOption[], details?: string };
 
 @Injectable({ providedIn: 'root' })
 
@@ -26,7 +26,9 @@ export class FdService {
 	recipeUpdateChannel: Subject<RecipeChannelResult>;
 	recipeDeleteChannel: Subject<RecipeChannelResult>;
 
-	materialDetailsChannel: Subject<MaterialDetailsChannelResult>;
+	materialProductListChannel: Subject<MaterialChannelResult>;
+	materialProductDetailsChannel: Subject<MaterialChannelResult>;
+	recipeMaterialEditChannel: Subject<IMaterialsRecipe>;
 
 	constructor() {
 		this.productListChannel = new Subject<ProductChannelResult>;
@@ -39,7 +41,9 @@ export class FdService {
 		this.recipeUpdateChannel = new Subject<RecipeChannelResult>;
 		this.recipeDeleteChannel = new Subject<RecipeChannelResult>;
 
-		this.materialDetailsChannel = new Subject<MaterialDetailsChannelResult>;
+		this.materialProductListChannel = new Subject<MaterialChannelResult>;
+		this.materialProductDetailsChannel = new Subject<MaterialChannelResult>;
+		this.recipeMaterialEditChannel = new Subject<IMaterialsRecipe>;
 	};
 
 	ProductListChannelFire(result: boolean, errorCode: string = '', productList?: IListProduct[],): void {
@@ -74,9 +78,17 @@ export class FdService {
 		this.recipeDeleteChannel.next({ sucess: result, details: code });
 	};
 
-	MaterialDetailsChannelFire(result: boolean, errorCode: string = '', recordList?: IMaterialsRecordOption[]): void {
-		this.materialDetailsChannel.next({ sucess: result, recordList: recordList, details: errorCode });
+	MaterialProductListChannelFire(result: boolean, errorCode: string = '', recordList?: IMaterialsRecordOption[]): void {
+		this.materialProductListChannel.next({ sucess: result, matrecordList: recordList, details: errorCode });
 	};
+
+	MaterialProductDetailsChannelFire(result: boolean, errorCode: string = '', record?: IDetailsProduct | IDetailsSupplement): void {
+		this.materialProductDetailsChannel.next({ sucess: result, record: record, details: errorCode });
+	};
+
+	RecipeMaterialEditChannelFire(recipe:IMaterialsRecipe) {
+		this.recipeMaterialEditChannel.next(recipe);
+	 }
 
 	GetPriceByRatio(price: number, unitvalue: number, unit: string): number {
 

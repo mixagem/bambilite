@@ -1,80 +1,55 @@
-.dialog-details-wrapper {
-	.mat-mdc-standard-chip.mdc-evolution-chip--disabled {
-		opacity: 1;
-	}
+.recipe-wrapper {
+	padding-top: 10px;
 }
 
-.record-mini-info {
-	width: 100%;
+.recipe-material {
 	display: flex;
-	flex-direction: column;
-	mat-icon {
-		margin-right: 10px;
+	justify-content: space-evenly;
+	align-items: center;
+
+	&.disabled-mat,
+	&.disabled-recipes {
+		opacity: .3;
+	}
+
+
+	img {
+		border-radius: 15px;
+		max-width: 50px;
+		max-height: 50px;
 	}
 
 	div {
+		padding: 0px 5px;
+		min-width: calc(40px + 1.5vw);
+		text-align: center;
+	}
+
+	.img-col {
+		margin-left: 10px;
 		display: flex;
-		align-content: center;
-		margin: 5px auto;
-		span {
-			margin-top: 4px;
-		}
-	}
-
-	img {
-		max-width: 100%;
-		margin: 0 auto 5px;
-		border-radius: 25%;
-	}
-}
-
-.record-info-left,
-.record-info-right {
-	padding: 0 10px;
-	height: 100%;
-	display: flex;
-}
-
-.record-info-left {
-	width: 30%;
-}
-
-.record-info-right {
-	width: 70%;
-	flex-direction: column;
-
-	.record-title {
-		margin-bottom: 10px;
-		h1 {
-			margin: 0;
-		}
-	}
-
-	.record-chips {
-		margin-bottom: 10px;
-	}
-
-	.recipes-list {
-		display: flex;
-		align-items: center;
 		justify-content: center;
+		align-items: center;
 	}
 
-	.delete-confirmation {
-		padding-top: 10px;
+	.title-col {
+		flex-grow: 1;
+		text-align: left;
+	}
 
-		p {
-			text-align: center;
+	.action-buttons-wrapper {
+		min-width: 120px;
+		button {
+			margin: 0 5px;
 		}
+	}
+}
 
-		div {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding-top: 10px;
-			button {
-				margin: 0 10px;
-			}
-		}
+.materials-action-buttons-wrapper {
+	display: flex;
+	justify-content: center;
+	padding: 10px 0;
+	button {
+		margin: 0 10px;
 	}
 }

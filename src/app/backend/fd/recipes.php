@@ -156,6 +156,25 @@ switch ($operation) {
 			array_push($record_object["recordDetails"]["recipemats"], $SQL_RESULT_ROW);
 		}
 
+
+
+		// $IN_CLAUSE = "";
+		foreach ($record_object["recordDetails"]["recipemats"] as &$mat) {
+			$SQL_QUERY = "SELECT image FROM " . $mat["origin"] . " WHERE stamp = '" . $mat["originstamp"] . "'";
+			$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
+
+			if (mysqli_num_rows($SQL_RUN) !== 1) {
+				LeggeraError($record_object, $SQL_CON, "error-fetching-images");
+				return;
+			}
+
+			while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
+				$mat["image"] = $SQL_RESULT_ROW["image"];
+			}
+		}
+		// $IN_CLAUSE = substr_replace($IN_CLAUSE, "", -1);
+
+
 		LeggeraSucess($record_object, $SQL_CON);
 		return;
 
@@ -250,14 +269,14 @@ switch ($operation) {
 		}
 
 		foreach ($recipemats_updated_mats as &$mat) {
-			$SQL_QUERY = "UPDATE recipemats SET origin = '" . $mat['origin'] . "',originstamp = '" . $mat['originstamp'] . "',title = '" . sanitizeInput($mat['title']) . "',kcal = " . sanitizeInput($mat['kcal']) . ",unit = '" . $mat['unit'] . "',unitvalue = " . sanitizeInput($mat['unitvalue']) . ",price = " . sanitizeInput($mat['price']) . ",owner = '" . $mat['owner'] . "' WHERE stamp = '" . $mat['stamp'] . "'";
+			$SQL_QUERY = "UPDATE recipemats SET origin = '" . $mat['origin'] . "',originstamp = '" . $mat['originstamp'] . "',title = '" . sanitizeInput($mat['title']) . "',kcal = " . sanitizeInput($mat['kcal']) . ",unit = '" . $mat['unit'] . "',unitvalue = " . sanitizeInput($mat['unitvalue']) . ",price = " . sanitizeInput($mat['price']) . ",owner = '" . $mat['owner'] . "', qtd = " . sanitizeInput($mat['qtd']) . " WHERE stamp = '" . $mat['stamp'] . "'";
 			$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 		}
 
 		foreach ($recipemats_newmats as &$mat) {
 			$stampgen = LeggeraStamp();
 
-			$SQL_QUERY = "INSERT INTO recipemats (stamp,recipestamp,origin,originstamp,title,kcal,unit,unitvalue,price,owner) VALUES	('" . $stampgen . "', '" . $mat['recipestamp'] . "', '" . $mat['origin'] . "', '" . $mat['originstamp'] . "', '" . sanitizeInput($mat['title']) . "', '" . sanitizeInput($mat['kcal']) . "', '" . $mat['unit'] . "', '" . sanitizeInput($mat['unitvalue']) . "', '" . sanitizeInput($mat['price']) . "', '" . $mat['owner'] . "')";
+			$SQL_QUERY = "INSERT INTO recipemats (stamp,recipestamp,origin,originstamp,title,kcal,unit,unitvalue,price,owner,qtd) VALUES	('" . $stampgen . "', '" . $mat['recipestamp'] . "', '" . $mat['origin'] . "', '" . $mat['originstamp'] . "', '" . sanitizeInput($mat['title']) . "', '" . sanitizeInput($mat['kcal']) . "', '" . $mat['unit'] . "', '" . sanitizeInput($mat['unitvalue']) . "', '" . sanitizeInput($mat['price']) . "', '" . $mat['owner'] . "', ". sanitizeInput($mat['qtd']) ." )";
 			$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 			if (mysqli_affected_rows($SQL_CON) !== 1) {
@@ -296,11 +315,11 @@ switch ($operation) {
 
 		$recipemats = $record["recipemats"];
 
+		$recipestamp = $stampgen;
 		foreach ($recipemats as &$mat) {
-			$recipestamp = $stampgen;
 			$stampgen = LeggeraStamp();
 
-			$SQL_QUERY = "INSERT INTO recipemats (stamp,recipestamp,origin,originstamp,title,kcal,unit,unitvalue,price,owner) VALUES	('" . $stampgen . "', '" . $recipestamp . "', '" . $mat['origin'] . "', '" . $mat['originstamp'] . "', '" . sanitizeInput($mat['title']) . "', '" . sanitizeInput($mat['kcal']) . "', '" . $mat['unit'] . "', '" . sanitizeInput($mat['unitvalue']) . "', '" . sanitizeInput($mat['price']) . "', '" . $mat['owner'] . "')";
+			$SQL_QUERY = "INSERT INTO recipemats (stamp,recipestamp,origin,originstamp,title,kcal,unit,unitvalue,price,owner,qtd) VALUES	('" . $stampgen . "', '" . $recipestamp . "', '" . $mat['origin'] . "', '" . $mat['originstamp'] . "', '" . sanitizeInput($mat['title']) . "', '" . sanitizeInput($mat['kcal']) . "', '" . $mat['unit'] . "', '" . sanitizeInput($mat['unitvalue']) . "', '" . sanitizeInput($mat['price']) . "', '" . $mat['owner'] . "', " .sanitizeInput($mat['qtd']) . ")";
 			$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
 
 			if (mysqli_affected_rows($SQL_CON) !== 1) {
@@ -394,6 +413,38 @@ switch ($operation) {
 		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
 			array_push($record_object["matrecordList"], $SQL_RESULT_ROW);
 		}
+
+		LeggeraSucess($record_object, $SQL_CON);
+		return;
+
+	case 'matrecorddetails':
+
+		if (!isset($_POST["stamp"])) {
+			LeggeraError($record_object, $SQL_CON, "no-stamp-or-context-provided");
+			return;
+		}
+
+		$recordstamp = $_POST["stamp"];
+
+		$SQL_QUERY = "SELECT * FROM products WHERE stamp = '" . $recordstamp . "' UNION SELECT * FROM supplements WHERE stamp = '" . $recordstamp . "'";
+
+		$SQL_RUN = mysqli_query($SQL_CON, $SQL_QUERY);
+
+		if (mysqli_num_rows($SQL_RUN) !== 1) {
+			LeggeraError($record_object, $SQL_CON, "no-records-found");
+			return;
+		}
+
+		$record_object["recordDetails"] = [];
+		while ($SQL_RESULT_ROW = mysqli_fetch_assoc($SQL_RUN)) {
+			if ($SQL_RESULT_ROW["tags"] !== "") {
+				$SQL_RESULT_ROW["tags"] = explode(",", $SQL_RESULT_ROW["tags"]);
+			};
+			$record_object["recordDetails"] = $SQL_RESULT_ROW;
+			$record_object["recordDetails"]["inactive"] = boolval($record_object["recordDetails"]["inactive"]);
+			$record_object["recordDetails"]["public"] = boolval($record_object["recordDetails"]["public"]);
+		};
+
 
 		LeggeraSucess($record_object, $SQL_CON);
 		return;
